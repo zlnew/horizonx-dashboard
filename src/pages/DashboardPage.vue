@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import MetricsApi from '@/api/Metrics'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { useDate } from '@/composables/date'
 import { useNumber } from '@/composables/number'
 import useAppStore from '@/stores/app'
+import useMetricsStore from '@/stores/metrics'
 import { useTimestamp } from '@vueuse/core'
 import {
   ActivityIcon,
@@ -16,41 +16,21 @@ import {
   ServerIcon,
 } from 'lucide-vue-next'
 import { storeToRefs } from 'pinia'
-import { onBeforeUnmount, onMounted, ref } from 'vue'
-import { toast } from 'vue-sonner'
+import { onMounted } from 'vue'
 
 const appStore = useAppStore()
+const metricsStore = useMetricsStore()
+
 const timestamp = useTimestamp({ offset: 0 })
 const { formatNumber, formatDuration } = useNumber()
 const { formatDate } = useDate()
 
-let metricsPool: number
-
 const { title } = storeToRefs(appStore)
-const metrics = ref<Metrics>()
+const { metrics } = storeToRefs(metricsStore)
 
 onMounted(() => {
   title.value = 'Dashboard'
-
-  fetchMetrics()
-
-  metricsPool = setInterval(() => {
-    fetchMetrics()
-  }, 1000)
 })
-
-onBeforeUnmount(() => {
-  clearInterval(metricsPool)
-})
-
-const fetchMetrics = async () => {
-  try {
-    metrics.value = await new MetricsApi().get<Metrics>()
-  } catch (error) {
-    const fetchError = error as Error
-    toast.error(fetchError.message)
-  }
-}
 </script>
 
 <template>

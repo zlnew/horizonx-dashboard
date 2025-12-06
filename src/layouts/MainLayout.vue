@@ -1,5 +1,14 @@
 <script setup lang="ts">
+import useSocket from '@/composables/socket'
+import useMetricsStore from '@/stores/metrics'
 import { OrbitIcon } from 'lucide-vue-next'
+
+const metricsStore = useMetricsStore()
+const { subscribe } = useSocket()
+
+subscribe('metrics', (payload) => {
+  metricsStore.metrics = payload as Metrics | undefined
+})
 </script>
 
 <template>
