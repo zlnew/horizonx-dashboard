@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import { Button } from '@/components/ui/button'
 import useSocket from '@/composables/socket'
 import useMetricsStore from '@/stores/metrics'
-import { OrbitIcon } from 'lucide-vue-next'
+import { LogOutIcon, OrbitIcon } from 'lucide-vue-next'
 
 const metricsStore = useMetricsStore()
 const { subscribe } = useSocket()
@@ -20,6 +21,12 @@ subscribe('metrics', (payload) => {
           <span class="text-neutral-400">Horizon</span>
           <span>X</span>
         </div>
+      </div>
+
+      <div>
+        <Button variant="ghost" size="icon" aria-label="Logout">
+          <LogOutIcon />
+        </Button>
       </div>
     </div>
   </header>

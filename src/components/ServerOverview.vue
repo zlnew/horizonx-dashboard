@@ -15,6 +15,9 @@ import {
   ServerIcon,
 } from 'lucide-vue-next'
 import { Badge } from '@/components/ui/badge'
+import { Progress } from '@/components/ui/progress'
+import { Spinner } from '@/components/ui/spinner'
+import { Empty, EmptyHeader, EmptyMedia } from '@/components/ui/empty'
 
 const metricsStore = useMetricsStore()
 
@@ -63,6 +66,7 @@ const { metrics } = storeToRefs(metricsStore)
                 <span class="text-2xl">{{ formatNumber(metrics.cpu.usage, 0, 2) }}</span>
                 <span class="text-lg text-neutral-400">%</span>
               </div>
+              <Progress :model-value="metrics.cpu.usage" />
             </div>
           </div>
         </CardContent>
@@ -86,6 +90,7 @@ const { metrics } = storeToRefs(metricsStore)
                 </span>
                 <span class="text-lg text-neutral-400">%</span>
               </div>
+              <Progress :model-value="gpu.core_usage_percent" />
             </div>
           </div>
         </CardContent>
@@ -158,5 +163,13 @@ const { metrics } = storeToRefs(metricsStore)
         </CardContent>
       </Card>
     </div>
+
+    <Empty v-else class="w-full">
+      <EmptyHeader>
+        <EmptyMedia>
+          <Spinner class="size-8" />
+        </EmptyMedia>
+      </EmptyHeader>
+    </Empty>
   </section>
 </template>
