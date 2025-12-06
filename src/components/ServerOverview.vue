@@ -14,6 +14,7 @@ import {
   NetworkIcon,
   ServerIcon,
 } from 'lucide-vue-next'
+import { Badge } from '@/components/ui/badge'
 
 const metricsStore = useMetricsStore()
 
