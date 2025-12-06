@@ -21,7 +21,7 @@ import { toast } from 'vue-sonner'
 
 const appStore = useAppStore()
 const timestamp = useTimestamp({ offset: 0 })
-const { formatNumber } = useNumber()
+const { formatNumber, formatDuration } = useNumber()
 const { formatDate } = useDate()
 
 let metricsPool: number
@@ -57,7 +57,7 @@ const fetchMetrics = async () => {
   <section class="space-y-8">
     <div class="flex items-start justify-between gap-4">
       <div class="flex items-center gap-4">
-        <div class="bg-accent p-3 rounded-lg">
+        <div class="bg-accent rounded-lg p-3">
           <ServerIcon :size="24" />
         </div>
         <div class="flex flex-col gap-0">
@@ -75,21 +75,21 @@ const fetchMetrics = async () => {
       </div>
     </div>
 
-    <div v-if="metrics" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+    <div v-if="metrics" class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
       <Card class="hover:border-foreground">
         <CardContent>
           <div class="space-y-4">
             <div class="flex items-start justify-between gap-4">
-              <div class="bg-accent p-2 rounded-lg">
+              <div class="bg-accent rounded-lg p-2">
                 <CpuIcon />
               </div>
             </div>
 
             <div class="flex flex-col gap-4">
-              <div class="text-neutral-400 text-sm">CPU Usage</div>
+              <div class="text-sm text-neutral-400">CPU Usage</div>
               <div class="flex items-center gap-1">
                 <span class="text-2xl">{{ formatNumber(metrics.cpu.usage, 0, 2) }}</span>
-                <span class="text-neutral-400 text-lg">%</span>
+                <span class="text-lg text-neutral-400">%</span>
               </div>
             </div>
           </div>
@@ -100,19 +100,19 @@ const fetchMetrics = async () => {
         <CardContent>
           <div class="space-y-4">
             <div class="flex items-start justify-between gap-4">
-              <div class="bg-accent p-2 rounded-lg">
+              <div class="bg-accent rounded-lg p-2">
                 <GpuIcon />
               </div>
-              <div class="text-neutral-300 text-sm">{{ gpu.vendor }} {{ gpu.model }}</div>
+              <div class="text-sm text-neutral-300">{{ gpu.vendor }} {{ gpu.model }}</div>
             </div>
 
             <div class="flex flex-col gap-4">
-              <div class="text-neutral-400 text-sm">GPU Usage</div>
+              <div class="text-sm text-neutral-400">GPU Usage</div>
               <div class="flex items-center gap-1">
                 <span class="text-2xl">
                   {{ formatNumber(gpu.core_usage_percent, 0, 2) }}
                 </span>
-                <span class="text-neutral-400 text-lg">%</span>
+                <span class="text-lg text-neutral-400">%</span>
               </div>
             </div>
           </div>
@@ -123,15 +123,15 @@ const fetchMetrics = async () => {
         <CardContent>
           <div class="space-y-4">
             <div class="flex items-start justify-between gap-4">
-              <div class="bg-accent p-2 rounded-lg">
+              <div class="bg-accent rounded-lg p-2">
                 <MemoryStickIcon />
               </div>
             </div>
 
             <div class="flex flex-col gap-4">
-              <div class="text-neutral-400 text-sm">Memory</div>
+              <div class="text-sm text-neutral-400">Memory</div>
               <div class="flex items-center gap-1">
-                <div class="text-2xl flex items-center gap-1">
+                <div class="flex items-center gap-1 text-2xl">
                   <span class="text-neutral-300">
                     {{ formatNumber(metrics.memory.used_gb, 0, 2) }}
                   </span>
@@ -140,7 +140,7 @@ const fetchMetrics = async () => {
                     {{ formatNumber(metrics.memory.total_gb, 0, 2) }}
                   </span>
                 </div>
-                <span class="text-neutral-400 text-lg">GB</span>
+                <span class="text-lg text-neutral-400">GB</span>
               </div>
             </div>
           </div>
@@ -151,16 +151,16 @@ const fetchMetrics = async () => {
         <CardContent>
           <div class="space-y-4">
             <div class="flex items-start justify-between gap-4">
-              <div class="bg-accent p-2 rounded-lg">
+              <div class="bg-accent rounded-lg p-2">
                 <NetworkIcon />
               </div>
             </div>
 
             <div class="flex flex-col gap-4">
-              <div class="text-neutral-400 text-sm">Network</div>
+              <div class="text-sm text-neutral-400">Network</div>
               <div class="flex items-center gap-1">
                 <span class="text-2xl">{{ formatNumber(metrics.network.rx_speed, 0, 2) }}</span>
-                <span class="text-neutral-400 text-lg">Mbps</span>
+                <span class="text-lg text-neutral-400">Mbps</span>
               </div>
             </div>
           </div>
@@ -171,15 +171,15 @@ const fetchMetrics = async () => {
         <CardContent>
           <div class="space-y-4">
             <div class="flex items-start justify-between gap-4">
-              <div class="bg-accent p-2 rounded-lg">
+              <div class="bg-accent rounded-lg p-2">
                 <ActivityIcon />
               </div>
             </div>
 
             <div class="flex flex-col gap-4">
-              <div class="text-neutral-400 text-sm">Activity</div>
+              <div class="text-sm text-neutral-400">Uptime</div>
               <div class="flex items-center gap-1">
-                <span class="text-2xl">23d 14h 32m</span>
+                <span class="text-2xl">{{ formatDuration(metrics.uptime_seconds) }}</span>
               </div>
             </div>
           </div>

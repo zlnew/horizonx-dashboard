@@ -4,7 +4,7 @@ import { OrbitIcon } from 'lucide-vue-next'
 
 <template>
   <header>
-    <div class="container mx-auto h-16 flex items-center justify-between">
+    <div class="container mx-auto flex h-16 items-center justify-between">
       <div class="flex items-center gap-2">
         <OrbitIcon />
         <div class="text-lg font-bold">
@@ -15,7 +15,13 @@ import { OrbitIcon } from 'lucide-vue-next'
     </div>
   </header>
 
-  <main class="container mx-auto mt-4">
+  <main class="container mx-auto my-4 min-h-dvh">
     <RouterView />
   </main>
+
+  <footer>
+    <div class="container mx-auto flex h-16 items-center justify-center">
+      <div class="text-sm text-neutral-400">Copyright (c) 2025 HorizonX. All Rights Reserved.</div>
+    </div>
+  </footer>
 </template>
