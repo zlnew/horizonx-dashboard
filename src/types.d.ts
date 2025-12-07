@@ -73,3 +73,9 @@ type CpuUsageHistory = {
   timestamp: Date
   usage: number
 }
+
+type NetHistory = {
+  timestamp: Date
+  download: number
+  upload: number
+}

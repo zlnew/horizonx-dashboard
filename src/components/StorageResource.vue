@@ -26,7 +26,7 @@ const swapUsedPct = () => {
 
 <template>
   <section v-if="metrics?.memory" class="mt-8 space-y-8">
-    <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
+    <div class="grid grid-cols-1 gap-4 lg:grid-cols-1">
       <Card>
         <CardContent class="space-y-4">
           <div>
@@ -38,11 +38,11 @@ const swapUsedPct = () => {
             <div class="flex justify-between text-sm">
               <span>Used / Available</span>
               <div class="flex items-center gap-1 font-bold">
-                <span class="text-neutral-300">
+                <span>
                   {{ formatNumber(metrics.memory.used_gb, 0, 2) }}
                 </span>
                 /
-                <span>
+                <span class="text-neutral-400">
                   {{ formatNumber(metrics.memory.available_gb, 0, 2) }}
                 </span>
                 <span class="text-neutral-400">GB</span>
@@ -55,11 +55,11 @@ const swapUsedPct = () => {
             <div class="flex justify-between text-sm">
               <span>Swap Used / Free</span>
               <div class="flex items-center gap-1 font-bold">
-                <span class="text-neutral-300">
+                <span>
                   {{ formatNumber(metrics.memory.swap_used_gb, 0, 2) }}
                 </span>
                 /
-                <span>
+                <span class="text-neutral-400">
                   {{ formatNumber(metrics.memory.swap_free_gb, 0, 2) }}
                 </span>
                 <span class="text-neutral-400">GB</span>
@@ -103,21 +103,23 @@ const swapUsedPct = () => {
               <template v-if="disk.filesystems?.length">
                 <Separator />
 
-                <div v-for="fs in disk.filesystems" :key="fs.mountpoint" class="space-y-2">
-                  <div class="flex justify-between text-sm">
-                    <span>{{ fs.mountpoint }}</span>
-                    <div class="flex items-center gap-1 font-bold">
-                      <span class="text-neutral-300">
-                        {{ formatNumber(fs.used_gb, 0, 2) }}
-                      </span>
-                      /
-                      <span>
-                        {{ formatNumber(fs.total_gb, 0, 2) }}
-                      </span>
-                      <span class="text-neutral-400">GB</span>
+                <div class="sm:columns-2 sm:space-y-4">
+                  <div v-for="fs in disk.filesystems" :key="fs.mountpoint" class="space-y-2">
+                    <div class="flex justify-between text-sm">
+                      <span class="text-neutral-300">{{ fs.mountpoint }}</span>
+                      <div class="flex items-center gap-1 font-bold">
+                        <span class="text-neutral-300">
+                          {{ formatNumber(fs.used_gb, 0, 2) }}
+                        </span>
+                        /
+                        <span>
+                          {{ formatNumber(fs.total_gb, 0, 2) }}
+                        </span>
+                        <span class="text-neutral-400">GB</span>
+                      </div>
                     </div>
+                    <Progress :model-value="fs.percent" />
                   </div>
-                  <Progress :model-value="fs.percent" />
                 </div>
               </template>
             </div>
