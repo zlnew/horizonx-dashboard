@@ -103,7 +103,7 @@ const swapUsedPct = () => {
               <template v-if="disk.filesystems?.length">
                 <Separator />
 
-                <div class="sm:columns-2 sm:space-y-4">
+                <div class="space-y-4 sm:columns-2">
                   <div v-for="fs in disk.filesystems" :key="fs.mountpoint" class="space-y-2">
                     <div class="flex justify-between text-sm">
                       <span class="text-neutral-300">{{ fs.mountpoint }}</span>
