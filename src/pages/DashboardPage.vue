@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import ServerOverview from '@/components/ServerOverview.vue'
 import useAppStore from '@/stores/app'
 import { storeToRefs } from 'pinia'
 import { onMounted } from 'vue'
+import SystemHealth from '@/components/SystemHealth.vue'
+import ComputePower from '@/components/ComputePower.vue'
 
 const appStore = useAppStore()
 const { title } = storeToRefs(appStore)
@@ -13,5 +14,6 @@ onMounted(() => {
 </script>
 
 <template>
-  <ServerOverview />
+  <SystemHealth />
+  <ComputePower />
 </template>

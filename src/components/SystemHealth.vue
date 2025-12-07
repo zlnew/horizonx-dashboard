@@ -1,35 +1,52 @@
 <script setup lang="ts">
-import { useDate } from '@/composables/date'
 import { useNumber } from '@/composables/number'
 import useMetricsStore from '@/stores/metrics'
-import { useTimestamp } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { Card, CardContent } from '@/components/ui/card'
 import {
   ActivityIcon,
-  Clock3Icon,
   CpuIcon,
   GpuIcon,
+  HardDriveIcon,
   MemoryStickIcon,
-  NetworkIcon,
   ServerIcon,
 } from 'lucide-vue-next'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { Spinner } from '@/components/ui/spinner'
 import { Empty, EmptyHeader, EmptyMedia } from '@/components/ui/empty'
+import { computed } from 'vue'
 
 const metricsStore = useMetricsStore()
-
-const timestamp = useTimestamp({ offset: 0 })
 const { formatNumber, formatDuration } = useNumber()
-const { formatDate } = useDate()
-
 const { metrics } = storeToRefs(metricsStore)
+
+const gpuUsageAvg = computed(() => {
+  const gpus = metrics.value?.gpu
+  if (!gpus?.length) return 0
+
+  const total = gpus.reduce((sum, gpu) => sum + gpu.core_usage_percent, 0)
+  return total / gpus.length
+})
+
+const memoryUsagePercentage = computed(() => {
+  const memory = metrics.value?.memory
+  if (!memory) return 0
+
+  return (memory.used_gb / memory.total_gb) * 100
+})
+
+const diskUsageAvg = computed(() => {
+  const fss = metrics.value?.disk.filter((d) => d.filesystems?.length).flatMap((d) => d.filesystems)
+  if (!fss?.length) return 0
+
+  const total = fss.reduce((sum, fs) => sum + fs.percent, 0)
+  return total / fss.length
+})
 </script>
 
 <template>
-  <section class="space-y-8">
+  <section v-if="metrics" class="space-y-8">
     <div class="flex items-start justify-between gap-4">
       <div class="flex items-center gap-4">
         <div class="bg-accent rounded-lg p-3">
@@ -44,13 +61,13 @@ const { metrics } = storeToRefs(metricsStore)
       <div class="flex flex-col items-end gap-2">
         <Badge>Online</Badge>
         <div class="flex items-center gap-2 text-sm text-neutral-400">
-          <Clock3Icon :size="14" />
-          <span>{{ formatDate(new Date(timestamp), 'hh:mm:ss A') }}</span>
+          <ActivityIcon :size="14" />
+          <span>{{ formatDuration(metrics?.uptime_seconds) }}</span>
         </div>
       </div>
     </div>
 
-    <div v-if="metrics" class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
       <Card class="hover:border-foreground">
         <CardContent>
           <div class="space-y-4">
@@ -79,18 +96,17 @@ const { metrics } = storeToRefs(metricsStore)
               <div class="bg-accent rounded-lg p-2">
                 <GpuIcon />
               </div>
-              <div class="text-sm text-neutral-300">{{ gpu.vendor }} {{ gpu.model }}</div>
             </div>
 
             <div class="flex flex-col gap-4">
               <div class="text-sm text-neutral-400">GPU Usage</div>
               <div class="flex items-center gap-1">
                 <span class="text-2xl">
-                  {{ formatNumber(gpu.core_usage_percent, 0, 2) }}
+                  {{ formatNumber(gpuUsageAvg, 0, 2) }}
                 </span>
                 <span class="text-lg text-neutral-400">%</span>
               </div>
-              <Progress :model-value="gpu.core_usage_percent" />
+              <Progress :model-value="gpuUsageAvg" />
             </div>
           </div>
         </CardContent>
@@ -119,6 +135,7 @@ const { metrics } = storeToRefs(metricsStore)
                 </div>
                 <span class="text-lg text-neutral-400">GB</span>
               </div>
+              <Progress :model-value="memoryUsagePercentage" />
             </div>
           </div>
         </CardContent>
@@ -129,47 +146,29 @@ const { metrics } = storeToRefs(metricsStore)
           <div class="space-y-4">
             <div class="flex items-start justify-between gap-4">
               <div class="bg-accent rounded-lg p-2">
-                <NetworkIcon />
+                <HardDriveIcon />
               </div>
             </div>
 
             <div class="flex flex-col gap-4">
-              <div class="text-sm text-neutral-400">Network</div>
+              <div class="text-sm text-neutral-400">Disk Usage</div>
               <div class="flex items-center gap-1">
-                <span class="text-2xl">{{ formatNumber(metrics.network.rx_speed, 0, 2) }}</span>
-                <span class="text-lg text-neutral-400">Mbps</span>
+                <span class="text-2xl">{{ formatNumber(diskUsageAvg, 0, 2) }}</span>
+                <span class="text-lg text-neutral-400">%</span>
               </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card class="hover:border-foreground">
-        <CardContent>
-          <div class="space-y-4">
-            <div class="flex items-start justify-between gap-4">
-              <div class="bg-accent rounded-lg p-2">
-                <ActivityIcon />
-              </div>
-            </div>
-
-            <div class="flex flex-col gap-4">
-              <div class="text-sm text-neutral-400">Uptime</div>
-              <div class="flex items-center gap-1">
-                <span class="text-2xl">{{ formatDuration(metrics.uptime_seconds) }}</span>
-              </div>
+              <Progress :model-value="diskUsageAvg" />
             </div>
           </div>
         </CardContent>
       </Card>
     </div>
-
-    <Empty v-else class="w-full">
-      <EmptyHeader>
-        <EmptyMedia>
-          <Spinner class="size-8" />
-        </EmptyMedia>
-      </EmptyHeader>
-    </Empty>
   </section>
+
+  <Empty v-else class="w-full">
+    <EmptyHeader>
+      <EmptyMedia>
+        <Spinner class="size-8" />
+      </EmptyMedia>
+    </EmptyHeader>
+  </Empty>
 </template>

@@ -60,3 +60,8 @@ type Metrics = {
   network: NetworkMetric
   uptime_seconds: number
 }
+
+type CpuUsageHistory = {
+  timestamp: Date
+  usage: number
+}
