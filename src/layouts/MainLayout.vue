@@ -1,8 +1,11 @@
 <script setup lang="ts">
+import MetricsApi from '@/api/Metrics'
 import { Button } from '@/components/ui/button'
 import useSocket from '@/composables/socket'
 import useMetricsStore from '@/stores/metrics'
 import { LogOutIcon, OrbitIcon } from 'lucide-vue-next'
+import { onMounted } from 'vue'
+import { toast } from 'vue-sonner'
 
 const metricsStore = useMetricsStore()
 const { subscribe } = useSocket()
@@ -10,6 +13,19 @@ const { subscribe } = useSocket()
 subscribe('metrics', (payload) => {
   metricsStore.metrics = payload as Metrics | undefined
 })
+
+onMounted(() => {
+  fetchMetrics()
+})
+
+const fetchMetrics = async () => {
+  try {
+    metricsStore.metrics = await new MetricsApi().get<Metrics>()
+  } catch (error) {
+    const fetchError = error as Error
+    toast.error(fetchError.message)
+  }
+}
 </script>
 
 <template>
