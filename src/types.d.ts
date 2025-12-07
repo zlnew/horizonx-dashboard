@@ -49,7 +49,7 @@ type DiskMetric = {
   name: string
   raw_size_gb: number
   temperature: number
-  filesystems: FilesystemUsage[]
+  filesystems: FilesystemUsage[] | null
 }
 
 type NetworkMetric = {

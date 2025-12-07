@@ -39,7 +39,7 @@ const diskUsageAvg = computed(() => {
   const fss = metrics.value?.disk.filter((d) => d.filesystems?.length).flatMap((d) => d.filesystems)
   if (!fss?.length) return 0
 
-  const total = fss.reduce((sum, fs) => sum + fs.percent, 0)
+  const total = fss.reduce((sum, fs) => sum + (fs?.percent ?? 0), 0)
   return total / fss.length
 })
 </script>

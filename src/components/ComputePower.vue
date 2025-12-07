@@ -29,7 +29,7 @@ const { metrics } = storeToRefs(metricsStore)
                 </div>
               </div>
 
-              <div class="flex items-center justify-end gap-2">
+              <div class="flex flex-wrap items-center justify-end gap-2">
                 <div class="bg-accent flex items-center gap-1 rounded-lg px-2 py-1">
                   <AudioLinesIcon :size="16" />
                   <span>{{ formatNumber(metrics.cpu.frequency, 0, 0) }}</span>
@@ -92,7 +92,7 @@ const { metrics } = storeToRefs(metricsStore)
                   <div class="text-neutral-400">{{ card.model }}</div>
                 </div>
 
-                <div class="flex items-center justify-end gap-2">
+                <div class="flex flex-wrap items-center justify-end gap-2">
                   <div class="bg-foreground/10 flex items-center gap-1 rounded-lg px-2 py-1">
                     <AudioLinesIcon :size="16" />
                     <span>{{ formatNumber(card.core_usage_percent, 0, 0) }}</span>
