@@ -68,7 +68,7 @@ const diskUsageAvg = computed(() => {
     </div>
 
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      <Card class="hover:border-foreground">
+      <Card>
         <CardContent>
           <div class="space-y-4">
             <div class="flex items-start justify-between gap-4">
@@ -89,7 +89,7 @@ const diskUsageAvg = computed(() => {
         </CardContent>
       </Card>
 
-      <Card v-for="gpu in metrics.gpu" :key="gpu.model" class="hover:border-foreground">
+      <Card v-for="gpu in metrics.gpu" :key="gpu.model">
         <CardContent>
           <div class="space-y-4">
             <div class="flex items-start justify-between gap-4">
@@ -112,7 +112,7 @@ const diskUsageAvg = computed(() => {
         </CardContent>
       </Card>
 
-      <Card class="hover:border-foreground">
+      <Card>
         <CardContent>
           <div class="space-y-4">
             <div class="flex items-start justify-between gap-4">
@@ -141,7 +141,7 @@ const diskUsageAvg = computed(() => {
         </CardContent>
       </Card>
 
-      <Card class="hover:border-foreground">
+      <Card>
         <CardContent>
           <div class="space-y-4">
             <div class="flex items-start justify-between gap-4">
