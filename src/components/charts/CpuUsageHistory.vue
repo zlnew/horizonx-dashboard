@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import useMetricsStore from '@/stores/metrics'
-import { storeToRefs } from 'pinia'
 import { watch } from 'vue'
+import { storeToRefs } from 'pinia'
+import { VisArea, VisAxis, VisLine, VisXYContainer } from '@unovis/vue'
 import {
+  type ChartConfig,
   ChartContainer,
   ChartCrosshair,
   ChartTooltip,
   ChartTooltipContent,
-  componentToString,
-  type ChartConfig,
+  componentToString
 } from '@/components/ui/chart'
-import { VisArea, VisAxis, VisLine, VisXYContainer } from '@unovis/vue'
 import { useDate } from '@/composables/date'
+import useMetricsStore from '@/stores/metrics'
 
 type ChartData = CpuUsageHistory
 
@@ -22,8 +22,8 @@ const { metrics, cpuUsageHistory: chartData } = storeToRefs(metricsStore)
 const chartConfig = {
   cpu: {
     label: 'CPU Usage',
-    color: 'var(--color-foreground)',
-  },
+    color: 'var(--color-foreground)'
+  }
 } satisfies ChartConfig
 
 watch(
@@ -36,19 +36,25 @@ watch(
 
     chartData.value.push({
       timestamp: now,
-      usage: val,
+      usage: val
     })
 
     while (chartData.value.length > 0 && chartData.value[0]!.timestamp.getTime() < cutoff) {
       chartData.value.shift()
     }
-  },
+  }
 )
 </script>
 
 <template>
-  <ChartContainer :config="chartConfig" class="min-h-[220px] w-full">
-    <VisXYContainer :data="chartData" :y-domain="[0, 100]">
+  <ChartContainer
+    :config="chartConfig"
+    class="min-h-[220px] w-full"
+  >
+    <VisXYContainer
+      :data="chartData"
+      :y-domain="[0, 100]"
+    >
       <VisArea
         :x="(d: ChartData) => d.timestamp"
         :y="(d: ChartData) => d.usage"
@@ -84,7 +90,7 @@ watch(
         :template="
           componentToString(chartConfig, ChartTooltipContent, {
             labelKey: 'usage',
-            indicator: 'dot',
+            indicator: 'dot'
           })
         "
         :color="chartConfig.cpu.color"

@@ -3,7 +3,7 @@ export const useNumber = () => {
     const options: Intl.NumberFormatOptions = {
       style: 'decimal',
       minimumFractionDigits,
-      maximumFractionDigits,
+      maximumFractionDigits
     }
 
     return new Intl.NumberFormat('id-ID', options).format(number)
@@ -23,6 +23,6 @@ export const useNumber = () => {
 
   return {
     formatNumber,
-    formatDuration,
+    formatDuration
   }
 }

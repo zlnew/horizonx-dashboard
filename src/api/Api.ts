@@ -22,7 +22,7 @@ export default abstract class Api {
 
   protected handleResponse<T>(
     data: T | null,
-    error: { errors: Record<string, string[]> | null; message: string } | null,
+    error: { errors: Record<string, string[]> | null; message: string } | null
   ) {
     if (error?.message) {
       throw new Error(error.message)

@@ -1,10 +1,9 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-
+import 'vue-sonner/style.css'
+import '@/main.css'
 import App from './App.vue'
 import router from './router'
-import '@/main.css'
-import 'vue-sonner/style.css'
 
 const app = createApp(App)
 

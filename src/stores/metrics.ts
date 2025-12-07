@@ -1,5 +1,5 @@
-import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { defineStore } from 'pinia'
 
 const useMetricsStore = defineStore('metrics', () => {
   const metrics = ref<Metrics>()
@@ -9,7 +9,7 @@ const useMetricsStore = defineStore('metrics', () => {
   return {
     metrics,
     cpuUsageHistory,
-    netHistory,
+    netHistory
   }
 })
 

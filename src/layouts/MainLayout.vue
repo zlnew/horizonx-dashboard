@@ -1,11 +1,11 @@
 <script setup lang="ts">
+import { onMounted } from 'vue'
+import { LogOutIcon, OrbitIcon } from 'lucide-vue-next'
+import { toast } from 'vue-sonner'
 import MetricsApi from '@/api/Metrics'
 import { Button } from '@/components/ui/button'
 import useSocket from '@/composables/socket'
 import useMetricsStore from '@/stores/metrics'
-import { LogOutIcon, OrbitIcon } from 'lucide-vue-next'
-import { onMounted } from 'vue'
-import { toast } from 'vue-sonner'
 
 const metricsStore = useMetricsStore()
 const { subscribe } = useSocket()
@@ -40,7 +40,11 @@ const fetchMetrics = async () => {
       </div>
 
       <div>
-        <Button variant="ghost" size="icon" aria-label="Logout">
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label="Logout"
+        >
           <LogOutIcon />
         </Button>
       </div>

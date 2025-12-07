@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from 'vue'
-import { Primitive } from 'reka-ui'
 import { computed } from 'vue'
+import { Primitive } from 'reka-ui'
 import { THEMES, useChart } from '.'
 
 defineProps<{
@@ -16,7 +16,10 @@ const colorConfig = computed(() => {
 </script>
 
 <template>
-  <Primitive v-if="colorConfig.length" as="style">
+  <Primitive
+    v-if="colorConfig.length"
+    as="style"
+  >
     {{
       Object.entries(THEMES)
         .map(
@@ -29,7 +32,7 @@ ${colorConfig
   })
   .join('\n')}
 }
-`,
+`
         )
         .join('\n')
     }}

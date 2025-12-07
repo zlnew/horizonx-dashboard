@@ -15,7 +15,7 @@ export const useFetch = () => {
         }
 
         return context
-      },
+      }
     })
   }
 

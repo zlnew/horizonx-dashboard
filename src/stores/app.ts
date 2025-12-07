@@ -1,13 +1,13 @@
-import { useTitle } from '@vueuse/core'
 import { defineStore } from 'pinia'
+import { useTitle } from '@vueuse/core'
 
 const useAppStore = defineStore('app', () => {
   const title = useTitle(null, {
-    titleTemplate: '%s | HorizonX',
+    titleTemplate: '%s | HorizonX'
   })
 
   return {
-    title,
+    title
   }
 })
 

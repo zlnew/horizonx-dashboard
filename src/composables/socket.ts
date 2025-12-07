@@ -1,4 +1,4 @@
-import { ref, onUnmounted } from 'vue'
+import { onUnmounted, ref } from 'vue'
 import useApp from '@/composables/app'
 
 type OutgoingMessage = {
@@ -57,7 +57,7 @@ export default function useSocket() {
 
     safeSend({
       type: 'subscribe',
-      channel,
+      channel
     })
 
     return {
@@ -66,9 +66,9 @@ export default function useSocket() {
 
         safeSend({
           type: 'unsubscribe',
-          channel,
+          channel
         })
-      },
+      }
     }
   }
 
@@ -79,6 +79,6 @@ export default function useSocket() {
   return {
     connected,
     subscribe,
-    socket,
+    socket
   }
 }

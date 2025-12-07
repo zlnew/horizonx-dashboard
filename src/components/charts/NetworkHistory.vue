@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import useMetricsStore from '@/stores/metrics'
-import { storeToRefs } from 'pinia'
 import { watch } from 'vue'
+import { storeToRefs } from 'pinia'
+import { VisArea, VisAxis, VisLine, VisXYContainer } from '@unovis/vue'
 import {
+  type ChartConfig,
   ChartContainer,
   ChartCrosshair,
   ChartTooltip,
   ChartTooltipContent,
-  componentToString,
-  type ChartConfig,
+  componentToString
 } from '@/components/ui/chart'
-import { VisArea, VisAxis, VisLine, VisXYContainer } from '@unovis/vue'
 import { useDate } from '@/composables/date'
+import useMetricsStore from '@/stores/metrics'
 
 type ChartData = NetHistory
 
@@ -22,12 +22,12 @@ const { formatDate } = useDate()
 const chartConfig = {
   download: {
     label: 'Download',
-    color: 'var(--color-primary)',
+    color: 'var(--color-primary)'
   },
   upload: {
     label: 'Upload',
-    color: 'var(--color-accent)',
-  },
+    color: 'var(--color-accent)'
+  }
 } satisfies ChartConfig
 
 watch(
@@ -41,20 +41,26 @@ watch(
     chartData.value.push({
       timestamp: now,
       download: val.rx_speed,
-      upload: val.tx_speed,
+      upload: val.tx_speed
     })
 
     while (chartData.value.length > 0 && chartData.value[0]!.timestamp.getTime() < cutoff) {
       chartData.value.shift()
     }
   },
-  { deep: true },
+  { deep: true }
 )
 </script>
 
 <template>
-  <ChartContainer :config="chartConfig" class="min-h-[220px] w-full">
-    <VisXYContainer :data="chartData" :y-domain="[0, 200]">
+  <ChartContainer
+    :config="chartConfig"
+    class="min-h-[220px] w-full"
+  >
+    <VisXYContainer
+      :data="chartData"
+      :y-domain="[0, 200]"
+    >
       <VisArea
         :x="(d: ChartData) => d.timestamp"
         :y="(d: ChartData) => d.download"
@@ -105,7 +111,7 @@ watch(
             labelFormatter(d) {
               return formatDate(d as Date, 'hh:mm A')
             },
-            indicator: 'dot',
+            indicator: 'dot'
           })
         "
       />

@@ -1,15 +1,15 @@
 <script setup lang="ts">
+import { storeToRefs } from 'pinia'
+import { AudioLinesIcon, ThermometerIcon, ZapIcon } from 'lucide-vue-next'
+import CpuUsageHistory from '@/components/charts/CpuUsageHistory.vue'
+import NetworkHistory from '@/components/charts/NetworkHistory.vue'
+import { Card, CardContent } from '@/components/ui/card'
+import { Empty, EmptyHeader, EmptyMedia } from '@/components/ui/empty'
+import { Progress } from '@/components/ui/progress'
+import { Separator } from '@/components/ui/separator'
+import { Spinner } from '@/components/ui/spinner'
 import { useNumber } from '@/composables/number'
 import useMetricsStore from '@/stores/metrics'
-import { storeToRefs } from 'pinia'
-import { Empty, EmptyHeader, EmptyMedia } from '@/components/ui/empty'
-import { Spinner } from '@/components/ui/spinner'
-import { Card, CardContent } from '@/components/ui/card'
-import { Progress } from '@/components/ui/progress'
-import { AudioLinesIcon, ThermometerIcon, ZapIcon } from 'lucide-vue-next'
-import { Separator } from '@/components/ui/separator'
-import CpuUsageHistory from '@/components/charts/CpuUsageHistory.vue'
-import NetworkHistory from './charts/NetworkHistory.vue'
 
 const metricsStore = useMetricsStore()
 const { formatNumber } = useNumber()
@@ -17,7 +17,10 @@ const { metrics } = storeToRefs(metricsStore)
 </script>
 
 <template>
-  <section v-if="metrics" class="mt-8 space-y-8">
+  <section
+    v-if="metrics"
+    class="mt-8 space-y-8"
+  >
     <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
       <Card>
         <CardContent>
@@ -171,7 +174,10 @@ const { metrics } = storeToRefs(metricsStore)
     </div>
   </section>
 
-  <Empty v-else class="w-full">
+  <Empty
+    v-else
+    class="w-full"
+  >
     <EmptyHeader>
       <EmptyMedia>
         <Spinner class="size-8" />

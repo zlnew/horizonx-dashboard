@@ -1,20 +1,20 @@
 <script setup lang="ts">
-import { useNumber } from '@/composables/number'
-import useMetricsStore from '@/stores/metrics'
+import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
-import { Card, CardContent } from '@/components/ui/card'
 import {
   ActivityIcon,
   CpuIcon,
   GpuIcon,
   HardDriveIcon,
   MemoryStickIcon,
-  ServerIcon,
+  ServerIcon
 } from 'lucide-vue-next'
+import { Card, CardContent } from '@/components/ui/card'
+import { Empty, EmptyHeader, EmptyMedia } from '@/components/ui/empty'
 import { Progress } from '@/components/ui/progress'
 import { Spinner } from '@/components/ui/spinner'
-import { Empty, EmptyHeader, EmptyMedia } from '@/components/ui/empty'
-import { computed } from 'vue'
+import { useNumber } from '@/composables/number'
+import useMetricsStore from '@/stores/metrics'
 
 const metricsStore = useMetricsStore()
 const { formatNumber, formatDuration } = useNumber()
@@ -45,7 +45,10 @@ const diskUsageAvg = computed(() => {
 </script>
 
 <template>
-  <section v-if="metrics" class="space-y-8">
+  <section
+    v-if="metrics"
+    class="space-y-8"
+  >
     <div class="flex flex-wrap items-center justify-between gap-8">
       <div class="flex items-center gap-4">
         <div class="bg-accent rounded-lg p-3">
@@ -91,7 +94,10 @@ const diskUsageAvg = computed(() => {
         </CardContent>
       </Card>
 
-      <Card v-for="gpu in metrics.gpu" :key="gpu.model">
+      <Card
+        v-for="gpu in metrics.gpu"
+        :key="gpu.model"
+      >
         <CardContent>
           <div class="space-y-4">
             <div class="flex items-start justify-between gap-4">
@@ -166,7 +172,10 @@ const diskUsageAvg = computed(() => {
     </div>
   </section>
 
-  <Empty v-else class="w-full">
+  <Empty
+    v-else
+    class="w-full"
+  >
     <EmptyHeader>
       <EmptyMedia>
         <Spinner class="size-8" />

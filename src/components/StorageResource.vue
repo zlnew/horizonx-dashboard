@@ -1,13 +1,13 @@
 <script setup lang="ts">
+import { storeToRefs } from 'pinia'
+import { ThermometerIcon } from 'lucide-vue-next'
+import { Card, CardContent } from '@/components/ui/card'
+import { Empty, EmptyHeader, EmptyMedia } from '@/components/ui/empty'
+import { Progress } from '@/components/ui/progress'
+import { Separator } from '@/components/ui/separator'
+import { Spinner } from '@/components/ui/spinner'
 import { useNumber } from '@/composables/number'
 import useMetricsStore from '@/stores/metrics'
-import { storeToRefs } from 'pinia'
-import { Empty, EmptyHeader, EmptyMedia } from '@/components/ui/empty'
-import { Spinner } from '@/components/ui/spinner'
-import { Card, CardContent } from '@/components/ui/card'
-import { Progress } from './ui/progress'
-import { ThermometerIcon } from 'lucide-vue-next'
-import { Separator } from './ui/separator'
 
 const metricsStore = useMetricsStore()
 const { formatNumber } = useNumber()
@@ -25,7 +25,10 @@ const swapUsedPct = () => {
 </script>
 
 <template>
-  <section v-if="metrics?.memory" class="mt-8 space-y-8">
+  <section
+    v-if="metrics?.memory"
+    class="mt-8 space-y-8"
+  >
     <div class="grid grid-cols-1 gap-4 lg:grid-cols-1">
       <Card>
         <CardContent class="space-y-4">
@@ -70,7 +73,6 @@ const swapUsedPct = () => {
         </CardContent>
       </Card>
 
-      <!-- Disks Card -->
       <Card>
         <CardContent class="space-y-4">
           <div>
@@ -78,7 +80,11 @@ const swapUsedPct = () => {
             <div class="text-sm text-neutral-400">Storage Overview</div>
           </div>
 
-          <div v-for="disk in metrics.disk" :key="disk.name" class="bg-accent rounded-lg p-4">
+          <div
+            v-for="disk in metrics.disk"
+            :key="disk.name"
+            class="bg-accent rounded-lg p-4"
+          >
             <div class="space-y-4">
               <div class="flex flex-wrap items-center justify-between gap-2">
                 <div class="font-bold">{{ disk.name }}</div>
@@ -104,7 +110,11 @@ const swapUsedPct = () => {
                 <Separator />
 
                 <div class="space-y-4 sm:columns-2">
-                  <div v-for="fs in disk.filesystems" :key="fs.mountpoint" class="space-y-2">
+                  <div
+                    v-for="fs in disk.filesystems"
+                    :key="fs.mountpoint"
+                    class="space-y-2"
+                  >
                     <div class="flex justify-between text-sm">
                       <span class="text-neutral-300">{{ fs.mountpoint }}</span>
                       <div class="flex items-center gap-1 font-bold">
@@ -129,7 +139,10 @@ const swapUsedPct = () => {
     </div>
   </section>
 
-  <Empty v-else class="w-full">
+  <Empty
+    v-else
+    class="w-full"
+  >
     <EmptyHeader>
       <EmptyMedia>
         <Spinner class="size-8" />
