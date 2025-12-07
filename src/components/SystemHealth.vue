@@ -46,28 +46,26 @@ const diskUsageAvg = computed(() => {
 
 <template>
   <section v-if="metrics" class="space-y-8">
-    <div class="flex items-center gap-4">
-      <div class="bg-accent rounded-lg p-3">
-        <ServerIcon :size="24" />
-      </div>
-      <div class="flex flex-col gap-0">
-        <div class="text-xl">Server Monitor</div>
-        <div class="flex flex-wrap items-center gap-2 text-sm">
-          <span>@{{ metrics.os_info.hostname }}</span>
-          &middot;
-          <span class="text-neutral-400">
-            {{ metrics.os_info.name }}
-          </span>
-          &middot;
-          <span class="text-neutral-400">
-            {{ metrics.os_info.kernel_version }}
-          </span>
-          &middot;
-          <div class="flex items-center gap-1 text-sm text-neutral-400">
-            <ActivityIcon :size="14" />
-            <span>{{ formatDuration(metrics?.uptime_seconds) }}</span>
+    <div class="flex flex-wrap items-center justify-between gap-8">
+      <div class="flex items-center gap-4">
+        <div class="bg-accent rounded-lg p-3">
+          <ServerIcon :size="24" />
+        </div>
+        <div class="flex flex-col gap-0">
+          <div class="text-xl">Server Monitor</div>
+          <div class="flex flex-wrap items-center gap-2 text-sm">
+            <span>@{{ metrics.os_info.hostname }}</span>
+            &middot;
+            <span class="text-neutral-400">
+              {{ metrics.os_info.name }}
+            </span>
           </div>
         </div>
+      </div>
+
+      <div class="flex items-center gap-2 text-lg text-neutral-400">
+        <ActivityIcon :size="24" />
+        <span>{{ formatDuration(metrics?.uptime_seconds) }}</span>
       </div>
     </div>
 

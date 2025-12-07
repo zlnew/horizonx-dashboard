@@ -21,7 +21,7 @@ const { metrics } = storeToRefs(metricsStore)
       <Card>
         <CardContent>
           <div class="space-y-4">
-            <div class="flex items-start justify-between gap-4">
+            <div class="flex flex-wrap items-start justify-between gap-4">
               <div class="space-y-1">
                 <div class="text-lg font-bold">Central Processing Unit</div>
                 <div class="text-sm text-neutral-400">
@@ -56,7 +56,7 @@ const { metrics } = storeToRefs(metricsStore)
                 :key="index"
                 class="flex items-center justify-between gap-2"
               >
-                <div class="text-sm text-neutral-400">{{ `C${index}` }}</div>
+                <div class="w-8 text-sm text-neutral-400">{{ `C${index}` }}</div>
                 <Progress :model-value="usage" />
               </div>
             </div>
@@ -86,7 +86,7 @@ const { metrics } = storeToRefs(metricsStore)
               :key="card.id"
               class="border-accent bg-accent space-y-4 rounded-lg border p-4"
             >
-              <div class="flex items-center justify-between gap-4">
+              <div class="flex flex-wrap items-center justify-between gap-4">
                 <div class="space-y-1">
                   <div class="font-bold">{{ card.vendor }}</div>
                   <div class="text-neutral-400">{{ card.model }}</div>
@@ -113,7 +113,7 @@ const { metrics } = storeToRefs(metricsStore)
                 </div>
               </div>
 
-              <div class="grid grid-cols-2 gap-4">
+              <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div class="bg-foreground/10 gap-4 rounded-lg p-4">
                   <div class="space-y-2">
                     <div class="text-sm text-neutral-400">VRAM</div>

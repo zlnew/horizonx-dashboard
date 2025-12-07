@@ -42,6 +42,11 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+@utility container {
+  margin-inline: auto;
+  padding-inline: 2rem;
+}
+
 :root {
   --radius: 0.625rem;
   --background: oklch(1 0 0);
