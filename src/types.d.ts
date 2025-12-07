@@ -1,3 +1,10 @@
+type OsInfo = {
+  hostname: string
+  name: string
+  kernel_version: string
+  arch: string
+}
+
 type CPUMetric = {
   usage: number
   per_core: number[]
@@ -53,6 +60,7 @@ type NetworkMetric = {
 }
 
 type Metrics = {
+  os_info: OsInfo
   cpu: CPUMetric
   gpu: GPUMetric[]
   memory: MemoryMetric
