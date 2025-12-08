@@ -10,6 +10,11 @@ const router = createRouter({
       component: AuthLayout,
       children: [
         {
+          name: 'auth.register',
+          path: 'register',
+          component: () => import('@/pages/auth/RegisterPage.vue')
+        },
+        {
           name: 'auth.login',
           path: 'login',
           component: () => import('@/pages/auth/LoginPage.vue')

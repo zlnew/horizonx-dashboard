@@ -23,10 +23,16 @@ const appStore = useAppStore()
 const authStore = useAuthStore()
 
 const formSchema = toTypedSchema(
-  z.object({
-    email: z.string().email(),
-    password: z.string().min(8)
-  })
+  z
+    .object({
+      email: z.string().email(),
+      password: z.string().min(8, 'Password must be at least 8 characters'),
+      confirmPassword: z.string().min(8, 'Password must be at least 8 characters')
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: 'Passwords do not match',
+      path: ['confirmPassword']
+    })
 )
 
 const form = useForm({
@@ -34,12 +40,12 @@ const form = useForm({
 })
 
 onMounted(() => {
-  appStore.title = 'Login'
+  appStore.title = 'Register'
 })
 
 const onSubmit = form.handleSubmit((values) => {
-  authStore.login(values).then(() => {
-    router.push({ name: 'dashboard' })
+  authStore.register(values).then(() => {
+    router.push({ name: 'auth.login' })
   })
 })
 </script>
@@ -47,14 +53,14 @@ const onSubmit = form.handleSubmit((values) => {
 <template>
   <Card class="sm:min-w-sm">
     <CardHeader>
-      <CardTitle>Login to your account</CardTitle>
-      <CardDescription> Enter your email below to login to your account </CardDescription>
+      <CardTitle>Create Your Account</CardTitle>
+      <CardDescription> Fill in your details below to get started. </CardDescription>
       <CardAction>
         <Button
           variant="link"
           asChild
         >
-          <RouterLink :to="{ name: 'auth.register' }">Register</RouterLink>
+          <RouterLink :to="{ name: 'auth.login' }">Login</RouterLink>
         </Button>
       </CardAction>
     </CardHeader>
@@ -98,11 +104,28 @@ const onSubmit = form.handleSubmit((values) => {
           </FormItem>
         </FormField>
 
+        <FormField
+          v-slot="{ componentField }"
+          name="confirmPassword"
+        >
+          <FormItem>
+            <FormLabel>Confirm Password</FormLabel>
+            <FormControl>
+              <Input
+                type="password"
+                placeholder="Re-enter your password"
+                v-bind="componentField"
+              />
+            </FormControl>
+            <FormMessage class="text-red-500" />
+          </FormItem>
+        </FormField>
+
         <Button
           type="submit"
           class="w-full"
         >
-          Sign In
+          Sign Up
         </Button>
       </form>
     </CardContent>

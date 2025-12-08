@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { LogOutIcon, OrbitIcon } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
 import MetricsApi from '@/api/Metrics'
@@ -7,8 +8,11 @@ import { Button } from '@/components/ui/button'
 import useWebSocket from '@/composables/web-socket'
 import WSChannel from '@/constants/ws-channel'
 import WSEvent from '@/constants/ws-event'
+import useAuthStore from '@/stores/auth'
 import useMetricsStore from '@/stores/metrics'
 
+const router = useRouter()
+const authStore = useAuthStore()
 const metricsStore = useMetricsStore()
 const { subscribe } = useWebSocket()
 
@@ -30,6 +34,12 @@ const fetchMetrics = async () => {
     toast.error(fetchError.message)
   }
 }
+
+const handleLogout = () => {
+  authStore.logout().then(() => {
+    router.push({ name: 'auth.login' })
+  })
+}
 </script>
 
 <template>
@@ -48,6 +58,7 @@ const fetchMetrics = async () => {
           variant="ghost"
           size="icon"
           aria-label="Logout"
+          @click="handleLogout"
         >
           <LogOutIcon />
         </Button>

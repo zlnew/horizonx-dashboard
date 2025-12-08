@@ -1,6 +1,6 @@
 import Api from './Api'
 
-class Auth extends Api {
+class AuthApi extends Api {
   public async register<T>(request = {}) {
     const { data, error } = await this.fetch('auth/register').post(request).json<T>()
 
@@ -20,4 +20,4 @@ class Auth extends Api {
   }
 }
 
-export default Auth
+export default AuthApi

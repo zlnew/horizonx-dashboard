@@ -79,3 +79,23 @@ type NetHistory = {
   download: number
   upload: number
 }
+
+type User = {
+  id: number
+  email: string
+}
+
+type LoginRequest = {
+  email: string
+  password: string
+}
+
+type RegisterRequest = {
+  email: string
+  password: string
+}
+
+type ApiResponse = {
+  message: string
+  data?: unknown
+}
