@@ -5,13 +5,15 @@ import { toast } from 'vue-sonner'
 import MetricsApi from '@/api/Metrics'
 import { Button } from '@/components/ui/button'
 import useWebSocket from '@/composables/web-socket'
+import WSChannel from '@/constants/ws-channel'
+import WSEvent from '@/constants/ws-event'
 import useMetricsStore from '@/stores/metrics'
 
 const metricsStore = useMetricsStore()
 const { subscribe } = useWebSocket()
 
-subscribe('metrics', (incoming) => {
-  if (incoming.event === 'metrics.updated') {
+subscribe(WSChannel.METRICS, (incoming) => {
+  if (incoming.event === WSEvent.METRICS_UPDATED) {
     metricsStore.metrics = incoming.payload as Metrics | undefined
   }
 })
