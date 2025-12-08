@@ -4,10 +4,8 @@ import { AudioLinesIcon, ThermometerIcon, ZapIcon } from 'lucide-vue-next'
 import CpuUsageHistory from '@/components/charts/CpuUsageHistory.vue'
 import NetworkHistory from '@/components/charts/NetworkHistory.vue'
 import { Card, CardContent } from '@/components/ui/card'
-import { Empty, EmptyHeader, EmptyMedia } from '@/components/ui/empty'
 import { Progress } from '@/components/ui/progress'
 import { Separator } from '@/components/ui/separator'
-import { Spinner } from '@/components/ui/spinner'
 import { useNumber } from '@/composables/number'
 import useMetricsStore from '@/stores/metrics'
 
@@ -173,15 +171,4 @@ const { metrics } = storeToRefs(metricsStore)
       </div>
     </div>
   </section>
-
-  <Empty
-    v-else
-    class="w-full"
-  >
-    <EmptyHeader>
-      <EmptyMedia>
-        <Spinner class="size-8" />
-      </EmptyMedia>
-    </EmptyHeader>
-  </Empty>
 </template>

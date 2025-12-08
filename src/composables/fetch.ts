@@ -28,18 +28,18 @@ export const useFetch = () => {
   const fetch = <T>(url: string) => {
     return useVueFetch<T>(`/api/${url}`, {
       async onFetchError(context) {
-        if (context.response?.status === 401) {
-          console.warn('⛔ Session expired. Please login again.')
+        if (context.response?.status === 401 && context.context.url !== '/api/auth/login') {
+          console.warn('session expired. Please login again.')
           window.location.href = '/auth/login'
         }
 
         if (context.response?.status === 403) {
-          console.warn('⚠️ CSRF Token expired/missing. Refreshing page to fix...')
+          console.warn('CSRF Token expired/missing. Refreshing page to fix...')
           try {
             await getHealth()
-            console.log('✅ Token refreshed. User needs to retry.')
+            console.log('token refreshed. User needs to retry.')
           } catch (e) {
-            console.error('💀 Refresh failed. Reloading page.', e)
+            console.error('refresh failed. Reloading page.', e)
             window.location.reload()
           }
         }

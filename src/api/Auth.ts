@@ -14,9 +14,9 @@ class AuthApi extends Api {
   }
 
   public async logout<T>() {
-    const { data, error } = await this.fetch('auth/logout').post().json<T>()
+    const { error } = await this.fetch('auth/logout').post()
 
-    return this.handleResponse<T>(data.value, error.value)
+    return this.handleResponse<T>(null, error.value)
   }
 }
 

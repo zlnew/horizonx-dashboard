@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onBeforeUnmount, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { storeToRefs } from 'pinia'
 import { toTypedSchema } from '@vee-validate/zod'
 import { useForm } from 'vee-validate'
 import { z } from 'zod'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -21,6 +23,7 @@ import useAuthStore from '@/stores/auth'
 const router = useRouter()
 const appStore = useAppStore()
 const authStore = useAuthStore()
+const { registerError } = storeToRefs(authStore)
 
 const formSchema = toTypedSchema(
   z
@@ -43,6 +46,10 @@ onMounted(() => {
   appStore.title = 'Register'
 })
 
+onBeforeUnmount(() => {
+  registerError.value = null
+})
+
 const onSubmit = form.handleSubmit((values) => {
   authStore.register(values).then(() => {
     router.push({ name: 'auth.login' })
@@ -51,10 +58,10 @@ const onSubmit = form.handleSubmit((values) => {
 </script>
 
 <template>
-  <Card class="w-full sm:min-w-sm">
+  <Card class="w-full sm:w-sm">
     <CardHeader>
       <CardTitle>Create Your Account</CardTitle>
-      <CardDescription> Fill in your details below to get started. </CardDescription>
+      <CardDescription>Fill in your details below to get started.</CardDescription>
       <CardAction>
         <Button
           variant="link"
@@ -68,8 +75,16 @@ const onSubmit = form.handleSubmit((values) => {
     <CardContent>
       <form
         class="space-y-4"
-        @submit="onSubmit"
+        @submit.prevent="onSubmit"
       >
+        <Alert
+          v-if="registerError"
+          variant="destructive"
+        >
+          <AlertTitle>Register Error!</AlertTitle>
+          <AlertDescription>{{ registerError }}</AlertDescription>
+        </Alert>
+
         <FormField
           v-slot="{ componentField }"
           name="email"

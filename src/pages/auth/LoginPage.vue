@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onBeforeUnmount, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { storeToRefs } from 'pinia'
 import { toTypedSchema } from '@vee-validate/zod'
 import { useForm } from 'vee-validate'
 import { z } from 'zod'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -21,6 +23,7 @@ import useAuthStore from '@/stores/auth'
 const router = useRouter()
 const appStore = useAppStore()
 const authStore = useAuthStore()
+const { loginError, registerSuccess } = storeToRefs(authStore)
 
 const formSchema = toTypedSchema(
   z.object({
@@ -37,6 +40,11 @@ onMounted(() => {
   appStore.title = 'Login'
 })
 
+onBeforeUnmount(() => {
+  loginError.value = null
+  registerSuccess.value = null
+})
+
 const onSubmit = form.handleSubmit((values) => {
   authStore.login(values).then(() => {
     router.push({ name: 'dashboard' })
@@ -45,10 +53,10 @@ const onSubmit = form.handleSubmit((values) => {
 </script>
 
 <template>
-  <Card class="w-full sm:min-w-sm">
+  <Card class="w-full sm:w-sm">
     <CardHeader>
       <CardTitle>Login to your account</CardTitle>
-      <CardDescription> Enter your email below to login to your account </CardDescription>
+      <CardDescription>Enter your email below to login to your account</CardDescription>
       <CardAction>
         <Button
           variant="link"
@@ -62,8 +70,21 @@ const onSubmit = form.handleSubmit((values) => {
     <CardContent>
       <form
         class="space-y-4"
-        @submit="onSubmit"
+        @submit.prevent="onSubmit"
       >
+        <Alert
+          v-if="loginError"
+          variant="destructive"
+        >
+          <AlertTitle>Login Error!</AlertTitle>
+          <AlertDescription>{{ loginError }}</AlertDescription>
+        </Alert>
+
+        <Alert v-if="registerSuccess">
+          <AlertTitle>Registration Success!</AlertTitle>
+          <AlertDescription>{{ registerSuccess }}</AlertDescription>
+        </Alert>
+
         <FormField
           v-slot="{ componentField }"
           name="email"

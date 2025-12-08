@@ -95,7 +95,7 @@ type RegisterRequest = {
   password: string
 }
 
-type ApiResponse = {
+type ApiResponse<T = unknown> = {
   message: string
-  data?: unknown
+  data?: T
 }

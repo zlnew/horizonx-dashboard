@@ -2,10 +2,8 @@
 import { storeToRefs } from 'pinia'
 import { ThermometerIcon } from 'lucide-vue-next'
 import { Card, CardContent } from '@/components/ui/card'
-import { Empty, EmptyHeader, EmptyMedia } from '@/components/ui/empty'
 import { Progress } from '@/components/ui/progress'
 import { Separator } from '@/components/ui/separator'
-import { Spinner } from '@/components/ui/spinner'
 import { useNumber } from '@/composables/number'
 import useMetricsStore from '@/stores/metrics'
 
@@ -138,15 +136,4 @@ const swapUsedPct = () => {
       </Card>
     </div>
   </section>
-
-  <Empty
-    v-else
-    class="w-full"
-  >
-    <EmptyHeader>
-      <EmptyMedia>
-        <Spinner class="size-8" />
-      </EmptyMedia>
-    </EmptyHeader>
-  </Empty>
 </template>
