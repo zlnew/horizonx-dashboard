@@ -6,6 +6,16 @@ export const useFetch = () => {
     const { apiURL } = useApp()
 
     return useVueFetch<T>(`${apiURL}/${url}`, {
+      beforeFetch({ options }) {
+        options.headers = {
+          ...options.headers,
+          Authorization: `Bearer`
+        }
+
+        return {
+          options
+        }
+      },
       updateDataOnError: true,
       onFetchError(context) {
         if (context.error) {

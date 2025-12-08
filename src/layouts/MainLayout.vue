@@ -4,14 +4,16 @@ import { LogOutIcon, OrbitIcon } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
 import MetricsApi from '@/api/Metrics'
 import { Button } from '@/components/ui/button'
-import useSocket from '@/composables/socket'
+import useWebSocket from '@/composables/web-socket'
 import useMetricsStore from '@/stores/metrics'
 
 const metricsStore = useMetricsStore()
-const { subscribe } = useSocket()
+const { subscribe } = useWebSocket()
 
-subscribe('metrics', (payload) => {
-  metricsStore.metrics = payload as Metrics | undefined
+subscribe('metrics', (incoming) => {
+  if (incoming.event === 'metrics.updated') {
+    metricsStore.metrics = incoming.payload as Metrics | undefined
+  }
 })
 
 onMounted(() => {
