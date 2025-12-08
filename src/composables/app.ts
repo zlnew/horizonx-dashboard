@@ -1,8 +1,14 @@
 const useApp = () => {
+  function getWSUrl() {
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
+    const host = window.location.host
+
+    return `${protocol}//${host}/api/ws`
+  }
+
   return {
     appURL: import.meta.env.VITE_APP_URL,
-    apiURL: import.meta.env.VITE_API_URL,
-    wsURL: import.meta.env.VITE_WEBSOCKET_URL
+    wsURL: getWSUrl()
   }
 }
 

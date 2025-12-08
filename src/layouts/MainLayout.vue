@@ -2,6 +2,7 @@
 import { onMounted } from 'vue'
 import { LogOutIcon, OrbitIcon } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
+import Auth from '@/api/Auth'
 import MetricsApi from '@/api/Metrics'
 import { Button } from '@/components/ui/button'
 import useWebSocket from '@/composables/web-socket'
@@ -18,9 +19,22 @@ subscribe(WSChannel.METRICS, (incoming) => {
   }
 })
 
-onMounted(() => {
+onMounted(async () => {
+  await autoLogin()
   fetchMetrics()
 })
+
+const autoLogin = async () => {
+  try {
+    await new Auth().login({
+      email: 'ul@example.com',
+      password: 'passwordrahasia'
+    })
+  } catch (error) {
+    const fetchError = error as Error
+    toast.error(fetchError.message)
+  }
+}
 
 const fetchMetrics = async () => {
   try {
