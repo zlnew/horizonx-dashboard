@@ -45,7 +45,7 @@ const onSubmit = form.handleSubmit((values) => {
 </script>
 
 <template>
-  <Card class="sm:min-w-sm">
+  <Card class="w-full sm:min-w-sm">
     <CardHeader>
       <CardTitle>Login to your account</CardTitle>
       <CardDescription> Enter your email below to login to your account </CardDescription>

@@ -51,7 +51,7 @@ const onSubmit = form.handleSubmit((values) => {
 </script>
 
 <template>
-  <Card class="sm:min-w-sm">
+  <Card class="w-full sm:min-w-sm">
     <CardHeader>
       <CardTitle>Create Your Account</CardTitle>
       <CardDescription> Fill in your details below to get started. </CardDescription>
