@@ -95,7 +95,22 @@ type RegisterRequest = {
   password: string
 }
 
+type Meta = {
+  current_page: number
+  per_page: number
+  total: number
+  last_page: number
+}
+
+type Criteria = {
+  page?: number
+  limit?: number
+  search?: string
+  paginate?: boolean
+}
+
 type ApiResponse<T = unknown> = {
-  message: string
-  data?: T
+  message?: string | null
+  data?: T | null
+  meta?: Meta | null
 }
