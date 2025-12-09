@@ -45,7 +45,7 @@ const diskUsageAvg = computed(() => {
 <template>
   <section
     v-if="metrics"
-    class="space-y-8"
+    class="mt-8 space-y-8"
   >
     <div class="flex flex-wrap items-center justify-between gap-8">
       <div class="flex items-center gap-4">

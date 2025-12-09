@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { toTypedSchema } from '@vee-validate/zod'
+import { IdCardLanyardIcon } from 'lucide-vue-next'
 import { Form, type FormContext, type GenericObject } from 'vee-validate'
 import { toast } from 'vue-sonner'
 import z from 'zod'
@@ -16,6 +17,14 @@ import {
 } from '@/components/ui/dialog'
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select'
 import useUserStore from '@/stores/user'
 
 const userStore = useUserStore()
@@ -23,8 +32,10 @@ const userStore = useUserStore()
 const veeForm = ref<FormContext>()
 const formSchema = toTypedSchema(
   z.object({
+    name: z.string(),
     email: z.string().email(),
-    password: z.string().nullable()
+    password: z.string().nullish(),
+    role_id: z.number()
   })
 )
 
@@ -33,7 +44,11 @@ watch(
   (open) => {
     if (open) {
       if (userStore.selectedUser) {
-        veeForm.value?.setValues(userStore.selectedUser)
+        veeForm.value?.setValues({
+          name: userStore.selectedUser.name,
+          email: userStore.selectedUser.email,
+          role_id: userStore.selectedUser.role_id
+        })
       }
     } else {
       userStore.selectedUser = null
@@ -85,6 +100,22 @@ const updateUser = async (values: GenericObject) => {
         >
           <FormField
             v-slot="{ componentField }"
+            name="name"
+          >
+            <FormItem>
+              <FormLabel>Name</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="e.g. John Doe"
+                  v-bind="componentField"
+                />
+              </FormControl>
+              <FormMessage class="text-red-500" />
+            </FormItem>
+          </FormField>
+
+          <FormField
+            v-slot="{ componentField }"
             name="email"
           >
             <FormItem>
@@ -114,6 +145,33 @@ const updateUser = async (values: GenericObject) => {
                   autocomplete="new-password"
                   v-bind="componentField"
                 />
+              </FormControl>
+              <FormMessage class="text-red-500" />
+            </FormItem>
+          </FormField>
+
+          <FormField
+            v-slot="{ componentField }"
+            name="role_id"
+          >
+            <FormItem>
+              <FormLabel>Role</FormLabel>
+              <FormControl>
+                <Select v-bind="componentField">
+                  <SelectTrigger>
+                    <div class="text-neutral-400">
+                      <IdCardLanyardIcon />
+                    </div>
+                    <SelectValue placeholder="Choose" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectItem :value="1">Owner</SelectItem>
+                      <SelectItem :value="2">Admin</SelectItem>
+                      <SelectItem :value="3">Viewer</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
               </FormControl>
               <FormMessage class="text-red-500" />
             </FormItem>

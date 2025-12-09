@@ -9,22 +9,6 @@ const useAuthStore = defineStore('auth', () => {
 
   const loginError = ref<string | null>(null)
   const logoutError = ref<string | null>(null)
-  const registerError = ref<string | null>(null)
-  const registerSuccess = ref<string | null>(null)
-
-  const register = async (request: RegisterRequest) => {
-    registerError.value = null
-    registerSuccess.value = null
-
-    try {
-      await new AuthApi().register<ApiResponse>(request)
-      registerSuccess.value = 'Please login with your credentials'
-    } catch (error) {
-      const fetchError = error as Error
-      registerError.value = fetchError.message
-      throw fetchError
-    }
-  }
 
   const login = async (request: LoginRequest) => {
     loginError.value = null
@@ -57,11 +41,8 @@ const useAuthStore = defineStore('auth', () => {
   return {
     user,
     isAuthenticated,
-    registerError,
-    registerSuccess,
     loginError,
     logoutError,
-    register,
     login,
     logout
   }

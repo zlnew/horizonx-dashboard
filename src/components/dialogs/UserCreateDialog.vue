@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { toTypedSchema } from '@vee-validate/zod'
+import { IdCardLanyardIcon } from 'lucide-vue-next'
 import { Form, type GenericObject } from 'vee-validate'
 import { toast } from 'vue-sonner'
 import z from 'zod'
@@ -15,14 +16,24 @@ import {
 } from '@/components/ui/dialog'
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select'
 import useUserStore from '@/stores/user'
 
 const userStore = useUserStore()
 
 const formSchema = toTypedSchema(
   z.object({
+    name: z.string(),
     email: z.string().email(),
-    password: z.string().min(8)
+    password: z.string().min(8),
+    role_id: z.number()
   })
 )
 
@@ -64,6 +75,22 @@ const createUser = async (values: GenericObject) => {
         >
           <FormField
             v-slot="{ componentField }"
+            name="name"
+          >
+            <FormItem>
+              <FormLabel>Name</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="e.g. John Doe"
+                  v-bind="componentField"
+                />
+              </FormControl>
+              <FormMessage class="text-red-500" />
+            </FormItem>
+          </FormField>
+
+          <FormField
+            v-slot="{ componentField }"
             name="email"
           >
             <FormItem>
@@ -93,6 +120,33 @@ const createUser = async (values: GenericObject) => {
                   autocomplete="new-password"
                   v-bind="componentField"
                 />
+              </FormControl>
+              <FormMessage class="text-red-500" />
+            </FormItem>
+          </FormField>
+
+          <FormField
+            v-slot="{ componentField }"
+            name="role_id"
+          >
+            <FormItem>
+              <FormLabel>Role</FormLabel>
+              <FormControl>
+                <Select v-bind="componentField">
+                  <SelectTrigger>
+                    <div class="text-neutral-400">
+                      <IdCardLanyardIcon />
+                    </div>
+                    <SelectValue placeholder="Choose" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectItem :value="1">Owner</SelectItem>
+                      <SelectItem :value="2">Admin</SelectItem>
+                      <SelectItem :value="3">Viewer</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
               </FormControl>
               <FormMessage class="text-red-500" />
             </FormItem>

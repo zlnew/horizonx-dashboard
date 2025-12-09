@@ -7,14 +7,7 @@ import { useForm } from 'vee-validate'
 import { z } from 'zod'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import useAppStore from '@/stores/app'
@@ -23,7 +16,7 @@ import useAuthStore from '@/stores/auth'
 const router = useRouter()
 const appStore = useAppStore()
 const authStore = useAuthStore()
-const { loginError, registerSuccess } = storeToRefs(authStore)
+const { loginError } = storeToRefs(authStore)
 
 const formSchema = toTypedSchema(
   z.object({
@@ -42,7 +35,6 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   loginError.value = null
-  registerSuccess.value = null
 })
 
 const onSubmit = form.handleSubmit((values) => {
@@ -57,14 +49,6 @@ const onSubmit = form.handleSubmit((values) => {
     <CardHeader>
       <CardTitle>Login to your account</CardTitle>
       <CardDescription>Enter your email below to login to your account</CardDescription>
-      <CardAction>
-        <Button
-          variant="link"
-          asChild
-        >
-          <RouterLink :to="{ name: 'auth.register' }">Register</RouterLink>
-        </Button>
-      </CardAction>
     </CardHeader>
 
     <CardContent>
@@ -78,11 +62,6 @@ const onSubmit = form.handleSubmit((values) => {
         >
           <AlertTitle>Login Error!</AlertTitle>
           <AlertDescription>{{ loginError }}</AlertDescription>
-        </Alert>
-
-        <Alert v-if="registerSuccess">
-          <AlertTitle>Registration Success!</AlertTitle>
-          <AlertDescription>{{ registerSuccess }}</AlertDescription>
         </Alert>
 
         <FormField

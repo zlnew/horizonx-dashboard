@@ -82,15 +82,26 @@ type NetHistory = {
 
 type User = {
   id: number
+  name: string
   email: string
+  role_id: number
+  role: Role
+  permissions: Permission[] | null
+  created_at: string
+  updated_at: string
+}
+
+type Role = {
+  id: number
+  name: string
+}
+
+type Permission = {
+  id: number
+  name: string
 }
 
 type LoginRequest = {
-  email: string
-  password: string
-}
-
-type RegisterRequest = {
   email: string
   password: string
 }

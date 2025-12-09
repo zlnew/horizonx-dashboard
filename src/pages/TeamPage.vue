@@ -15,6 +15,7 @@ import type { AcceptableValue } from 'reka-ui'
 import { toast } from 'vue-sonner'
 import DataLoading from '@/components/DataLoading.vue'
 import DataNotFound from '@/components/DataNotFound.vue'
+import RoleBadge from '@/components/RoleBadge.vue'
 import RoutePagination from '@/components/RoutePagination.vue'
 import UserCreateDialog from '@/components/dialogs/UserCreateDialog.vue'
 import UserDeleteDialog from '@/components/dialogs/UserDeleteDialog.vue'
@@ -64,7 +65,7 @@ watch(refetch, (refetched) => {
 })
 
 onMounted(() => {
-  title.value = 'Users'
+  title.value = 'Team'
   search.value = criteria.value.search ?? ''
   perPage.value = criteria.value.limit ?? 20
 
@@ -140,7 +141,7 @@ const showDeleteModal = (user: User) => {
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
-          <BreadcrumbPage>Users</BreadcrumbPage>
+          <BreadcrumbPage>Team</BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>
@@ -153,9 +154,9 @@ const showDeleteModal = (user: User) => {
           <UsersIcon :size="24" />
         </div>
         <div class="flex flex-col gap-0">
-          <div class="text-xl">Users</div>
+          <div class="text-xl">Team</div>
           <div class="text-sm text-neutral-400">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolore, suscipit?
+            A centralized place to organize your team and streamline collaboration.
           </div>
         </div>
       </div>
@@ -173,8 +174,8 @@ const showDeleteModal = (user: User) => {
   </section>
 
   <section class="mt-8 space-y-4">
-    <div class="flex flex-wrap items-center justify-between gap-4">
-      <div class="flex-1">
+    <div class="flex flex-wrap-reverse items-center justify-between gap-4 sm:flex-wrap">
+      <div class="flex-auto sm:flex-1">
         <InputGroup>
           <InputGroupInput
             v-model="search"
@@ -186,7 +187,7 @@ const showDeleteModal = (user: User) => {
           </InputGroupAddon>
         </InputGroup>
       </div>
-      <div class="flex items-center justify-end gap-2">
+      <div class="flex w-full items-center justify-end gap-2 sm:w-auto">
         <Select
           v-model="perPage"
           @update:modelValue="handlePerPage"
@@ -199,9 +200,9 @@ const showDeleteModal = (user: User) => {
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              <SelectItem value="20">20</SelectItem>
-              <SelectItem value="60">60</SelectItem>
-              <SelectItem value="100">100</SelectItem>
+              <SelectItem :value="20">20</SelectItem>
+              <SelectItem :value="60">60</SelectItem>
+              <SelectItem :value="100">100</SelectItem>
             </SelectGroup>
           </SelectContent>
         </Select>
@@ -224,7 +225,9 @@ const showDeleteModal = (user: User) => {
           <TableHeader>
             <TableRow>
               <TableHead class="w-8">#</TableHead>
+              <TableHead>Name</TableHead>
               <TableHead>Email</TableHead>
+              <TableHead>Role</TableHead>
               <TableHead class="text-end">Action</TableHead>
             </TableRow>
           </TableHeader>
@@ -236,7 +239,11 @@ const showDeleteModal = (user: User) => {
               <TableCell>
                 {{ meta ? (meta?.current_page - 1) * meta.per_page + index + 1 : 0 }}.
               </TableCell>
+              <TableCell class="font-bold">{{ row.name }}</TableCell>
               <TableCell>{{ row.email }}</TableCell>
+              <TableCell>
+                <RoleBadge :role-name="row.role.name" />
+              </TableCell>
               <TableCell>
                 <div class="flex items-center justify-end gap-2">
                   <Button
