@@ -85,7 +85,7 @@ const registerServer = async (values: GenericObject) => {
           <DialogHeader>
             <DialogTitle>{{ registerMessage }}</DialogTitle>
             <DialogDescription>
-              Please copy the token below and save it on your HorizonX Agent environtment
+              Please copy the token below and save it on your HorizonX Agent environment
               <code class="text-destructive font-bold">HORIZONX_AGENT_TOKEN</code>
             </DialogDescription>
           </DialogHeader>
