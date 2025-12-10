@@ -141,9 +141,8 @@ const createUser = async (values: GenericObject) => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
-                      <SelectItem :value="1">Owner</SelectItem>
-                      <SelectItem :value="2">Admin</SelectItem>
-                      <SelectItem :value="3">Viewer</SelectItem>
+                      <SelectItem :value="1">Admin</SelectItem>
+                      <SelectItem :value="2">Viewer</SelectItem>
                     </SelectGroup>
                   </SelectContent>
                 </Select>

@@ -8,15 +8,11 @@ const { roleName } = defineProps<{
 }>()
 
 const variant = computed(() => {
-  if (roleName === Role.ADMIN) {
-    return 'secondary'
-  }
-
   if (roleName === Role.VIEWER) {
     return 'outline'
   }
 
-  return 'default'
+  return 'secondary'
 })
 </script>
 
