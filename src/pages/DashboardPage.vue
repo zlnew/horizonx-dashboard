@@ -24,7 +24,7 @@ const { title } = storeToRefs(appStore)
 const { subscribe } = useWebSocket()
 let sub: { unsubscribe: () => void }
 
-onMounted(() => {
+onMounted(async () => {
   title.value = 'Dashboard'
 
   sub = subscribe<Metrics>('server:1:metrics', (msg) => {

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import {
@@ -19,11 +20,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
+import useWebSocket from '@/composables/web-socket'
 import useAuthStore from '@/stores/auth'
 
 const router = useRouter()
 const authStore = useAuthStore()
+const { connect: connectWs } = useWebSocket()
 const { user } = storeToRefs(authStore)
+
+onMounted(() => {
+  connectWs()
+})
 
 const handleLogout = () => {
   authStore.logout().then(() => {
