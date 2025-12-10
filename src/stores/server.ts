@@ -1,0 +1,79 @@
+import { ref } from 'vue'
+import { defineStore } from 'pinia'
+import ServerApi from '@/api/Server'
+
+const useServerStore = defineStore('server', () => {
+  const servers = ref<Server[]>([])
+  const loading = ref(false)
+  const refetch = ref(false)
+  const notFound = ref(false)
+
+  const selectedServer = ref<Server | null>(null)
+
+  const dialogRegisterOpen = ref(false)
+  const dialogUpdateOpen = ref(false)
+  const dialogDeleteOpen = ref(false)
+
+  const getServers = async () => {
+    loading.value = true
+    refetch.value = false
+    notFound.value = false
+
+    try {
+      const res = await new ServerApi().get<ApiResponse<Server[]>>()
+
+      if (!res.data?.length) {
+        notFound.value = true
+      }
+
+      servers.value = res.data ?? []
+
+      return res
+    } catch (error) {
+      throw error
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const registerServer = async (request = {}) => {
+    try {
+      return await new ServerApi().store<ApiResponse>(request)
+    } catch (error) {
+      throw error
+    }
+  }
+
+  const updateServer = async (resourceId: number, request = {}) => {
+    try {
+      return await new ServerApi().update<ApiResponse>(resourceId, request)
+    } catch (error) {
+      throw error
+    }
+  }
+
+  const deleteServer = async (resourceId: number) => {
+    try {
+      return await new ServerApi().destroy<ApiResponse>(resourceId)
+    } catch (error) {
+      throw error
+    }
+  }
+
+  return {
+    servers,
+    loading,
+    refetch,
+    notFound,
+    selectedServer,
+    dialogRegisterOpen,
+    dialogUpdateOpen,
+    dialogDeleteOpen,
+    getServers,
+    registerServer,
+    updateServer,
+    deleteServer
+  }
+})
+
+export default useServerStore

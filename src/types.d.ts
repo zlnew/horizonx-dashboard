@@ -80,6 +80,15 @@ type NetHistory = {
   upload: number
 }
 
+type Server = {
+  id: number
+  name: string
+  ip_address: string
+  is_online: boolean
+  created_at: string
+  updated_at: string
+}
+
 type User = {
   id: number
   name: string

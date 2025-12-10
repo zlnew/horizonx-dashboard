@@ -26,6 +26,11 @@ const router = createRouter({
           component: () => import('@/pages/DashboardPage.vue')
         },
         {
+          name: 'servers',
+          path: 'servers',
+          component: () => import('@/pages/ServersPage.vue')
+        },
+        {
           name: 'team',
           path: 'team',
           component: () => import('@/pages/TeamPage.vue')

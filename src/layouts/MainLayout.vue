@@ -3,6 +3,7 @@ import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import {
+  ChartColumnBigIcon,
   ChevronDownIcon,
   LayoutGridIcon,
   LogOutIcon,
@@ -74,8 +75,14 @@ const handleLogout = () => {
             <DropdownMenuLabel>Pages</DropdownMenuLabel>
             <DropdownMenuItem as-child>
               <RouterLink :to="{ name: 'dashboard' }">
-                <ServerIcon />
+                <ChartColumnBigIcon />
                 Server Monitor
+              </RouterLink>
+            </DropdownMenuItem>
+            <DropdownMenuItem as-child>
+              <RouterLink :to="{ name: 'servers' }">
+                <ServerIcon />
+                Servers
               </RouterLink>
             </DropdownMenuItem>
             <DropdownMenuItem as-child>
