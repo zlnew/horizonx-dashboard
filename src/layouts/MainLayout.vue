@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import {
@@ -10,8 +9,6 @@ import {
   ServerIcon,
   UsersIcon
 } from 'lucide-vue-next'
-import { toast } from 'vue-sonner'
-import MetricsApi from '@/api/Metrics'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -22,36 +19,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import useWebSocket from '@/composables/web-socket'
-import WSChannel from '@/constants/ws-channel'
-import WSEvent from '@/constants/ws-event'
 import useAuthStore from '@/stores/auth'
-import useMetricsStore from '@/stores/metrics'
 
 const router = useRouter()
 const authStore = useAuthStore()
-const metricsStore = useMetricsStore()
-const { subscribe } = useWebSocket()
 const { user } = storeToRefs(authStore)
-
-subscribe(WSChannel.METRICS, (incoming) => {
-  if (incoming.event === WSEvent.METRICS_UPDATED) {
-    metricsStore.metrics = incoming.payload as Metrics | undefined
-  }
-})
-
-onMounted(async () => {
-  fetchMetrics()
-})
-
-const fetchMetrics = async () => {
-  try {
-    metricsStore.metrics = await new MetricsApi().get<Metrics>()
-  } catch (error) {
-    const fetchError = error as Error
-    toast.error(fetchError.message)
-  }
-}
 
 const handleLogout = () => {
   authStore.logout().then(() => {

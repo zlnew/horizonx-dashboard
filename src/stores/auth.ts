@@ -2,10 +2,12 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { useLocalStorage } from '@vueuse/core'
 import AuthApi from '@/api/Auth'
+import useWebSocket from '@/composables/web-socket'
 
 const useAuthStore = defineStore('auth', () => {
   const user = useLocalStorage('horizonx_user', {} as User)
   const isAuthenticated = useLocalStorage('horizonx_authenticated', false)
+  const { disconnect: disconnectWs } = useWebSocket()
 
   const loginError = ref<string | null>(null)
   const logoutError = ref<string | null>(null)
@@ -31,6 +33,7 @@ const useAuthStore = defineStore('auth', () => {
       await new AuthApi().logout()
       user.value = {} as User
       isAuthenticated.value = false
+      disconnectWs()
     } catch (error) {
       const fetchError = error as Error
       logoutError.value = fetchError.message

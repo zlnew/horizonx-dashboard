@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onMounted, onUnmounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import StorageResource from '@/components/StorageResource.vue'
 import SystemHealth from '@/components/SystemHealth.vue'
@@ -12,13 +12,30 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator
 } from '@/components/ui/breadcrumb'
+import useWebSocket from '@/composables/web-socket'
+import WSEvent from '@/constants/ws-event'
 import useAppStore from '@/stores/app'
+import useMetricsStore from '@/stores/metrics'
 
 const appStore = useAppStore()
+const metricsStore = useMetricsStore()
 const { title } = storeToRefs(appStore)
+
+const { subscribe } = useWebSocket()
+let sub: { unsubscribe: () => void }
 
 onMounted(() => {
   title.value = 'Dashboard'
+
+  sub = subscribe<Metrics>('server:1:metrics', (msg) => {
+    if (msg.event === WSEvent.METRICS_UPDATED) {
+      metricsStore.metrics = msg.payload
+    }
+  })
+})
+
+onUnmounted(() => {
+  sub?.unsubscribe()
 })
 </script>
 

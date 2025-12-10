@@ -1,4 +1,4 @@
-import { onUnmounted, ref } from 'vue'
+import { ref } from 'vue'
 import useApp from '@/composables/app'
 
 type OutgoingMessage = {
@@ -6,101 +6,135 @@ type OutgoingMessage = {
   channel: string
 }
 
-type IncomingMessage = {
+type IncomingMessage<T = unknown> = {
   type: string
   event: string
   channel: string
-  payload: unknown
+  payload: T
 }
+
+type InternalHandler = (msg: IncomingMessage<unknown>) => void
+
+const socket = ref<WebSocket | null>(null)
+const isConnected = ref(false)
+const listeners = new Map<string, Set<(msg: IncomingMessage<unknown>) => void>>()
+const messageQueue: OutgoingMessage[] = []
+
+let reconnectAttempts = 0
+let reconnectTimer: number | null = null
+let explicitClose = false
 
 export default function useWebSocket() {
   const { wsURL } = useApp()
-  let socket: WebSocket | null = null
-  let openPromise: Promise<void> | null = null
-
-  const connected = ref(false)
-  const listeners = new Map<string, (msg: IncomingMessage) => void>()
-  const queue: OutgoingMessage[] = []
 
   const connect = (): Promise<void> => {
-    if (socket && socket.readyState === WebSocket.OPEN) {
-      connected.value = true
-      return Promise.resolve()
-    }
+    if (socket.value?.readyState === WebSocket.OPEN) return Promise.resolve()
+    if (socket.value?.readyState === WebSocket.CONNECTING) return Promise.resolve()
 
-    if (socket && socket.readyState === WebSocket.CONNECTING) {
-      return openPromise!
-    }
+    explicitClose = false
+    socket.value = new WebSocket(wsURL)
 
-    socket = new WebSocket(wsURL)
+    return new Promise((resolve) => {
+      socket.value!.onopen = () => {
+        console.log('⚡ WS Connected')
+        isConnected.value = true
+        reconnectAttempts = 0
 
-    openPromise = new Promise((resolve, reject) => {
-      socket!.onopen = () => {
-        connected.value = true
-        console.log('WS connected')
-        for (const msg of queue) socket!.send(JSON.stringify(msg))
-        queue.length = 0
+        while (messageQueue.length > 0) {
+          const msg = messageQueue.shift()
+          if (msg) sendRaw(msg)
+        }
+
+        listeners.forEach((_, channel) => {
+          sendRaw({ type: 'subscribe', channel })
+        })
+
         resolve()
       }
 
-      socket!.onmessage = (event) => {
+      socket.value!.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data) as IncomingMessage
-          const handler = listeners.get(data.channel)
-          if (handler) handler(data)
+          const handlers = listeners.get(data.channel)
+          if (handlers) {
+            handlers.forEach((handler) => handler(data))
+          }
         } catch (err) {
-          console.error('WS parse error', err)
+          console.error('WS Parse Error', err)
         }
       }
 
-      socket!.onclose = () => {
-        connected.value = false
-        console.log('WS closed, reconnecting in 3s...')
-        setTimeout(() => connect(), 3000)
+      socket.value!.onclose = () => {
+        isConnected.value = false
+        if (!explicitClose) {
+          handleReconnect()
+        } else {
+          console.log('⚡ WS Closed gracefully')
+        }
       }
 
-      socket!.onerror = (err) => {
-        console.error('WS error:', err)
-        reject(err)
+      socket.value!.onerror = (err) => {
+        console.error('WS Error:', err)
+        socket.value?.close()
       }
     })
-
-    return openPromise
   }
 
-  const safeSend = async (msg: OutgoingMessage) => {
-    await connect()
-    if (socket && socket.readyState === WebSocket.OPEN) {
-      socket.send(JSON.stringify(msg))
+  const handleReconnect = () => {
+    if (reconnectTimer) clearTimeout(reconnectTimer)
+
+    const delay = Math.min(1000 * 2 ** reconnectAttempts, 10000)
+    reconnectAttempts++
+
+    console.log(`🔌 WS Disconnected. Reconnecting in ${delay}ms...`)
+    reconnectTimer = window.setTimeout(() => connect(), delay)
+  }
+
+  const sendRaw = (msg: OutgoingMessage) => {
+    if (socket.value?.readyState === WebSocket.OPEN) {
+      socket.value.send(JSON.stringify(msg))
     } else {
-      queue.push(msg)
+      messageQueue.push(msg)
     }
   }
 
-  const subscribe = (channel: string, callback: (incoming: IncomingMessage) => void) => {
-    listeners.set(channel, callback)
+  const subscribe = <T>(channel: string, callback: (msg: IncomingMessage<T>) => void) => {
+    if (!listeners.has(channel)) {
+      listeners.set(channel, new Set())
+      sendRaw({ type: 'subscribe', channel })
+    }
 
-    safeSend({ type: 'subscribe', channel })
+    const internalHandler: InternalHandler = (msg) => {
+      callback(msg as IncomingMessage<T>)
+    }
+
+    listeners.get(channel)!.add(internalHandler)
 
     return {
-      unsubscribe() {
-        listeners.delete(channel)
-        safeSend({
-          type: 'unsubscribe',
-          channel
-        })
+      unsubscribe: () => {
+        const channelListeners = listeners.get(channel)
+        if (channelListeners) {
+          channelListeners.delete(internalHandler)
+
+          if (channelListeners.size === 0) {
+            listeners.delete(channel)
+            sendRaw({ type: 'unsubscribe', channel })
+          }
+        }
       }
     }
   }
 
-  onUnmounted(() => {
-    socket?.close()
-  })
+  const disconnect = () => {
+    explicitClose = true
+    socket.value?.close()
+  }
 
   return {
-    connected,
+    socket,
+    connected: isConnected,
     connect,
-    subscribe,
-    send: safeSend
+    disconnect,
+    subscribe
   }
 }
