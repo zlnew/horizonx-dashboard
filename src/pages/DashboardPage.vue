@@ -68,6 +68,7 @@ onMounted(async () => {
 
 onUnmounted(() => {
   sub?.unsubscribe()
+  metricsStore.cleanupState()
   serverStore.cleanupState()
 })
 

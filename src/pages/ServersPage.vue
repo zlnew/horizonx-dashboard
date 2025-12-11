@@ -49,9 +49,9 @@ onMounted(() => {
   title.value = 'Servers'
   fetchServers()
 
-  sub = subscribe('server_status', (msg) => {
+  sub = subscribe<ServerStatus>('server_status', (msg) => {
     if (msg.event === WSEvent.SERVER_STATUS_UPDATED) {
-      console.log(msg.payload)
+      serverStore.updateServerStatus(msg.payload)
     }
   })
 })

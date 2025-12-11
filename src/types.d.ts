@@ -89,6 +89,11 @@ type Server = {
   updated_at: string
 }
 
+type ServerStatus = {
+  server_id: number
+  is_online: boolean
+}
+
 type User = {
   id: number
   name: string

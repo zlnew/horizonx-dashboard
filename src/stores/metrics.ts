@@ -6,10 +6,15 @@ const useMetricsStore = defineStore('metrics', () => {
   const cpuUsageHistory = ref<CpuUsageHistory[]>([])
   const netHistory = ref<NetHistory[]>([])
 
+  const cleanupState = () => {
+    metrics.value = null
+  }
+
   return {
     metrics,
     cpuUsageHistory,
-    netHistory
+    netHistory,
+    cleanupState
   }
 })
 

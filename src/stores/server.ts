@@ -60,6 +60,13 @@ const useServerStore = defineStore('server', () => {
     }
   }
 
+  const updateServerStatus = (status: ServerStatus) => {
+    const idx = servers.value.findIndex((s) => s.id === status.server_id)
+    if (idx != -1 && servers.value[idx]) {
+      servers.value[idx].is_online = status.is_online
+    }
+  }
+
   const cleanupState = () => {
     servers.value = []
     loading.value = false
@@ -84,6 +91,7 @@ const useServerStore = defineStore('server', () => {
     registerServer,
     updateServer,
     deleteServer,
+    updateServerStatus,
     cleanupState
   }
 })
