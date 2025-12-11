@@ -60,6 +60,17 @@ const useServerStore = defineStore('server', () => {
     }
   }
 
+  const cleanupState = () => {
+    servers.value = []
+    loading.value = false
+    refetch.value = false
+    notFound.value = false
+    selectedServer.value = null
+    dialogRegisterOpen.value = false
+    dialogUpdateOpen.value = false
+    dialogDeleteOpen.value = false
+  }
+
   return {
     servers,
     loading,
@@ -72,7 +83,8 @@ const useServerStore = defineStore('server', () => {
     getServers,
     registerServer,
     updateServer,
-    deleteServer
+    deleteServer,
+    cleanupState
   }
 })
 
