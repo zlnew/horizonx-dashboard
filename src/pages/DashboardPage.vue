@@ -54,7 +54,7 @@ watch(selectedServerId, (serverId) => {
     }
 
     sub = subscribe<Metrics>(`server:${serverId}:metrics`, (msg) => {
-      if (msg.event === WSEvent.METRICS_UPDATED) {
+      if (msg.event === WSEvent.SERVER_METRICS_RECEIVED) {
         metrics.value = msg.payload
       }
     })

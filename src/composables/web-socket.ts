@@ -45,10 +45,6 @@ export default function useWebSocket() {
           if (msg) sendRaw(msg)
         }
 
-        listeners.forEach((_, channel) => {
-          sendRaw({ type: 'subscribe', channel })
-        })
-
         resolve()
       }
 

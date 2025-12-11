@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, watch } from 'vue'
+import { onMounted, onUnmounted, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { PlusIcon, RefreshCwIcon, ServerIcon, SquarePenIcon, TrashIcon } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
@@ -26,6 +26,8 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
+import useWebSocket from '@/composables/web-socket'
+import WSEvent from '@/constants/ws-event'
 import useAppStore from '@/stores/app'
 import useServerStore from '@/stores/server'
 
@@ -33,6 +35,9 @@ const appStore = useAppStore()
 const serverStore = useServerStore()
 const { title } = storeToRefs(appStore)
 const { servers, loading, refetch, notFound } = storeToRefs(serverStore)
+
+const { subscribe } = useWebSocket()
+let sub: { unsubscribe: () => void }
 
 watch(refetch, (refetched) => {
   if (refetched) {
@@ -42,8 +47,18 @@ watch(refetch, (refetched) => {
 
 onMounted(() => {
   title.value = 'Servers'
-
   fetchServers()
+
+  sub = subscribe('server_status', (msg) => {
+    if (msg.event === WSEvent.SERVER_STATUS_UPDATED) {
+      console.log(msg.payload)
+    }
+  })
+})
+
+onUnmounted(() => {
+  sub?.unsubscribe()
+  serverStore.cleanupState()
 })
 
 const fetchServers = async () => {
