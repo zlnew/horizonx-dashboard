@@ -19,13 +19,6 @@ const gpuUsageAvg = computed(() => {
   return total / gpus.length
 })
 
-const memoryUsagePercentage = computed(() => {
-  const memory = metrics.value?.memory
-  if (!memory) return 0
-
-  return (memory.used_gb / memory.total_gb) * 100
-})
-
 const diskUsageAvg = computed(() => {
   const fss = metrics.value?.disk.filter((d) => d.filesystems?.length).flatMap((d) => d.filesystems)
   if (!fss?.length) return 0
