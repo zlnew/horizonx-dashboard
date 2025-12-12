@@ -3,6 +3,7 @@ import { onMounted, onUnmounted, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { ActivityIcon, ServerIcon, Settings2Icon } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
+import AgentIsOffline from '@/components/AgentIsOffline.vue'
 import DataLoading from '@/components/DataLoading.vue'
 import StorageResource from '@/components/StorageResource.vue'
 import SystemHealth from '@/components/SystemHealth.vue'
@@ -40,34 +41,52 @@ const { formatDuration } = useNumber()
 const { title } = storeToRefs(appStore)
 const { metrics } = storeToRefs(metricsStore)
 const { servers } = storeToRefs(serverStore)
-const selectedServerId = ref<number | null>(null)
+const selectedServer = ref<Server | null>(null)
 
 const { subscribe } = useWebSocket()
-let sub: { unsubscribe: () => void }
 
-watch(selectedServerId, (serverId) => {
-  if (serverId) {
-    metrics.value = null
+let subServerStatus: { unsubscribe: () => void } | null = null
+let subMetrics: { unsubscribe: () => void } | null = null
 
-    if (sub) {
-      sub.unsubscribe()
+watch(
+  selectedServer,
+  (server) => {
+    if (!server?.id) {
+      return
     }
 
-    sub = subscribe<Metrics>(`server:${serverId}:metrics`, (msg) => {
+    metrics.value = null
+
+    if (subMetrics) {
+      subMetrics.unsubscribe()
+    }
+
+    subMetrics = subscribe<Metrics>(`server:${server.id}:metrics`, (msg) => {
       if (msg.event === WSEvent.SERVER_METRICS_RECEIVED) {
         metrics.value = msg.payload
       }
     })
+  },
+  {
+    immediate: true
   }
-})
+)
 
-onMounted(async () => {
+onMounted(() => {
   title.value = 'Dashboard'
+
+  subServerStatus = subscribe<ServerStatus>('server_status', (msg) => {
+    if (msg.event === WSEvent.SERVER_STATUS_UPDATED) {
+      serverStore.updateServerStatus(msg.payload)
+    }
+  })
+
   fetchServers()
 })
 
 onUnmounted(() => {
-  sub?.unsubscribe()
+  subServerStatus?.unsubscribe()
+  subMetrics?.unsubscribe()
   metricsStore.cleanupState()
   serverStore.cleanupState()
 })
@@ -76,7 +95,7 @@ const fetchServers = async () => {
   try {
     await serverStore.getServers()
     if (servers.value.length && servers.value[0]) {
-      selectedServerId.value = servers.value[0].id
+      selectedServer.value = servers.value[0]
     }
   } catch (error) {
     const fetchError = error as Error
@@ -111,40 +130,49 @@ const fetchServers = async () => {
               </div>
               <div class="flex flex-col gap-0">
                 <div class="text-xl">Server Monitor</div>
-                <div
-                  v-if="metrics"
-                  class="flex flex-wrap items-center gap-2 text-sm"
-                >
-                  <span>@{{ metrics.os_info.hostname }}</span>
-                  &middot;
-                  <span class="text-neutral-400">
-                    {{ metrics.os_info.name }}
-                  </span>
-                </div>
-                <div
-                  v-else
-                  class="flex flex-wrap items-center gap-2"
-                >
-                  <Skeleton class="h-5 w-20" />
-                  <Skeleton class="h-5 w-28" />
-                </div>
+
+                <template v-if="!selectedServer?.is_online">
+                  <span class="text-sm text-neutral-400">Agent Unreachable</span>
+                </template>
+
+                <template v-else>
+                  <div
+                    v-if="metrics"
+                    class="flex flex-wrap items-center gap-2 text-sm"
+                  >
+                    <span>@{{ metrics.os_info.hostname }}</span>
+                    &middot;
+                    <span class="text-neutral-400">
+                      {{ metrics.os_info.name }}
+                    </span>
+                  </div>
+                  <div
+                    v-else
+                    class="flex flex-wrap items-center gap-2"
+                  >
+                    <Skeleton class="h-5 w-20" />
+                    <Skeleton class="h-5 w-28" />
+                  </div>
+                </template>
               </div>
             </div>
 
-            <div
-              v-if="metrics"
-              class="flex items-center gap-2 text-lg text-neutral-400"
-            >
-              <ActivityIcon :size="24" />
-              <span>{{ formatDuration(metrics.uptime_seconds) }}</span>
-            </div>
-            <Skeleton
-              v-else
-              class="h-8 w-32"
-            />
+            <template v-if="selectedServer?.is_online">
+              <div
+                v-if="metrics"
+                class="flex items-center gap-2 text-lg text-neutral-400"
+              >
+                <ActivityIcon :size="24" />
+                <span>{{ formatDuration(metrics.uptime_seconds) }}</span>
+              </div>
+              <Skeleton
+                v-else
+                class="h-8 w-32"
+              />
+            </template>
           </div>
           <div>
-            <Select v-model="selectedServerId">
+            <Select v-model="selectedServer">
               <SelectTrigger class="w-full">
                 <Settings2Icon />
                 <SelectValue placeholder="Select server" />
@@ -155,7 +183,7 @@ const fetchServers = async () => {
                   <SelectItem
                     v-for="(srv, i) in servers"
                     :key="i"
-                    :value="srv.id"
+                    :value="srv"
                   >
                     <div class="flex items-center gap-2">
                       <div class="font-bold">{{ srv.name }}</div>
@@ -172,11 +200,17 @@ const fetchServers = async () => {
     </Item>
   </section>
 
-  <template v-if="metrics">
-    <SystemHealth />
-    <SystemPerformance />
-    <StorageResource />
+  <template v-if="!selectedServer?.is_online">
+    <AgentIsOffline />
   </template>
 
-  <DataLoading v-else />
+  <template v-else>
+    <template v-if="metrics">
+      <SystemHealth />
+      <SystemPerformance />
+      <StorageResource />
+    </template>
+
+    <DataLoading v-else />
+  </template>
 </template>

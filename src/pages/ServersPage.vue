@@ -98,7 +98,7 @@ const showDeleteModal = (server: Server) => {
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
-          <BreadcrumbPage>Server</BreadcrumbPage>
+          <BreadcrumbPage>Servers</BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>
@@ -113,7 +113,7 @@ const showDeleteModal = (server: Server) => {
         <div class="flex flex-col gap-0">
           <div class="text-xl">Servers</div>
           <div class="text-sm text-neutral-400">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Natus, nam.
+            Overview of all registered servers and their real-time agent status.
           </div>
         </div>
       </div>
@@ -155,7 +155,7 @@ const showDeleteModal = (server: Server) => {
               <TableHead class="w-8">#</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>IP Address</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead>Agent Status</TableHead>
               <TableHead class="text-end">Action</TableHead>
             </TableRow>
           </TableHeader>
