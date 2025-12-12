@@ -98,20 +98,14 @@ const diskUsageAvg = computed(() => {
             </div>
 
             <div class="flex flex-col gap-4">
-              <div class="text-sm text-neutral-400">Memory</div>
+              <div class="text-sm text-neutral-400">Memory Usage</div>
               <div class="flex items-center gap-1">
-                <div class="flex items-center gap-1 text-2xl">
-                  <span class="text-neutral-300">
-                    {{ formatNumber(metrics.memory.used_gb, 0, 2) }}
-                  </span>
-                  /
-                  <span>
-                    {{ formatNumber(metrics.memory.total_gb, 0, 2) }}
-                  </span>
-                </div>
-                <span class="text-lg text-neutral-400">GB</span>
+                <span class="text-2xl">
+                  {{ formatNumber(metrics.memory.usage_percent, 0, 2) }}
+                </span>
+                <span class="text-lg text-neutral-400">%</span>
               </div>
-              <Progress :model-value="memoryUsagePercentage" />
+              <Progress :model-value="metrics.memory.usage_percent" />
             </div>
           </div>
         </CardContent>

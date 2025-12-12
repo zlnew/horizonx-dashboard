@@ -31,6 +31,7 @@ type MemoryMetric = {
   total_gb: number
   used_gb: number
   available_gb: number
+  usage_percent: number
   swap_total_gb: number
   swap_free_gb: number
   swap_used_gb: number
