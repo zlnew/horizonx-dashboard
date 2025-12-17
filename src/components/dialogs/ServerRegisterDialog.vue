@@ -25,7 +25,8 @@ const registerMessage = ref<string | null>()
 const registeredServer = ref<Server | null>()
 const token = ref<string | null>()
 
-const { copy, copied } = useClipboard({ legacy: true })
+const { copy: copyToken, copied: tokenCopied } = useClipboard({ legacy: true })
+const { copy: copySID, copied: sidCopied } = useClipboard({ legacy: true })
 
 const formSchema = toTypedSchema(
   z.object({
@@ -48,9 +49,15 @@ watch(
   }
 )
 
-watch(copied, (clipCopied) => {
+watch(tokenCopied, (clipCopied) => {
   if (clipCopied) {
     toast.success('Token copied to clipboard!')
+  }
+})
+
+watch(sidCopied, (clipCopied) => {
+  if (clipCopied) {
+    toast.success('Server ID copied to clipboard!')
   }
 })
 
@@ -85,24 +92,48 @@ const registerServer = async (values: GenericObject) => {
           <DialogHeader>
             <DialogTitle>{{ registerMessage }}</DialogTitle>
             <DialogDescription>
-              Please copy the token below and save it on your HorizonX Agent environment
-              <code class="text-destructive font-bold">HORIZONX_AGENT_TOKEN</code>
+              Please save this data on your HorizonX Agent environment
             </DialogDescription>
           </DialogHeader>
 
-          <div
-            class="bg-accent flex items-center justify-between gap-4 overflow-x-auto rounded-lg px-4 py-2"
-          >
-            <div class="overflow-x-auto tracking-wide text-neutral-100">{{ token }}</div>
-            <Button
-              size="icon-sm"
-              aria-label="Copy token"
-              variant="ghost"
-              @click="copy(token)"
-            >
-              <CheckIcon v-if="copied" />
-              <CopyIcon v-else />
-            </Button>
+          <div class="space-y-4 overflow-x-auto">
+            <div class="space-y-1">
+              <code class="text-destructive font-bold">HORIZONX_SERVER_API_TOKEN</code>
+              <div
+                class="bg-accent flex items-center justify-between gap-4 overflow-x-auto rounded-lg px-4 py-2"
+              >
+                <div class="overflow-x-auto tracking-wide text-neutral-100">{{ token }}</div>
+                <Button
+                  size="icon-sm"
+                  aria-label="Copy token"
+                  variant="ghost"
+                  @click="copyToken(token)"
+                >
+                  <CheckIcon v-if="tokenCopied" />
+                  <CopyIcon v-else />
+                </Button>
+              </div>
+            </div>
+
+            <div class="space-y-1">
+              <code class="text-destructive font-bold">HORIZONX_SERVER_ID</code>
+              <div
+                class="bg-accent flex items-center justify-between gap-4 overflow-x-auto rounded-lg px-4 py-2"
+              >
+                <div class="overflow-x-auto tracking-wide text-neutral-100">
+                  {{ registeredServer.id }}
+                </div>
+                <Button
+                  size="icon-sm"
+                  aria-label="Copy server id"
+                  variant="ghost"
+                  @click="copySID(registeredServer.id)"
+                >
+                  <CheckIcon v-if="sidCopied" />
+                  <CopyIcon v-else />
+                </Button>
+              </div>
+            </div>
           </div>
         </template>
 

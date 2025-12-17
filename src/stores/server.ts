@@ -44,7 +44,7 @@ const useServerStore = defineStore('server', () => {
     }
   }
 
-  const updateServer = async (resourceId: number, request = {}) => {
+  const updateServer = async (resourceId: string, request = {}) => {
     try {
       return await new ServerApi().update<ApiResponse>(resourceId, request)
     } catch (error) {
@@ -52,7 +52,7 @@ const useServerStore = defineStore('server', () => {
     }
   }
 
-  const deleteServer = async (resourceId: number) => {
+  const deleteServer = async (resourceId: string) => {
     try {
       return await new ServerApi().destroy<ApiResponse>(resourceId)
     } catch (error) {

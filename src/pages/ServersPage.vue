@@ -165,7 +165,10 @@ const showDeleteModal = (server: Server) => {
               :key="index"
             >
               <TableCell>{{ index + 1 }}.</TableCell>
-              <TableCell class="font-bold">{{ row.name }}</TableCell>
+              <TableCell class="font-bold">
+                <div>{{ row.name }}</div>
+                <div class="text-xs font-normal text-neutral-400">ID: {{ row.id }}</div>
+              </TableCell>
               <TableCell>{{ row.ip_address }}</TableCell>
               <TableCell>
                 <Badge :variant="row.is_online ? 'default' : 'outline'">

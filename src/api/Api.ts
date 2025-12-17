@@ -20,7 +20,7 @@ export default abstract class Api {
     return this.handleResponse<T>(data.value, error.value)
   }
 
-  public async show<T>(resourceId: number) {
+  public async show<T>(resourceId: number | string) {
     const { data, error } = await this.fetch(`${this.resource}/${resourceId}`).get().json<T>()
 
     return this.handleResponse<T>(data.value, error.value)
@@ -32,7 +32,7 @@ export default abstract class Api {
     return this.handleResponse<T>(data.value, error.value)
   }
 
-  public async update<T>(resourceId: number, options = {}) {
+  public async update<T>(resourceId: number | string, options = {}) {
     const { data, error } = await this.fetch(`${this.resource}/${resourceId}`)
       .put(options)
       .json<T>()
@@ -40,7 +40,7 @@ export default abstract class Api {
     return this.handleResponse<T>(data.value, error.value)
   }
 
-  public async destroy<T>(resourceId: number) {
+  public async destroy<T>(resourceId: number | string) {
     const { data, error } = await this.fetch(`${this.resource}/${resourceId}`).delete().json<T>()
 
     return this.handleResponse<T>(data.value, error.value)

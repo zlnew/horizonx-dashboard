@@ -82,7 +82,7 @@ type NetHistory = {
 }
 
 type Server = {
-  id: number
+  id: string
   name: string
   ip_address: string
   is_online: boolean
@@ -91,7 +91,7 @@ type Server = {
 }
 
 type ServerStatus = {
-  server_id: number
+  server_id: string
   is_online: boolean
 }
 
