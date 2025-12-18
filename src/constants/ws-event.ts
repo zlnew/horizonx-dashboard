@@ -1,6 +1,6 @@
 const WSEvent = {
-  SERVER_METRICS_RECEIVED: 'server_metrics_received',
-  SERVER_STATUS_UPDATED: 'server_status_updated'
+  SERVER_STATUS_CHANGED: 'server_status_changed',
+  SERVER_METRICS_RECEIVED: 'server_metrics_received'
 }
 
 export default WSEvent

@@ -46,7 +46,7 @@ const selectedServer = ref<Server | null>(null)
 const { subscribe } = useWebSocket()
 
 let subServerStatus: { unsubscribe: () => void } | null = null
-let subMetrics: { unsubscribe: () => void } | null = null
+let subServerMetrics: { unsubscribe: () => void } | null = null
 
 watch(
   selectedServer,
@@ -57,11 +57,7 @@ watch(
 
     metrics.value = null
 
-    if (subMetrics) {
-      subMetrics.unsubscribe()
-    }
-
-    subMetrics = subscribe<Metrics>(`server:${server.id}:metrics`, (msg) => {
+    subServerMetrics = subscribe<Metrics>('server_metrics', (msg) => {
       if (msg.event === WSEvent.SERVER_METRICS_RECEIVED) {
         metrics.value = msg.payload
       }
@@ -76,7 +72,7 @@ onMounted(() => {
   title.value = 'Dashboard'
 
   subServerStatus = subscribe<ServerStatus>('server_status', (msg) => {
-    if (msg.event === WSEvent.SERVER_STATUS_UPDATED) {
+    if (msg.event === WSEvent.SERVER_STATUS_CHANGED) {
       serverStore.updateServerStatus(msg.payload)
     }
   })
@@ -86,7 +82,7 @@ onMounted(() => {
 
 onUnmounted(() => {
   subServerStatus?.unsubscribe()
-  subMetrics?.unsubscribe()
+  subServerMetrics?.unsubscribe()
   metricsStore.cleanupState()
   serverStore.cleanupState()
 })
