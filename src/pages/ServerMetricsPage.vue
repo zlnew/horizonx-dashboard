@@ -8,14 +8,6 @@ import DataLoading from '@/components/DataLoading.vue'
 import StorageResource from '@/components/StorageResource.vue'
 import SystemHealth from '@/components/SystemHealth.vue'
 import SystemPerformance from '@/components/SystemPerformance.vue'
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator
-} from '@/components/ui/breadcrumb'
 import { Item, ItemContent } from '@/components/ui/item'
 import {
   Select,
@@ -69,7 +61,7 @@ watch(
 )
 
 onMounted(() => {
-  title.value = 'Dashboard'
+  title.value = 'Server Metrics'
 
   subServerStatus = subscribe<ServerStatus>('server_status', (msg) => {
     if (msg.event === WSEvent.SERVER_STATUS_CHANGED) {
@@ -101,21 +93,7 @@ const fetchServers = async () => {
 </script>
 
 <template>
-  <section>
-    <Breadcrumb>
-      <BreadcrumbList>
-        <BreadcrumbItem>
-          <BreadcrumbLink>Home</BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbPage>Server Monitor</BreadcrumbPage>
-        </BreadcrumbItem>
-      </BreadcrumbList>
-    </Breadcrumb>
-  </section>
-
-  <section class="mt-8 space-y-8">
+  <section class="space-y-8">
     <Item variant="outline">
       <ItemContent>
         <div class="space-y-4">

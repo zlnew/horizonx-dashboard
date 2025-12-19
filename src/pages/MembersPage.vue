@@ -20,14 +20,6 @@ import RoutePagination from '@/components/RoutePagination.vue'
 import UserCreateDialog from '@/components/dialogs/UserCreateDialog.vue'
 import UserDeleteDialog from '@/components/dialogs/UserDeleteDialog.vue'
 import UserUpdateDialog from '@/components/dialogs/UserUpdateDialog.vue'
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator
-} from '@/components/ui/breadcrumb'
 import { Button } from '@/components/ui/button'
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group'
 import {
@@ -65,7 +57,7 @@ watch(refetch, (refetched) => {
 })
 
 onMounted(() => {
-  title.value = 'Team'
+  title.value = 'Members'
   search.value = criteria.value.search ?? ''
   perPage.value = criteria.value.limit ?? 20
 
@@ -138,29 +130,15 @@ const showDeleteModal = (user: User) => {
 
 <template>
   <section>
-    <Breadcrumb>
-      <BreadcrumbList>
-        <BreadcrumbItem>
-          <BreadcrumbLink>Home</BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbPage>Team</BreadcrumbPage>
-        </BreadcrumbItem>
-      </BreadcrumbList>
-    </Breadcrumb>
-  </section>
-
-  <section class="mt-8">
     <div class="flex flex-wrap items-center justify-between gap-8">
       <div class="flex items-center gap-4">
         <div class="bg-accent rounded-lg p-3">
           <UsersIcon :size="24" />
         </div>
         <div class="flex flex-col gap-0">
-          <div class="text-xl">Team</div>
+          <div class="text-xl">Members</div>
           <div class="text-sm text-neutral-400">
-            A centralized place to organize your team and streamline collaboration.
+            Everything about your team, organized and easy to manage.
           </div>
         </div>
       </div>

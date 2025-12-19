@@ -18,12 +18,13 @@ const router = createRouter({
     },
     {
       path: '/',
+      redirect: { name: 'applications' },
       component: MainLayout,
       children: [
         {
-          name: 'dashboard',
-          path: '',
-          component: () => import('@/pages/DashboardPage.vue')
+          name: 'applications',
+          path: 'applications',
+          component: () => import('@/pages/ApplicationsPage.vue')
         },
         {
           name: 'servers',
@@ -31,9 +32,14 @@ const router = createRouter({
           component: () => import('@/pages/ServersPage.vue')
         },
         {
-          name: 'team',
-          path: 'team',
-          component: () => import('@/pages/TeamPage.vue')
+          name: 'server.metrics',
+          path: 'server-metrics',
+          component: () => import('@/pages/ServerMetricsPage.vue')
+        },
+        {
+          name: 'members',
+          path: 'members',
+          component: () => import('@/pages/MembersPage.vue')
         }
       ]
     }

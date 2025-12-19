@@ -9,14 +9,6 @@ import ServerDeleteDialog from '@/components/dialogs/ServerDeleteDialog.vue'
 import ServerRegisterDialog from '@/components/dialogs/ServerRegisterDialog.vue'
 import ServerUpdateDialog from '@/components/dialogs/ServerUpdateDialog.vue'
 import { Badge } from '@/components/ui/badge'
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator
-} from '@/components/ui/breadcrumb'
 import { Button } from '@/components/ui/button'
 import {
   Table,
@@ -91,20 +83,6 @@ const showDeleteModal = (server: Server) => {
 
 <template>
   <section>
-    <Breadcrumb>
-      <BreadcrumbList>
-        <BreadcrumbItem>
-          <BreadcrumbLink>Home</BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbPage>Servers</BreadcrumbPage>
-        </BreadcrumbItem>
-      </BreadcrumbList>
-    </Breadcrumb>
-  </section>
-
-  <section class="mt-8">
     <div class="flex flex-wrap items-center justify-between gap-8">
       <div class="flex items-center gap-4">
         <div class="bg-accent rounded-lg p-3">

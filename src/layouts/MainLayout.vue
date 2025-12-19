@@ -1,32 +1,52 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import {
   ChartColumnBigIcon,
-  ChevronDownIcon,
+  ChevronUpIcon,
   LayoutGridIcon,
   LogOutIcon,
   OrbitIcon,
+  SearchIcon,
   ServerIcon,
+  User2Icon,
+  UserIcon,
   UsersIcon
 } from 'lucide-vue-next'
-import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
+import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group'
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarInset,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
+  SidebarRail,
+  SidebarTrigger
+} from '@/components/ui/sidebar'
 import useWebSocket from '@/composables/web-socket'
+import useAppStore from '@/stores/app'
 import useAuthStore from '@/stores/auth'
 
+const route = useRoute()
 const router = useRouter()
+const appStore = useAppStore()
 const authStore = useAuthStore()
 const { connect: connectWs } = useWebSocket()
+const { title } = storeToRefs(appStore)
 const { user } = storeToRefs(authStore)
 
 onMounted(() => {
@@ -41,79 +61,147 @@ const handleLogout = () => {
 </script>
 
 <template>
-  <header>
-    <div class="container mx-auto flex h-16 items-center justify-between">
-      <div class="flex items-center gap-2">
-        <OrbitIcon />
-        <div>
-          <span class="text-lg font-light tracking-widest text-neutral-400">Horizon</span>
-          <span class="text-lg font-bold">X</span>
+  <SidebarProvider>
+    <Sidebar
+      variant="floating"
+      collapsible="icon"
+    >
+      <SidebarHeader>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton size="lg">
+              <div class="flex aspect-square size-8 items-center justify-center">
+                <OrbitIcon class="size-6" />
+              </div>
+              <div class="grid flex-1 text-left text-base leading-tight">
+                <div>
+                  <span class="font-normal tracking-widest text-neutral-300">Horizon</span>
+                  <span class="font-bold">X</span>
+                </div>
+              </div>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarHeader>
+
+      <SidebarContent>
+        <div class="px-4">
+          <InputGroup>
+            <InputGroupInput placeholder="Search&hellip;" />
+            <InputGroupAddon>
+              <SearchIcon />
+            </InputGroupAddon>
+          </InputGroup>
         </div>
-      </div>
 
-      <div>
-        <DropdownMenu>
-          <DropdownMenuTrigger as-child>
-            <Button variant="ghost">
-              <LayoutGridIcon class="text-neutral-400" />
-              {{ user.name }}
-              <ChevronDownIcon />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            class="w-56"
-            align="end"
-          >
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            <DropdownMenuGroup>
-              <DropdownMenuItem>Profile</DropdownMenuItem>
-              <DropdownMenuItem>Settings</DropdownMenuItem>
-            </DropdownMenuGroup>
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarGroupLabel>Dashboard</SidebarGroupLabel>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  as-child
+                  :is-active="route.name === 'applications'"
+                >
+                  <RouterLink :to="{ name: 'applications' }">
+                    <LayoutGridIcon />
+                    <span>Applications</span>
+                  </RouterLink>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
 
-            <DropdownMenuSeparator />
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  as-child
+                  :is-active="route.name === 'servers'"
+                >
+                  <RouterLink :to="{ name: 'servers' }">
+                    <ServerIcon />
+                    <span>Servers</span>
+                  </RouterLink>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  as-child
+                  :is-active="route.name === 'server.metrics'"
+                >
+                  <RouterLink :to="{ name: 'server.metrics' }">
+                    <ChartColumnBigIcon />
+                    <span>Server Metrics</span>
+                  </RouterLink>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  as-child
+                  :is-active="route.name === 'members'"
+                >
+                  <RouterLink :to="{ name: 'members' }">
+                    <UsersIcon />
+                    <span>Members</span>
+                  </RouterLink>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
 
-            <DropdownMenuLabel>Pages</DropdownMenuLabel>
-            <DropdownMenuItem as-child>
-              <RouterLink :to="{ name: 'dashboard' }">
-                <ChartColumnBigIcon />
-                Server Monitor
-              </RouterLink>
-            </DropdownMenuItem>
-            <DropdownMenuItem as-child>
-              <RouterLink :to="{ name: 'servers' }">
-                <ServerIcon />
-                Servers
-              </RouterLink>
-            </DropdownMenuItem>
-            <DropdownMenuItem as-child>
-              <RouterLink :to="{ name: 'team' }">
-                <UsersIcon />
-                Team
-              </RouterLink>
-            </DropdownMenuItem>
+      <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <DropdownMenu>
+              <DropdownMenuTrigger as-child>
+                <SidebarMenuButton>
+                  <User2Icon /> {{ user.name }}
+                  <ChevronUpIcon class="ml-auto" />
+                </SidebarMenuButton>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                side="top"
+                class="w-(--reka-popper-anchor-width)"
+              >
+                <DropdownMenuItem>
+                  <UserIcon />
+                  <span>Profile</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  variant="destructive"
+                  @click="handleLogout"
+                >
+                  <LogOutIcon />
+                  <span>Sign out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
+      <SidebarRail />
+    </Sidebar>
 
-            <DropdownMenuSeparator />
+    <SidebarInset>
+      <header
+        class="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12"
+      >
+        <div class="flex items-center gap-2 px-4 sm:px-8">
+          <SidebarTrigger class="-ml-1" />
+          <span class="font-bold">{{ title }}</span>
+        </div>
+      </header>
 
-            <DropdownMenuItem
-              class="text-destructive"
-              @click="handleLogout"
-            >
-              <LogOutIcon />
-              Log out
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-    </div>
-  </header>
+      <main class="min-h-screen p-4 sm:p-8">
+        <RouterView />
+      </main>
 
-  <main class="container mx-auto my-4 min-h-dvh">
-    <RouterView />
-  </main>
-
-  <footer>
-    <div class="container mx-auto flex h-16 items-center justify-center">
-      <div class="text-sm text-neutral-400">Copyright (c) 2025 HorizonX. All Rights Reserved.</div>
-    </div>
-  </footer>
+      <footer>
+        <div class="container mx-auto flex h-16 items-center justify-center">
+          <div class="text-sm text-neutral-400">
+            Copyright (c) 2025 HorizonX. All Rights Reserved.
+          </div>
+        </div>
+      </footer>
+    </SidebarInset>
+  </SidebarProvider>
 </template>
