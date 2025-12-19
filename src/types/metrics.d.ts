@@ -1,3 +1,17 @@
+type Metrics = {
+  server_id: string
+  os_info: OsInfo
+  cpu: CPUMetric
+  gpu: GPUMetric[]
+  memory: MemoryMetric
+  disk: DiskMetric[]
+  network: NetworkMetric
+  uptime_seconds: number
+  recorded_at: string
+
+  server: Server | null
+}
+
 type OsInfo = {
   hostname: string
   name: string
@@ -60,18 +74,6 @@ type NetworkMetric = {
   tx_speed: number
 }
 
-type Metrics = {
-  server_id: string
-  os_info: OsInfo
-  cpu: CPUMetric
-  gpu: GPUMetric[]
-  memory: MemoryMetric
-  disk: DiskMetric[]
-  network: NetworkMetric
-  uptime_seconds: number
-  recorded_at: string
-}
-
 type CpuUsageHistory = {
   timestamp: Date
   usage: number
@@ -81,64 +83,4 @@ type NetHistory = {
   timestamp: Date
   download: number
   upload: number
-}
-
-type Server = {
-  id: string
-  name: string
-  ip_address: string
-  is_online: boolean
-  created_at: string
-  updated_at: string
-}
-
-type ServerStatus = {
-  server_id: string
-  is_online: boolean
-}
-
-type User = {
-  id: number
-  name: string
-  email: string
-  role_id: number
-  role: Role
-  permissions: Permission[] | null
-  created_at: string
-  updated_at: string
-}
-
-type Role = {
-  id: number
-  name: string
-}
-
-type Permission = {
-  id: number
-  name: string
-}
-
-type LoginRequest = {
-  email: string
-  password: string
-}
-
-type Meta = {
-  current_page: number
-  per_page: number
-  total: number
-  last_page: number
-}
-
-type Criteria = {
-  page?: number
-  limit?: number
-  search?: string
-  paginate?: boolean
-}
-
-type ApiResponse<T = unknown> = {
-  message?: string | null
-  data?: T | null
-  meta?: Meta | null
 }
