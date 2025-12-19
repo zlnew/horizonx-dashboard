@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, watch } from 'vue'
+import { computed, onMounted, onUnmounted, watch } from 'vue'
 import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import {
@@ -79,6 +79,10 @@ onBeforeRouteUpdate((to) => {
   perPage.value = criteria.limit ?? 20
 
   fetchUsers(criteria)
+})
+
+onUnmounted(() => {
+  userStore.cleanupState()
 })
 
 const fetchUsers = async (criteria: Criteria) => {

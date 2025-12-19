@@ -3,6 +3,8 @@ import { defineStore } from 'pinia'
 import UserApi from '@/api/User'
 
 const useUserStore = defineStore('user', () => {
+  const api = new UserApi()
+
   const users = ref<User[]>([])
   const meta = ref<Meta | null>(null)
   const loading = ref(false)
@@ -23,7 +25,7 @@ const useUserStore = defineStore('user', () => {
     notFound.value = false
 
     try {
-      const res = await new UserApi().get<ApiResponse<User[]>>(criteria)
+      const res = await api.get<ApiResponse<User[]>>(criteria)
 
       if (!res.data?.length) {
         notFound.value = true
@@ -42,7 +44,7 @@ const useUserStore = defineStore('user', () => {
 
   const createUser = async (request = {}) => {
     try {
-      return await new UserApi().store<ApiResponse>(request)
+      return await api.store<ApiResponse>(request)
     } catch (error) {
       throw error
     }
@@ -50,7 +52,7 @@ const useUserStore = defineStore('user', () => {
 
   const updateUser = async (resourceId: number, request = {}) => {
     try {
-      return await new UserApi().update<ApiResponse>(resourceId, request)
+      return await api.update<ApiResponse>(resourceId, request)
     } catch (error) {
       throw error
     }
@@ -58,10 +60,21 @@ const useUserStore = defineStore('user', () => {
 
   const deleteUser = async (resourceId: number) => {
     try {
-      return await new UserApi().destroy<ApiResponse>(resourceId)
+      return await api.destroy<ApiResponse>(resourceId)
     } catch (error) {
       throw error
     }
+  }
+
+  const cleanupState = () => {
+    users.value = []
+    loading.value = false
+    refetch.value = false
+    notFound.value = false
+    selectedUser.value = null
+    dialogCreateOpen.value = false
+    dialogUpdateOpen.value = false
+    dialogDeleteOpen.value = false
   }
 
   return {
@@ -79,7 +92,8 @@ const useUserStore = defineStore('user', () => {
     getUsers,
     createUser,
     updateUser,
-    deleteUser
+    deleteUser,
+    cleanupState
   }
 })
 

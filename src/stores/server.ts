@@ -3,6 +3,8 @@ import { defineStore } from 'pinia'
 import ServerApi from '@/api/Server'
 
 const useServerStore = defineStore('server', () => {
+  const api = new ServerApi()
+
   const servers = ref<Server[]>([])
   const loading = ref(false)
   const refetch = ref(false)
@@ -20,7 +22,7 @@ const useServerStore = defineStore('server', () => {
     notFound.value = false
 
     try {
-      const res = await new ServerApi().get<ApiResponse<Server[]>>()
+      const res = await api.get<ApiResponse<Server[]>>()
 
       if (!res.data?.length) {
         notFound.value = true
@@ -38,7 +40,7 @@ const useServerStore = defineStore('server', () => {
 
   const registerServer = async (request = {}) => {
     try {
-      return await new ServerApi().store<ApiResponse>(request)
+      return await api.store<ApiResponse>(request)
     } catch (error) {
       throw error
     }
@@ -46,7 +48,7 @@ const useServerStore = defineStore('server', () => {
 
   const updateServer = async (resourceId: string, request = {}) => {
     try {
-      return await new ServerApi().update<ApiResponse>(resourceId, request)
+      return await api.update<ApiResponse>(resourceId, request)
     } catch (error) {
       throw error
     }
@@ -54,7 +56,7 @@ const useServerStore = defineStore('server', () => {
 
   const deleteServer = async (resourceId: string) => {
     try {
-      return await new ServerApi().destroy<ApiResponse>(resourceId)
+      return await api.destroy<ApiResponse>(resourceId)
     } catch (error) {
       throw error
     }
