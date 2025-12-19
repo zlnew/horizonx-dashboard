@@ -39,7 +39,7 @@ onBeforeUnmount(() => {
 
 const onSubmit = form.handleSubmit((values) => {
   authStore.login(values).then(() => {
-    router.push({ name: 'dashboard' })
+    router.push({ path: '/' })
   })
 })
 </script>
