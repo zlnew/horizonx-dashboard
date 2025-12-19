@@ -45,9 +45,9 @@ const handleLogout = () => {
     <div class="container mx-auto flex h-16 items-center justify-between">
       <div class="flex items-center gap-2">
         <OrbitIcon />
-        <div class="text-lg font-bold">
-          <span class="text-neutral-400">Horizon</span>
-          <span>X</span>
+        <div>
+          <span class="text-lg font-light tracking-widest text-neutral-400">Horizon</span>
+          <span class="text-lg font-bold">X</span>
         </div>
       </div>
 
