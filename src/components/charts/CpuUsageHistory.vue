@@ -27,16 +27,16 @@ const chartConfig = {
 } satisfies ChartConfig
 
 watch(
-  () => metrics.value?.cpu?.usage,
+  () => metrics.value,
   (val) => {
-    if (val == null) return
+    if (!val?.cpu?.usage || !val.recorded_at) return
 
-    const now = new Date()
-    const cutoff = now.getTime() - 5 * 60 * 1000 // 5 minute
+    const recordedAt = new Date(val.recorded_at)
+    const cutoff = recordedAt.getTime() - 5 * 60 * 1000
 
     chartData.value.push({
-      timestamp: now,
-      usage: val
+      timestamp: recordedAt,
+      usage: val.cpu.usage
     })
 
     while (chartData.value.length > 0 && chartData.value[0]!.timestamp.getTime() < cutoff) {

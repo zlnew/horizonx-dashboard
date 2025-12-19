@@ -31,17 +31,17 @@ const chartConfig = {
 } satisfies ChartConfig
 
 watch(
-  () => metrics.value?.network,
+  () => metrics.value,
   (val) => {
-    if (!val) return
+    if (!val?.network || !val.recorded_at) return
 
-    const now = new Date()
-    const cutoff = now.getTime() - 5 * 60 * 1000 // 5 menit
+    const recordedAt = new Date(val.recorded_at)
+    const cutoff = recordedAt.getTime() - 5 * 60 * 1000
 
     chartData.value.push({
-      timestamp: now,
-      download: val.rx_speed,
-      upload: val.tx_speed
+      timestamp: recordedAt,
+      download: val.network.rx_speed,
+      upload: val.network.tx_speed
     })
 
     while (chartData.value.length > 0 && chartData.value[0]!.timestamp.getTime() < cutoff) {

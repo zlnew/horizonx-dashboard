@@ -61,6 +61,7 @@ type NetworkMetric = {
 }
 
 type Metrics = {
+  server_id: string
   os_info: OsInfo
   cpu: CPUMetric
   gpu: GPUMetric[]
@@ -68,6 +69,7 @@ type Metrics = {
   disk: DiskMetric[]
   network: NetworkMetric
   uptime_seconds: number
+  recorded_at: string
 }
 
 type CpuUsageHistory = {
