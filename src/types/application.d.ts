@@ -11,6 +11,8 @@ type Application = {
   updated_at: string
 
   server: Server | null
+  env_vars: EnvironmentVariable[] | null
+  volumes: Volume[] | null
 }
 
 type EnvironmentVariable = {
@@ -34,4 +36,37 @@ type Volume = {
   created_at: string
 
   application: Application | null
+}
+
+type ApplicationCreateRequest = {
+  server_id: string
+  name: string
+  repo_url: string
+  branch: string
+  docker_compose_raw: string
+
+  env_vars: EnvironmentVariableRequest[] | null
+  volumes: VolumeRequest[] | null
+}
+
+type ApplicationUpdateRequest = {
+  name: string
+  repo_url: string
+  branch: string
+  docker_compose_raw: string
+
+  env_vars: EnvironmentVariableRequest[] | null
+  volumes: VolumeRequest[] | null
+}
+
+type EnvironmentVariableRequest = {
+  key: string
+  value: string
+  is_preview: boolean
+}
+
+type VolumeRequest = {
+  host_path: string
+  container_path: string
+  mode: string
 }

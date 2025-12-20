@@ -27,6 +27,11 @@ const router = createRouter({
           component: () => import('@/pages/ApplicationsPage.vue')
         },
         {
+          name: 'applications.create',
+          path: 'applications/create',
+          component: () => import('@/pages/ApplicationCreatePage.vue')
+        },
+        {
           name: 'servers',
           path: 'servers',
           component: () => import('@/pages/ServersPage.vue')

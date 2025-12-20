@@ -27,9 +27,11 @@ onMounted(() => {
       </div>
 
       <div class="flex items-center gap-2">
-        <Button type="button">
-          <PlusIcon />
-          Create Application
+        <Button asChild>
+          <RouterLink :to="{ name: 'applications.create' }">
+            <PlusIcon />
+            Create Application
+          </RouterLink>
         </Button>
       </div>
     </div>
