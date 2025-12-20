@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
-import { ActivityIcon, ServerIcon, Settings2Icon } from 'lucide-vue-next'
+import { ActivityIcon, ChartColumnBigIcon, Settings2Icon } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
+import ServerApi from '@/api/Server'
 import AgentIsOffline from '@/components/AgentIsOffline.vue'
 import DataLoading from '@/components/DataLoading.vue'
 import StorageResource from '@/components/StorageResource.vue'
@@ -49,6 +50,8 @@ watch(
 
     metrics.value = null
 
+    fetchLatestMetrics(server.id)
+
     subServerMetrics = subscribe<Metrics>('server_metrics', (msg) => {
       if (msg.event === WSEvent.SERVER_METRICS_RECEIVED) {
         metrics.value = msg.payload
@@ -90,6 +93,19 @@ const fetchServers = async () => {
     toast.error(fetchError.message)
   }
 }
+
+const fetchLatestMetrics = async (serverID: string) => {
+  try {
+    const res = await new ServerApi().getLatestMetrics<ApiResponse<Metrics>>(serverID)
+
+    if (res.data) {
+      metrics.value = res.data
+    }
+  } catch (error) {
+    const fetchError = error as Error
+    toast.error(fetchError.message)
+  }
+}
 </script>
 
 <template>
@@ -100,10 +116,10 @@ const fetchServers = async () => {
           <div class="flex flex-wrap items-center justify-between gap-4">
             <div class="flex items-center gap-4">
               <div class="bg-accent rounded-lg p-3">
-                <ServerIcon :size="24" />
+                <ChartColumnBigIcon :size="24" />
               </div>
               <div class="flex flex-col gap-0">
-                <div class="text-xl">Server Monitor</div>
+                <div class="text-xl">System Monitor</div>
 
                 <template v-if="!selectedServer?.is_online">
                   <span class="text-sm text-neutral-400">Agent Unreachable</span>
