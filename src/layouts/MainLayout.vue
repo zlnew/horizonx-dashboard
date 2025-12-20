@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import {
@@ -10,17 +10,27 @@ import {
   OrbitIcon,
   SearchIcon,
   ServerIcon,
+  SettingsIcon,
   User2Icon,
   UserIcon,
   UsersIcon
 } from 'lucide-vue-next'
+import {
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator
+} from '@/components/ui/command'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group'
+import { Kbd } from '@/components/ui/kbd'
 import {
   Sidebar,
   SidebarContent,
@@ -49,9 +59,23 @@ const { connect: connectWs } = useWebSocket()
 const { title } = storeToRefs(appStore)
 const { user } = storeToRefs(authStore)
 
+const commandOpen = ref(false)
+
 onMounted(() => {
+  window.addEventListener('keydown', onKeydown)
   connectWs()
 })
+
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', onKeydown)
+})
+
+const onKeydown = (e: KeyboardEvent) => {
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+    e.preventDefault()
+    commandOpen.value = !commandOpen.value
+  }
+}
 
 const handleLogout = () => {
   authStore.logout().then(() => {
@@ -81,19 +105,30 @@ const handleLogout = () => {
               </div>
             </SidebarMenuButton>
           </SidebarMenuItem>
+
+          <SidebarMenuItem class="mt-4">
+            <SidebarMenuButton as-child>
+              <div
+                class="flex h-8 items-center justify-between border"
+                role="button"
+                @click="commandOpen = true"
+              >
+                <div class="flex items-center gap-2">
+                  <SearchIcon :size="16" />
+                  <span class="text-neutral-400">Search&hellip;</span>
+                </div>
+
+                <div class="flex items-center justify-end gap-1">
+                  <Kbd>Ctrl</Kbd>
+                  <Kbd>K</Kbd>
+                </div>
+              </div>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
 
       <SidebarContent>
-        <div class="px-4">
-          <InputGroup>
-            <InputGroupInput placeholder="Search&hellip;" />
-            <InputGroupAddon>
-              <SearchIcon />
-            </InputGroupAddon>
-          </InputGroup>
-        </div>
-
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -204,4 +239,77 @@ const handleLogout = () => {
       </footer>
     </SidebarInset>
   </SidebarProvider>
+
+  <Teleport to="body">
+    <CommandDialog
+      v-model:open="commandOpen"
+      #="{ close }"
+    >
+      <CommandInput placeholder="Type a command or search..." />
+      <CommandList>
+        <CommandEmpty>No results found.</CommandEmpty>
+        <CommandGroup heading="Suggestions">
+          <CommandItem
+            value="applications"
+            as-child
+          >
+            <RouterLink
+              :to="{ name: 'applications' }"
+              @click.capture="close"
+            >
+              <LayoutGridIcon />
+              <span>Applications</span>
+            </RouterLink>
+          </CommandItem>
+          <CommandItem
+            value="servers"
+            as-child
+          >
+            <RouterLink
+              :to="{ name: 'servers' }"
+              @click.capture="close"
+            >
+              <ServerIcon />
+              <span>Servers</span>
+            </RouterLink>
+          </CommandItem>
+          <CommandItem
+            value="server metrics"
+            as-child
+          >
+            <RouterLink
+              :to="{ name: 'server.metrics' }"
+              @click.capture="close"
+            >
+              <ChartColumnBigIcon />
+              <span>Server Metrics</span>
+            </RouterLink>
+          </CommandItem>
+          <CommandItem
+            value="members"
+            as-child
+          >
+            <RouterLink
+              :to="{ name: 'members' }"
+              @click.capture="close"
+            >
+              <UsersIcon />
+              <span>Members</span>
+            </RouterLink>
+          </CommandItem>
+        </CommandGroup>
+        <CommandSeparator />
+        <CommandGroup heading="Settings">
+          <CommandItem value="profile">
+            <User2Icon />
+            <span>Profile</span>
+          </CommandItem>
+          <CommandItem value="settings">
+            <SettingsIcon />
+            <span>Settings</span>
+          </CommandItem>
+        </CommandGroup>
+      </CommandList>
+    </CommandDialog>
+  </Teleport>
 </template>
