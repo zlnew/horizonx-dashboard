@@ -25,14 +25,6 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select'
-import {
   Stepper,
   StepperDescription,
   StepperIndicator,
@@ -52,14 +44,11 @@ import {
 import { Textarea } from '@/components/ui/textarea'
 import useAppStore from '@/stores/app'
 import useApplicationStore from '@/stores/application'
-import useServerStore from '@/stores/server'
 
 const router = useRouter()
 const appStore = useAppStore()
-const serverStore = useServerStore()
 const applicationStore = useApplicationStore()
 const { title } = storeToRefs(appStore)
-const { servers } = storeToRefs(serverStore)
 
 const stepIndex = ref(1)
 const steps = [
@@ -122,6 +111,7 @@ const currentSchema = computed(() => toTypedSchema(formSchema![stepIndex.value -
 const { handleSubmit, meta, validate } = useForm({
   validationSchema: currentSchema,
   initialValues: {
+    server_id: appStore.serverID,
     branch: 'main',
     env_vars: []
   },
@@ -139,21 +129,9 @@ const {
 
 const { value } = useFormValues()
 
-const selectedServer = computed(() => servers.value.find((s) => s.id === value?.server_id))
-
 onMounted(() => {
   title.value = 'Create New Application'
-  fetchServers()
 })
-
-const fetchServers = async () => {
-  try {
-    await serverStore.getServers()
-  } catch (error) {
-    const fetchError = error as Error
-    toast.error(fetchError.message)
-  }
-}
 
 const goNext = async (nextStep: () => void) => {
   const isValid = await validate()
@@ -255,34 +233,6 @@ const onSubmit = handleSubmit(async () => {
           </div>
 
           <template v-if="stepIndex === 1">
-            <FormField
-              v-slot="{ componentField }"
-              name="server_id"
-            >
-              <FormItem>
-                <FormLabel>Target Server</FormLabel>
-                <FormControl>
-                  <Select v-bind="componentField">
-                    <SelectTrigger>
-                      <SelectValue placeholder="Choose a server to deploy to" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectItem
-                          v-for="(srv, index) in servers"
-                          :key="index"
-                          :value="srv.id"
-                        >
-                          {{ srv.name }}
-                        </SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            </FormField>
-
             <FormField
               v-slot="{ componentField }"
               name="name"
@@ -439,7 +389,6 @@ const onSubmit = handleSubmit(async () => {
                 <h3 class="mb-2 font-semibold">Project</h3>
                 <div class="text-muted-foreground space-y-1 text-sm">
                   <div><strong>Name:</strong> {{ value?.name }}</div>
-                  <div><strong>Server:</strong> {{ selectedServer?.name }}</div>
                 </div>
               </div>
 

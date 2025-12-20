@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, onMounted, onUnmounted } from 'vue'
 import { storeToRefs } from 'pinia'
-import { ActivityIcon, ChartColumnBigIcon, Settings2Icon } from 'lucide-vue-next'
+import { ActivityIcon, ChartColumnBigIcon } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
 import ServerApi from '@/api/Server'
 import AgentIsOffline from '@/components/AgentIsOffline.vue'
@@ -10,15 +10,6 @@ import StorageResource from '@/components/StorageResource.vue'
 import SystemHealth from '@/components/SystemHealth.vue'
 import SystemPerformance from '@/components/SystemPerformance.vue'
 import { Item, ItemContent } from '@/components/ui/item'
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useNumber } from '@/composables/number'
 import useWebSocket from '@/composables/web-socket'
@@ -34,34 +25,13 @@ const { formatDuration } = useNumber()
 const { title } = storeToRefs(appStore)
 const { metrics } = storeToRefs(metricsStore)
 const { servers } = storeToRefs(serverStore)
-const selectedServer = ref<Server | null>(null)
 
 const { subscribe } = useWebSocket()
 
 let subServerStatus: { unsubscribe: () => void } | null = null
 let subServerMetrics: { unsubscribe: () => void } | null = null
 
-watch(
-  selectedServer,
-  (server) => {
-    if (!server?.id) {
-      return
-    }
-
-    metrics.value = null
-
-    fetchLatestMetrics(server.id)
-
-    subServerMetrics = subscribe<Metrics>('server_metrics', (msg) => {
-      if (msg.event === WSEvent.SERVER_METRICS_RECEIVED) {
-        metrics.value = msg.payload
-      }
-    })
-  },
-  {
-    immediate: true
-  }
-)
+const selectedServer = computed(() => servers.value.find((s) => s.id === appStore.serverID))
 
 onMounted(() => {
   title.value = 'Server Metrics'
@@ -72,7 +42,14 @@ onMounted(() => {
     }
   })
 
+  subServerMetrics = subscribe<Metrics>('server_metrics', (msg) => {
+    if (msg.event === WSEvent.SERVER_METRICS_RECEIVED) {
+      metrics.value = msg.payload
+    }
+  })
+
   fetchServers()
+  fetchLatestMetrics()
 })
 
 onUnmounted(() => {
@@ -85,18 +62,15 @@ onUnmounted(() => {
 const fetchServers = async () => {
   try {
     await serverStore.getServers()
-    if (servers.value.length && servers.value[0]) {
-      selectedServer.value = servers.value[0]
-    }
   } catch (error) {
     const fetchError = error as Error
     toast.error(fetchError.message)
   }
 }
 
-const fetchLatestMetrics = async (serverID: string) => {
+const fetchLatestMetrics = async () => {
   try {
-    const res = await new ServerApi().getLatestMetrics<ApiResponse<Metrics>>(serverID)
+    const res = await new ServerApi().getLatestMetrics<ApiResponse<Metrics>>(appStore.serverID)
 
     if (res.data) {
       metrics.value = res.data
@@ -160,30 +134,6 @@ const fetchLatestMetrics = async (serverID: string) => {
                 class="h-8 w-32"
               />
             </template>
-          </div>
-          <div>
-            <Select v-model="selectedServer">
-              <SelectTrigger class="w-full">
-                <Settings2Icon />
-                <SelectValue placeholder="Select server" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>Server Name</SelectLabel>
-                  <SelectItem
-                    v-for="(srv, i) in servers"
-                    :key="i"
-                    :value="srv"
-                  >
-                    <div class="flex items-center gap-2">
-                      <div class="font-bold">{{ srv.name }}</div>
-                      &middot;
-                      <div class="text-neutral-400">{{ srv.ip_address }}</div>
-                    </div>
-                  </SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
           </div>
         </div>
       </ItemContent>

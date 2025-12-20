@@ -15,6 +15,9 @@ import {
   UserIcon,
   UsersIcon
 } from 'lucide-vue-next'
+import type { AcceptableValue } from 'reka-ui'
+import { toast } from 'vue-sonner'
+import ServerApi from '@/api/Server'
 import {
   CommandDialog,
   CommandEmpty,
@@ -31,6 +34,14 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { Kbd } from '@/components/ui/kbd'
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select'
 import {
   Sidebar,
   SidebarContent,
@@ -56,14 +67,16 @@ const router = useRouter()
 const appStore = useAppStore()
 const authStore = useAuthStore()
 const { connect: connectWs } = useWebSocket()
-const { title } = storeToRefs(appStore)
+const { title, serverID } = storeToRefs(appStore)
 const { user } = storeToRefs(authStore)
 
+const servers = ref<Server[]>([])
 const commandOpen = ref(false)
 
 onMounted(() => {
   window.addEventListener('keydown', onKeydown)
   connectWs()
+  fetchServers()
 })
 
 onBeforeUnmount(() => {
@@ -75,6 +88,21 @@ const onKeydown = (e: KeyboardEvent) => {
     e.preventDefault()
     commandOpen.value = !commandOpen.value
   }
+}
+
+const fetchServers = async () => {
+  try {
+    const res = await new ServerApi().get<ApiResponse<Server[]>>()
+    servers.value = res.data ?? []
+  } catch (error) {
+    const fetchError = error as Error
+    toast.error(fetchError.message)
+  }
+}
+
+const handleServerSelect = (serverID: AcceptableValue) => {
+  appStore.serverID = serverID?.toString() ?? ''
+  window.location.reload()
 }
 
 const handleLogout = () => {
@@ -220,9 +248,34 @@ const handleLogout = () => {
       <header
         class="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12"
       >
-        <div class="flex items-center gap-2 px-4 sm:px-8">
-          <SidebarTrigger class="-ml-1" />
-          <span class="font-bold">{{ title }}</span>
+        <div class="flex w-full items-center justify-between gap-8 px-4 sm:px-8">
+          <div class="flex items-center gap-2">
+            <SidebarTrigger class="-ml-1" />
+            <span class="font-bold">{{ title }}</span>
+          </div>
+
+          <div>
+            <Select
+              v-model="serverID"
+              @update:model-value="handleServerSelect"
+            >
+              <SelectTrigger>
+                <ServerIcon class="text-neutral-400" />
+                <SelectValue placeholder="Choose a server" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectItem
+                    v-for="(srv, index) in servers"
+                    :key="index"
+                    :value="srv.id"
+                  >
+                    {{ srv.name }}
+                  </SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       </header>
 

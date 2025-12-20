@@ -1,13 +1,16 @@
 import { defineStore } from 'pinia'
-import { useTitle } from '@vueuse/core'
+import { useLocalStorage, useTitle } from '@vueuse/core'
 
 const useAppStore = defineStore('app', () => {
   const title = useTitle(null, {
     titleTemplate: '%s | HorizonX'
   })
 
+  const serverID = useLocalStorage('horizonx_server_id', '')
+
   return {
-    title
+    title,
+    serverID
   }
 })
 

@@ -19,9 +19,7 @@ onMounted(() => {
 
 const fetchApplications = async () => {
   try {
-    await applicationStore.getApplications({
-      server_id: 'none'
-    })
+    await applicationStore.getApplications({ server_id: appStore.serverID })
   } catch (error) {
     const fetchError = error as Error
     toast.error(fetchError.message)
