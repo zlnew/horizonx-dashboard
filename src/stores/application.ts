@@ -12,13 +12,13 @@ const useApplicationStore = defineStore('application', () => {
 
   const selectedApplication = ref<Application | null>(null)
 
-  const getApplications = async () => {
+  const getApplications = async (criteria: ApplicationCriteria = {}) => {
     loading.value = true
     refetch.value = false
     notFound.value = false
 
     try {
-      const res = await api.get<ApiResponse<Application[]>>()
+      const res = await api.get<ApiResponse<Application[]>>(criteria)
 
       if (!res.data?.length) {
         notFound.value = true

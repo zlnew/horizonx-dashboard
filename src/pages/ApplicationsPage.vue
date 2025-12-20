@@ -2,15 +2,31 @@
 import { onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { LayoutGridIcon, PlusIcon } from 'lucide-vue-next'
+import { toast } from 'vue-sonner'
 import { Button } from '@/components/ui/button'
 import useAppStore from '@/stores/app'
+import useApplicationStore from '@/stores/application'
 
 const appStore = useAppStore()
+const applicationStore = useApplicationStore()
 const { title } = storeToRefs(appStore)
+const {} = storeToRefs(applicationStore)
 
 onMounted(() => {
   title.value = 'Applications'
+  fetchApplications()
 })
+
+const fetchApplications = async () => {
+  try {
+    await applicationStore.getApplications({
+      server_id: 'none'
+    })
+  } catch (error) {
+    const fetchError = error as Error
+    toast.error(fetchError.message)
+  }
+}
 </script>
 
 <template>

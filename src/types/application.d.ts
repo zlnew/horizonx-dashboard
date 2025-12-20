@@ -1,3 +1,7 @@
+type ApplicationCriteria = Criteria & {
+  server_id?: string | null
+}
+
 type Application = {
   id: number
   server_id: string
