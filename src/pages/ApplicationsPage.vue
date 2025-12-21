@@ -76,7 +76,7 @@ const fetchApplications = async () => {
           :key="app.id"
           class="hover:bg-accent transition-colors"
         >
-          <RouterLink :to="{ name: 'applications.show', params: { id: app.id } }">
+          <RouterLink :to="{ name: 'applications.overview', params: { id: app.id } }">
             <CardHeader>
               <CardTitle>{{ app.name }}</CardTitle>
               <CardDescription>

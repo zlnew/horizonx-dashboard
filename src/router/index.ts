@@ -35,9 +35,30 @@ const router = createRouter({
               component: () => import('@/pages/ApplicationCreatePage.vue')
             },
             {
-              name: 'applications.show',
-              path: ':id/details',
-              component: () => import('@/pages/ApplicationDetailsPage.vue')
+              path: ':id',
+              component: () => import('@/layouts/ApplicationDetailsLayout.vue'),
+              children: [
+                {
+                  name: 'applications.overview',
+                  path: 'overview',
+                  component: () => import('@/pages/ApplicationOverviewPage.vue')
+                },
+                {
+                  name: 'applications.configuration',
+                  path: 'configuration',
+                  component: () => import('@/pages/ApplicationConfigurationPage.vue')
+                },
+                {
+                  name: 'applications.deploys',
+                  path: 'deploys',
+                  component: () => import('@/pages/ApplicationDeploysPage.vue')
+                },
+                {
+                  name: 'applications.deploys.show',
+                  path: 'deploys/:deploymentID',
+                  component: () => import('@/pages/ApplicationDeployDetailsPage.vue')
+                }
+              ]
             }
           ]
         },
