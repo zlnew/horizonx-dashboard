@@ -69,6 +69,10 @@ const fetchServers = async () => {
 }
 
 const fetchLatestMetrics = async () => {
+  if (appStore.serverID === '') {
+    return
+  }
+
   try {
     const res = await new ServerApi().getLatestMetrics<ApiResponse<Metrics>>(appStore.serverID)
 

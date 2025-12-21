@@ -1,16 +1,29 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
-import { LayoutGridIcon, PlusIcon } from 'lucide-vue-next'
+import { ChevronRightIcon, LayoutGridIcon, PlusIcon } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
+import AppStatusBadge from '@/components/AppStatusBadge.vue'
+import DataLoading from '@/components/DataLoading.vue'
+import DataNotFound from '@/components/DataNotFound.vue'
 import { Button } from '@/components/ui/button'
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from '@/components/ui/card'
+import { useDate } from '@/composables/date'
 import useAppStore from '@/stores/app'
 import useApplicationStore from '@/stores/application'
 
+const { formatDate } = useDate()
 const appStore = useAppStore()
 const applicationStore = useApplicationStore()
 const { title } = storeToRefs(appStore)
-const {} = storeToRefs(applicationStore)
+const { applications, loading, notFound } = storeToRefs(applicationStore)
 
 onMounted(() => {
   title.value = 'Applications'
@@ -18,6 +31,10 @@ onMounted(() => {
 })
 
 const fetchApplications = async () => {
+  if (appStore.serverID === '') {
+    return
+  }
+
   try {
     await applicationStore.getApplications({ server_id: appStore.serverID })
   } catch (error) {
@@ -49,5 +66,50 @@ const fetchApplications = async () => {
         </Button>
       </div>
     </div>
+  </section>
+
+  <section class="mt-8 space-y-4">
+    <template v-if="applications.length">
+      <div class="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3">
+        <Card
+          v-for="app in applications"
+          :key="app.id"
+          class="hover:bg-accent transition-colors"
+        >
+          <RouterLink :to="{ name: 'applications.show', params: { id: app.id } }">
+            <CardHeader>
+              <CardTitle>{{ app.name }}</CardTitle>
+              <CardDescription>
+                <span>Last deployment: </span>
+                <span class="text-neutral-200">
+                  {{
+                    app.last_deployment_at
+                      ? formatDate(new Date(app.last_deployment_at), 'DD MMM YYYY')
+                      : '-'
+                  }}
+                </span>
+              </CardDescription>
+              <CardAction>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-lg"
+                >
+                  <ChevronRightIcon />
+                </Button>
+              </CardAction>
+            </CardHeader>
+            <CardContent>
+              <div class="mt-4">
+                <AppStatusBadge :status="app.status" />
+              </div>
+            </CardContent>
+          </RouterLink>
+        </Card>
+      </div>
+    </template>
+
+    <DataLoading v-else-if="loading" />
+    <DataNotFound v-else-if="notFound" />
   </section>
 </template>

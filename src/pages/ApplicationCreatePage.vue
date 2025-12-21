@@ -89,17 +89,15 @@ const formSchema = [
     docker_compose_raw: z.string()
   }),
   z.object({
-    env_vars: z
-      .array(
-        z.object({
-          key: z
-            .string()
-            .min(1, 'Key is required')
-            .regex(/^[A-Z_][A-Z0-9_]*$/, 'Invalid env key format'),
-          value: z.string().optional()
-        })
-      )
-      .min(1, 'At least one env var required')
+    env_vars: z.array(
+      z.object({
+        key: z
+          .string()
+          .min(1, 'Key is required')
+          .regex(/^[A-Z_][A-Z0-9_]*$/, 'Invalid env key format'),
+        value: z.string().optional()
+      })
+    )
   }),
   z.object({})
 ]

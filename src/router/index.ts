@@ -22,14 +22,24 @@ const router = createRouter({
       component: MainLayout,
       children: [
         {
-          name: 'applications',
           path: 'applications',
-          component: () => import('@/pages/ApplicationsPage.vue')
-        },
-        {
-          name: 'applications.create',
-          path: 'applications/create',
-          component: () => import('@/pages/ApplicationCreatePage.vue')
+          children: [
+            {
+              name: 'applications',
+              path: '',
+              component: () => import('@/pages/ApplicationsPage.vue')
+            },
+            {
+              name: 'applications.create',
+              path: 'create',
+              component: () => import('@/pages/ApplicationCreatePage.vue')
+            },
+            {
+              name: 'applications.show',
+              path: ':id/details',
+              component: () => import('@/pages/ApplicationDetailsPage.vue')
+            }
+          ]
         },
         {
           name: 'servers',
