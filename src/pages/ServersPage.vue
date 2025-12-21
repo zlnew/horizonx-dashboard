@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, watch, watchEffect } from 'vue'
+import { onMounted, onUnmounted, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { PlusIcon, RefreshCwIcon, ServerIcon, SquarePenIcon, TrashIcon } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
@@ -18,14 +18,12 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
+import { usePageMeta } from '@/composables/page-meta'
 import useWebSocket from '@/composables/web-socket'
 import WSEvent from '@/constants/ws-event'
-import useAppStore from '@/stores/app'
 import useServerStore from '@/stores/server'
 
-const appStore = useAppStore()
 const serverStore = useServerStore()
-const { title, breadcrumb } = storeToRefs(appStore)
 const { servers, loading, refetch, notFound } = storeToRefs(serverStore)
 
 const { subscribe } = useWebSocket()
@@ -37,19 +35,14 @@ watch(refetch, (refetched) => {
   }
 })
 
-watchEffect((onCleanup) => {
-  title.value = 'Servers'
-  breadcrumb.value = [
+usePageMeta({
+  title: 'Servers',
+  breadcrumb: [
     {
       label: 'Servers',
       to: { name: 'servers' }
     }
   ]
-
-  onCleanup(() => {
-    title.value = null
-    breadcrumb.value = []
-  })
 })
 
 onMounted(() => {

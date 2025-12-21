@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { onMounted, watchEffect } from 'vue'
+import { computed, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { EditIcon, PlusIcon, XIcon } from 'lucide-vue-next'
 import DataNotFound from '@/components/DataNotFound.vue'
+import DockerComposeCode from '@/components/DockerComposeCode.vue'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -13,35 +14,30 @@ import {
   CardTitle
 } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table'
-import useAppStore from '@/stores/app'
+import { usePageMeta } from '@/composables/page-meta'
 import useApplicationStore from '@/stores/application'
 
-const appStore = useAppStore()
 const applicationStore = useApplicationStore()
 
-const { title, breadcrumb } = storeToRefs(appStore)
 const { selectedApplication } = storeToRefs(applicationStore)
 
-watchEffect((onCleanup) => {
-  title.value = `${selectedApplication.value?.name} · Configuration`
-  breadcrumb.value = [
+const pageTitle = computed(() => `${selectedApplication.value?.name} · Configuration`)
+
+usePageMeta({
+  title: pageTitle,
+  breadcrumb: computed(() => [
     {
       label: 'Applications',
       to: { name: 'applications' }
     },
     {
-      label: title.value,
+      label: pageTitle.value,
       to: {
         name: 'applications.configuration',
         params: { id: String(selectedApplication.value?.id) }
       }
     }
-  ]
-
-  onCleanup(() => {
-    title.value = null
-    breadcrumb.value = []
-  })
+  ])
 })
 
 onMounted(() => {})
@@ -65,9 +61,9 @@ onMounted(() => {})
         </CardAction>
       </CardHeader>
       <CardContent>
-        <div class="bg-background text-foreground h-84 overflow-auto rounded-lg p-4 text-sm">
-          <pre>{{ selectedApplication?.docker_compose_raw }}</pre>
-        </div>
+        <template v-if="selectedApplication?.docker_compose_raw">
+          <DockerComposeCode :code="selectedApplication?.docker_compose_raw" />
+        </template>
       </CardContent>
     </Card>
   </section>

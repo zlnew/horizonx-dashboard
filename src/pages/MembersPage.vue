@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, watch, watchEffect } from 'vue'
+import { computed, onMounted, onUnmounted, watch } from 'vue'
 import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import {
@@ -38,14 +38,12 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
-import useAppStore from '@/stores/app'
+import { usePageMeta } from '@/composables/page-meta'
 import useUserStore from '@/stores/user'
 
 const route = useRoute()
 const router = useRouter()
-const appStore = useAppStore()
 const userStore = useUserStore()
-const { title, breadcrumb } = storeToRefs(appStore)
 const { users, meta, loading, refetch, notFound, perPage, search } = storeToRefs(userStore)
 
 const criteria = computed(() => route.query as Criteria)
@@ -56,19 +54,14 @@ watch(refetch, (refetched) => {
   }
 })
 
-watchEffect((onCleanup) => {
-  title.value = 'Members'
-  breadcrumb.value = [
+usePageMeta({
+  title: 'Members',
+  breadcrumb: [
     {
       label: 'Members',
       to: { name: 'members' }
     }
   ]
-
-  onCleanup(() => {
-    title.value = null
-    breadcrumb.value = []
-  })
 })
 
 onMounted(() => {

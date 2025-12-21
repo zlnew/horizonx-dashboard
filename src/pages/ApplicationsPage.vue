@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, watchEffect } from 'vue'
+import { onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { ChevronRightIcon, LayoutGridIcon, PlusIcon } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
@@ -16,28 +16,23 @@ import {
   CardTitle
 } from '@/components/ui/card'
 import { useDate } from '@/composables/date'
+import { usePageMeta } from '@/composables/page-meta'
 import useAppStore from '@/stores/app'
 import useApplicationStore from '@/stores/application'
 
 const { formatDate } = useDate()
 const appStore = useAppStore()
 const applicationStore = useApplicationStore()
-const { title, breadcrumb } = storeToRefs(appStore)
 const { applications, loading, notFound } = storeToRefs(applicationStore)
 
-watchEffect((onCleanup) => {
-  title.value = 'Applications'
-  breadcrumb.value = [
+usePageMeta({
+  title: 'Applications',
+  breadcrumb: [
     {
       label: 'Applications',
       to: { name: 'applications' }
     }
   ]
-
-  onCleanup(() => {
-    title.value = null
-    breadcrumb.value = []
-  })
 })
 
 onMounted(() => {

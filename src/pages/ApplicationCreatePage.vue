@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { computed, ref, watchEffect } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { storeToRefs } from 'pinia'
 import { toTypedSchema } from '@vee-validate/zod'
 import {
   CheckCircleIcon,
@@ -14,6 +13,7 @@ import {
 import { useFieldArray, useForm, useFormValues } from 'vee-validate'
 import { toast } from 'vue-sonner'
 import z from 'zod'
+import DockerComposeCode from '@/components/DockerComposeCode.vue'
 import { Button } from '@/components/ui/button'
 import {
   FormControl,
@@ -42,13 +42,13 @@ import {
   TableRow
 } from '@/components/ui/table'
 import { Textarea } from '@/components/ui/textarea'
+import { usePageMeta } from '@/composables/page-meta'
 import useAppStore from '@/stores/app'
 import useApplicationStore from '@/stores/application'
 
 const router = useRouter()
 const appStore = useAppStore()
 const applicationStore = useApplicationStore()
-const { title, breadcrumb } = storeToRefs(appStore)
 
 const stepIndex = ref(1)
 const steps = [
@@ -127,25 +127,18 @@ const {
 
 const { value } = useFormValues()
 
-watchEffect((onCleanup) => {
-  title.value = 'Create New Application'
-  breadcrumb.value = [
+usePageMeta({
+  title: 'Create New Application',
+  breadcrumb: [
     {
       label: 'Applications',
       to: { name: 'applications' }
     },
     {
-      label: title.value,
-      to: {
-        name: 'applications.create'
-      }
+      label: 'Create New Application',
+      to: { name: 'applications.Create' }
     }
   ]
-
-  onCleanup(() => {
-    title.value = null
-    breadcrumb.value = []
-  })
 })
 
 const goNext = async (nextStep: () => void) => {
@@ -419,9 +412,9 @@ const onSubmit = handleSubmit(async () => {
               <!-- Build -->
               <div class="rounded-lg border p-4">
                 <h3 class="mb-2 font-semibold">Build Configuration</h3>
-                <pre class="bg-muted max-h-48 overflow-auto rounded p-3 text-xs">
-                  {{ value?.docker_compose_raw }}
-                </pre>
+                <template v-if="value?.docker_compose_raw">
+                  <DockerComposeCode :code="value.docker_compose_raw" />
+                </template>
               </div>
 
               <!-- Env Vars -->

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, watchEffect } from 'vue'
+import { computed, onMounted, onUnmounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { ActivityIcon, ChartColumnBigIcon } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
@@ -12,6 +12,7 @@ import SystemPerformance from '@/components/SystemPerformance.vue'
 import { Item, ItemContent } from '@/components/ui/item'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useNumber } from '@/composables/number'
+import { usePageMeta } from '@/composables/page-meta'
 import useWebSocket from '@/composables/web-socket'
 import WSEvent from '@/constants/ws-event'
 import useAppStore from '@/stores/app'
@@ -22,7 +23,6 @@ const appStore = useAppStore()
 const metricsStore = useMetricsStore()
 const serverStore = useServerStore()
 const { formatDuration } = useNumber()
-const { title, breadcrumb } = storeToRefs(appStore)
 const { metrics } = storeToRefs(metricsStore)
 const { servers } = storeToRefs(serverStore)
 
@@ -33,19 +33,14 @@ let subServerMetrics: { unsubscribe: () => void } | null = null
 
 const selectedServer = computed(() => servers.value.find((s) => s.id === appStore.serverID))
 
-watchEffect((onCleanup) => {
-  title.value = 'Server Metrics'
-  breadcrumb.value = [
+usePageMeta({
+  title: 'Servers Metrics',
+  breadcrumb: [
     {
-      label: 'Server Metrics',
-      to: { name: 'server.metrics' }
+      label: 'Servers Metrics',
+      to: { name: 'servers.metrics' }
     }
   ]
-
-  onCleanup(() => {
-    title.value = null
-    breadcrumb.value = []
-  })
 })
 
 onMounted(() => {
