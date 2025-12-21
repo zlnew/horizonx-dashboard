@@ -19,6 +19,14 @@ import type { AcceptableValue } from 'reka-ui'
 import { toast } from 'vue-sonner'
 import ServerApi from '@/api/Server'
 import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator
+} from '@/components/ui/breadcrumb'
+import {
   CommandDialog,
   CommandEmpty,
   CommandGroup,
@@ -67,7 +75,7 @@ const router = useRouter()
 const appStore = useAppStore()
 const authStore = useAuthStore()
 const { connect: connectWs } = useWebSocket()
-const { title, serverID } = storeToRefs(appStore)
+const { breadcrumb, serverID } = storeToRefs(appStore)
 const { user } = storeToRefs(authStore)
 
 const servers = ref<Server[]>([])
@@ -251,7 +259,28 @@ const handleLogout = () => {
         <div class="flex w-full items-center justify-between gap-8 px-4 sm:px-8">
           <div class="flex items-center gap-2">
             <SidebarTrigger class="-ml-1" />
-            <span class="font-bold">{{ title }}</span>
+            <Breadcrumb>
+              <BreadcrumbList>
+                <template
+                  v-for="(br, index) in breadcrumb"
+                  :key="index"
+                >
+                  <BreadcrumbItem>
+                    <template v-if="index === breadcrumb.length - 1">
+                      <BreadcrumbPage>{{ br.label }}</BreadcrumbPage>
+                    </template>
+                    <template v-else>
+                      <BreadcrumbLink as-child>
+                        <RouterLink :to="br.to">
+                          {{ br.label }}
+                        </RouterLink>
+                      </BreadcrumbLink>
+                    </template>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator v-if="index < breadcrumb.length - 1" />
+                </template>
+              </BreadcrumbList>
+            </Breadcrumb>
           </div>
 
           <div>

@@ -1,3 +1,4 @@
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { useLocalStorage, useTitle } from '@vueuse/core'
 
@@ -6,10 +7,13 @@ const useAppStore = defineStore('app', () => {
     titleTemplate: '%s | HorizonX'
   })
 
+  const breadcrumb = ref<Breadcrumb[]>([])
+
   const serverID = useLocalStorage('horizonx_server_id', '')
 
   return {
     title,
+    breadcrumb,
     serverID
   }
 })

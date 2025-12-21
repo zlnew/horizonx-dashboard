@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted } from 'vue'
+import { computed, onMounted, onUnmounted, watchEffect } from 'vue'
 import { storeToRefs } from 'pinia'
 import { ActivityIcon, ChartColumnBigIcon } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
@@ -22,7 +22,7 @@ const appStore = useAppStore()
 const metricsStore = useMetricsStore()
 const serverStore = useServerStore()
 const { formatDuration } = useNumber()
-const { title } = storeToRefs(appStore)
+const { title, breadcrumb } = storeToRefs(appStore)
 const { metrics } = storeToRefs(metricsStore)
 const { servers } = storeToRefs(serverStore)
 
@@ -33,9 +33,22 @@ let subServerMetrics: { unsubscribe: () => void } | null = null
 
 const selectedServer = computed(() => servers.value.find((s) => s.id === appStore.serverID))
 
-onMounted(() => {
+watchEffect((onCleanup) => {
   title.value = 'Server Metrics'
+  breadcrumb.value = [
+    {
+      label: 'Server Metrics',
+      to: { name: 'server.metrics' }
+    }
+  ]
 
+  onCleanup(() => {
+    title.value = null
+    breadcrumb.value = []
+  })
+})
+
+onMounted(() => {
   subServerStatus = subscribe<ServerStatus>('server_status', (msg) => {
     if (msg.event === WSEvent.SERVER_STATUS_CHANGED) {
       serverStore.updateServerStatus(msg.payload)

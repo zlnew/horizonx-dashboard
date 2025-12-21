@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onMounted, watchEffect } from 'vue'
 import { storeToRefs } from 'pinia'
 import { ChevronRightIcon, LayoutGridIcon, PlusIcon } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
@@ -22,11 +22,25 @@ import useApplicationStore from '@/stores/application'
 const { formatDate } = useDate()
 const appStore = useAppStore()
 const applicationStore = useApplicationStore()
-const { title } = storeToRefs(appStore)
+const { title, breadcrumb } = storeToRefs(appStore)
 const { applications, loading, notFound } = storeToRefs(applicationStore)
 
-onMounted(() => {
+watchEffect((onCleanup) => {
   title.value = 'Applications'
+  breadcrumb.value = [
+    {
+      label: 'Applications',
+      to: { name: 'applications' }
+    }
+  ]
+
+  onCleanup(() => {
+    title.value = null
+    breadcrumb.value = []
+  })
+})
+
+onMounted(() => {
   fetchApplications()
 })
 

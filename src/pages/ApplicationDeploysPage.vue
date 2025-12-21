@@ -9,14 +9,28 @@ import useApplicationStore from '@/stores/application'
 const appStore = useAppStore()
 const applicationStore = useApplicationStore()
 
-const { title } = storeToRefs(appStore)
+const { title, breadcrumb } = storeToRefs(appStore)
 const { selectedApplication } = storeToRefs(applicationStore)
 
 watchEffect((onCleanup) => {
   title.value = `${selectedApplication.value?.name} · Deploys`
+  breadcrumb.value = [
+    {
+      label: 'Applications',
+      to: { name: 'applications' }
+    },
+    {
+      label: title.value,
+      to: {
+        name: 'applications.deploys',
+        params: { id: String(selectedApplication.value?.id) }
+      }
+    }
+  ]
 
   onCleanup(() => {
     title.value = null
+    breadcrumb.value = []
   })
 })
 

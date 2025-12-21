@@ -17,3 +17,8 @@ type Criteria = {
   search?: string
   paginate?: boolean
 }
+
+type Breadcrumb = {
+  label: string
+  to: { name: string; params?: Record<string, string> }
+}

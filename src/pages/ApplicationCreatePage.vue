@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, ref, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { toTypedSchema } from '@vee-validate/zod'
@@ -48,7 +48,7 @@ import useApplicationStore from '@/stores/application'
 const router = useRouter()
 const appStore = useAppStore()
 const applicationStore = useApplicationStore()
-const { title } = storeToRefs(appStore)
+const { title, breadcrumb } = storeToRefs(appStore)
 
 const stepIndex = ref(1)
 const steps = [
@@ -127,8 +127,25 @@ const {
 
 const { value } = useFormValues()
 
-onMounted(() => {
+watchEffect((onCleanup) => {
   title.value = 'Create New Application'
+  breadcrumb.value = [
+    {
+      label: 'Applications',
+      to: { name: 'applications' }
+    },
+    {
+      label: title.value,
+      to: {
+        name: 'applications.create'
+      }
+    }
+  ]
+
+  onCleanup(() => {
+    title.value = null
+    breadcrumb.value = []
+  })
 })
 
 const goNext = async (nextStep: () => void) => {

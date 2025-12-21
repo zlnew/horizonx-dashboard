@@ -21,14 +21,28 @@ const { formatDate } = useDate()
 const appStore = useAppStore()
 const applicationStore = useApplicationStore()
 
-const { title } = storeToRefs(appStore)
+const { title, breadcrumb } = storeToRefs(appStore)
 const { selectedApplication } = storeToRefs(applicationStore)
 
 watchEffect((onCleanup) => {
   title.value = `${selectedApplication.value?.name} · Overview`
+  breadcrumb.value = [
+    {
+      label: 'Applications',
+      to: { name: 'applications' }
+    },
+    {
+      label: title.value,
+      to: {
+        name: 'applications.overview',
+        params: { id: String(selectedApplication.value?.id) }
+      }
+    }
+  ]
 
   onCleanup(() => {
     title.value = null
+    breadcrumb.value = []
   })
 })
 

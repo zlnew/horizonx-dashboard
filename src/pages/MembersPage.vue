@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, watch } from 'vue'
+import { computed, onMounted, onUnmounted, watch, watchEffect } from 'vue'
 import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import {
@@ -45,7 +45,7 @@ const route = useRoute()
 const router = useRouter()
 const appStore = useAppStore()
 const userStore = useUserStore()
-const { title } = storeToRefs(appStore)
+const { title, breadcrumb } = storeToRefs(appStore)
 const { users, meta, loading, refetch, notFound, perPage, search } = storeToRefs(userStore)
 
 const criteria = computed(() => route.query as Criteria)
@@ -56,8 +56,22 @@ watch(refetch, (refetched) => {
   }
 })
 
-onMounted(() => {
+watchEffect((onCleanup) => {
   title.value = 'Members'
+  breadcrumb.value = [
+    {
+      label: 'Members',
+      to: { name: 'members' }
+    }
+  ]
+
+  onCleanup(() => {
+    title.value = null
+    breadcrumb.value = []
+  })
+})
+
+onMounted(() => {
   search.value = criteria.value.search ?? ''
   perPage.value = criteria.value.limit ?? 20
 

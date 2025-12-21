@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, watch } from 'vue'
+import { onMounted, onUnmounted, watch, watchEffect } from 'vue'
 import { storeToRefs } from 'pinia'
 import { PlusIcon, RefreshCwIcon, ServerIcon, SquarePenIcon, TrashIcon } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
@@ -25,7 +25,7 @@ import useServerStore from '@/stores/server'
 
 const appStore = useAppStore()
 const serverStore = useServerStore()
-const { title } = storeToRefs(appStore)
+const { title, breadcrumb } = storeToRefs(appStore)
 const { servers, loading, refetch, notFound } = storeToRefs(serverStore)
 
 const { subscribe } = useWebSocket()
@@ -37,8 +37,22 @@ watch(refetch, (refetched) => {
   }
 })
 
-onMounted(() => {
+watchEffect((onCleanup) => {
   title.value = 'Servers'
+  breadcrumb.value = [
+    {
+      label: 'Servers',
+      to: { name: 'servers' }
+    }
+  ]
+
+  onCleanup(() => {
+    title.value = null
+    breadcrumb.value = []
+  })
+})
+
+onMounted(() => {
   fetchServers()
 
   sub = subscribe<ServerStatus>('server_status', (msg) => {
