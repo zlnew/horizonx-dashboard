@@ -4,6 +4,12 @@ import { storeToRefs } from 'pinia'
 import { EditIcon, PlusIcon, XIcon } from 'lucide-vue-next'
 import DataNotFound from '@/components/DataNotFound.vue'
 import DockerComposeCode from '@/components/DockerComposeCode.vue'
+import ApplicationCreateEnvVarDialog from '@/components/dialogs/ApplicationCreateEnvVarDialog.vue'
+import ApplicationDeleteDialog from '@/components/dialogs/ApplicationDeleteDialog.vue'
+import ApplicationDeleteEnvVarDialog from '@/components/dialogs/ApplicationDeleteEnvVarDialog.vue'
+import ApplicationUpdateDialog from '@/components/dialogs/ApplicationUpdateDialog.vue'
+import ApplicationUpdateDockerComposeDialog from '@/components/dialogs/ApplicationUpdateDockerComposeDialog.vue'
+import ApplicationUpdateEnvVarDialog from '@/components/dialogs/ApplicationUpdateEnvVarDialog.vue'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -41,6 +47,14 @@ usePageMeta({
 })
 
 onMounted(() => {})
+
+const showUpdateDockerComposeDialog = () => {
+  applicationStore.dialogUpdateDockerComposeOpen = true
+}
+
+const showDeleteDialog = () => {
+  applicationStore.dialogDeleteAppOpen = true
+}
 </script>
 
 <template>
@@ -53,8 +67,10 @@ onMounted(() => {})
         </CardDescription>
         <CardAction>
           <Button
+            type="button"
             size="icon-lg"
             variant="ghost"
+            @click="showUpdateDockerComposeDialog"
           >
             <EditIcon />
           </Button>
@@ -97,7 +113,7 @@ onMounted(() => {})
                     <Button
                       type="button"
                       size="icon-sm"
-                      variant="secondary"
+                      variant="outline"
                       aria-label="Edit env var"
                     >
                       <EditIcon />
@@ -131,10 +147,20 @@ onMounted(() => {})
         <Button
           type="button"
           variant="destructive"
+          @click="showDeleteDialog"
         >
           Permanently delete application
         </Button>
       </CardContent>
     </Card>
   </section>
+
+  <Teleport to="body">
+    <ApplicationUpdateDialog />
+    <ApplicationUpdateDockerComposeDialog />
+    <ApplicationCreateEnvVarDialog />
+    <ApplicationUpdateEnvVarDialog />
+    <ApplicationDeleteEnvVarDialog />
+    <ApplicationDeleteDialog />
+  </Teleport>
 </template>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { BoltIcon, FileClock, GaugeIcon } from 'lucide-vue-next'
@@ -10,8 +10,7 @@ import useApplicationStore from '@/stores/application'
 const route = useRoute()
 const applicationStore = useApplicationStore()
 
-const { selectedApplication } = storeToRefs(applicationStore)
-const loading = ref(false)
+const { selectedApplication, refetch, loading } = storeToRefs(applicationStore)
 
 const appID = computed(() => Number(route.params.id))
 
@@ -33,11 +32,22 @@ const menu = [
   }
 ]
 
+watch(refetch, (refetched) => {
+  if (refetched) {
+    fetchApplication()
+  }
+})
+
 onMounted(() => {
   fetchApplication()
 })
 
+onUnmounted(() => {
+  applicationStore.cleanupState()
+})
+
 const fetchApplication = async () => {
+  refetch.value = false
   loading.value = true
 
   try {

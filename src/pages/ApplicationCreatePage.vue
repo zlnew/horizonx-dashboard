@@ -153,9 +153,12 @@ const onSubmit = handleSubmit(async () => {
   try {
     const res = await applicationStore.createApplication(form)
 
-    if (res.message) {
+    if (res.message && res.data?.id) {
       toast.success(res.message)
-      router.push({ name: 'applications' })
+      router.push({
+        name: 'applications.deploys',
+        params: { id: res.data.id }
+      })
     }
   } catch (error) {
     const fetchError = error as Error

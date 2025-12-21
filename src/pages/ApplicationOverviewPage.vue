@@ -4,6 +4,7 @@ import { storeToRefs } from 'pinia'
 import { EditIcon } from 'lucide-vue-next'
 import AppStatusBadge from '@/components/AppStatusBadge.vue'
 import DataNotFound from '@/components/DataNotFound.vue'
+import ApplicationUpdateDialog from '@/components/dialogs/ApplicationUpdateDialog.vue'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -42,6 +43,10 @@ usePageMeta({
 })
 
 onMounted(() => {})
+
+const showUpdateDialog = () => {
+  applicationStore.dialogUpdateAppOpen = true
+}
 </script>
 
 <template>
@@ -54,8 +59,10 @@ onMounted(() => {})
         </CardDescription>
         <CardAction>
           <Button
+            type="button"
             size="icon-lg"
             variant="ghost"
+            @click="showUpdateDialog"
           >
             <EditIcon />
           </Button>
@@ -127,4 +134,8 @@ onMounted(() => {})
       </CardHeader>
     </Card>
   </section>
+
+  <Teleport to="body">
+    <ApplicationUpdateDialog />
+  </Teleport>
 </template>
