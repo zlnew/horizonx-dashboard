@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { onMounted, ref } from 'vue'
 import { toTypedSchema } from '@vee-validate/zod'
 import { Form, type FormContext, type GenericObject } from 'vee-validate'
 import { toast } from 'vue-sonner'
 import z from 'zod'
+import DialogRoot from '@/components/DialogRoot.vue'
 import { Button } from '@/components/ui/button'
 import {
-  Dialog,
   DialogClose,
   DialogContent,
   DialogDescription,
@@ -27,20 +27,15 @@ const formSchema = toTypedSchema(
   })
 )
 
-watch(
-  () => applicationStore.dialogUpdateDockerComposeOpen,
-  (open) => {
-    if (open) {
-      if (applicationStore.selectedApplication?.docker_compose_raw) {
-        veeForm.value?.setValues({
-          docker_compose_raw: applicationStore.selectedApplication.docker_compose_raw
-        })
-      }
-    }
+onMounted(() => {
+  if (applicationStore.selectedApplication?.docker_compose_raw) {
+    veeForm.value?.setValues({
+      docker_compose_raw: applicationStore.selectedApplication.docker_compose_raw
+    })
   }
-)
+})
 
-const updateApplication = async (values: GenericObject) => {
+const updateApplication = async (values: GenericObject, closeDialog: () => void) => {
   if (!applicationStore.selectedApplication?.id) {
     return
   }
@@ -59,8 +54,8 @@ const updateApplication = async (values: GenericObject) => {
       toast.success(res.message)
     }
 
-    applicationStore.dialogUpdateDockerComposeOpen = false
     applicationStore.refetch = true
+    closeDialog()
   } catch (error) {
     const fetchError = error as Error
     toast.error(fetchError.message)
@@ -75,7 +70,7 @@ const updateApplication = async (values: GenericObject) => {
     as=""
     :validation-schema="formSchema"
   >
-    <Dialog v-model:open="applicationStore.dialogUpdateDockerComposeOpen">
+    <DialogRoot #="{ close }">
       <DialogContent class="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Update docker compose file</DialogTitle>
@@ -87,7 +82,7 @@ const updateApplication = async (values: GenericObject) => {
         <form
           id="appUpdateDockerComposeDialogForm"
           class="space-y-4"
-          @submit.prevent="handleSubmit($event, updateApplication)"
+          @submit.prevent="handleSubmit((values) => updateApplication(values, close))"
         >
           <FormField
             v-slot="{ componentField }"
@@ -120,6 +115,6 @@ const updateApplication = async (values: GenericObject) => {
           </Button>
         </DialogFooter>
       </DialogContent>
-    </Dialog>
+    </DialogRoot>
   </Form>
 </template>

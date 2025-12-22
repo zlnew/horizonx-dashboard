@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, defineAsyncComponent, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { EditIcon } from 'lucide-vue-next'
 import AppStatusBadge from '@/components/AppStatusBadge.vue'
 import DataNotFound from '@/components/DataNotFound.vue'
-import ApplicationUpdateDialog from '@/components/dialogs/ApplicationUpdateDialog.vue'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -15,6 +14,7 @@ import {
   CardTitle
 } from '@/components/ui/card'
 import { useDate } from '@/composables/date'
+import { dialog } from '@/composables/dialog'
 import { usePageMeta } from '@/composables/page-meta'
 import useApplicationStore from '@/stores/application'
 
@@ -45,7 +45,9 @@ usePageMeta({
 onMounted(() => {})
 
 const showUpdateDialog = () => {
-  applicationStore.dialogUpdateAppOpen = true
+  dialog.open(
+    defineAsyncComponent(() => import('@/components/dialogs/ApplicationUpdateDialog.vue'))
+  )
 }
 </script>
 
@@ -134,8 +136,4 @@ const showUpdateDialog = () => {
       </CardHeader>
     </Card>
   </section>
-
-  <Teleport to="body">
-    <ApplicationUpdateDialog />
-  </Teleport>
 </template>

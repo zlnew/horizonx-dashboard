@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { toast } from 'vue-sonner'
+import DialogRoot from '@/components/DialogRoot.vue'
 import { Button } from '@/components/ui/button'
 import {
-  Dialog,
   DialogClose,
   DialogContent,
   DialogDescription,
@@ -16,7 +16,7 @@ import useApplicationStore from '@/stores/application'
 const router = useRouter()
 const applicationStore = useApplicationStore()
 
-const deleteApplication = async () => {
+const deleteApplication = async (closeDialog: () => void) => {
   if (!applicationStore.selectedApplication?.id) {
     return
   }
@@ -29,6 +29,7 @@ const deleteApplication = async () => {
 
     applicationStore.cleanupState()
     router.push({ name: 'applications' })
+    closeDialog()
   } catch (error) {
     const fetchError = error as Error
     toast.error(fetchError.message)
@@ -37,7 +38,7 @@ const deleteApplication = async () => {
 </script>
 
 <template>
-  <Dialog v-model:open="applicationStore.dialogDeleteAppOpen">
+  <DialogRoot #="{ close }">
     <DialogContent class="sm:max-w-[425px]">
       <DialogHeader>
         <DialogTitle>Delete application</DialogTitle>
@@ -54,11 +55,11 @@ const deleteApplication = async () => {
         <Button
           type="button"
           variant="destructive"
-          @click="deleteApplication"
+          @click="deleteApplication(close)"
         >
           Delete
         </Button>
       </DialogFooter>
     </DialogContent>
-  </Dialog>
+  </DialogRoot>
 </template>

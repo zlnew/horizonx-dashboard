@@ -12,13 +12,6 @@ const useApplicationStore = defineStore('application', () => {
 
   const selectedApplication = ref<Application | null>(null)
 
-  const dialogUpdateAppOpen = ref(false)
-  const dialogUpdateDockerComposeOpen = ref(false)
-  const dialogCreateEnvVarOpen = ref(false)
-  const dialogUpdateEnvVarOpen = ref(false)
-  const dialogDeleteEnvVarOpen = ref(false)
-  const dialogDeleteAppOpen = ref(false)
-
   const getApplications = async (criteria: ApplicationCriteria = {}) => {
     loading.value = true
     refetch.value = false
@@ -110,12 +103,6 @@ const useApplicationStore = defineStore('application', () => {
     refetch.value = false
     notFound.value = false
     selectedApplication.value = null
-    dialogUpdateAppOpen.value = false
-    dialogUpdateDockerComposeOpen.value = false
-    dialogCreateEnvVarOpen.value = false
-    dialogUpdateEnvVarOpen.value = false
-    dialogDeleteEnvVarOpen.value = false
-    dialogDeleteAppOpen.value = false
   }
 
   return {
@@ -124,12 +111,6 @@ const useApplicationStore = defineStore('application', () => {
     refetch,
     notFound,
     selectedApplication,
-    dialogUpdateAppOpen,
-    dialogUpdateDockerComposeOpen,
-    dialogCreateEnvVarOpen,
-    dialogUpdateEnvVarOpen,
-    dialogDeleteEnvVarOpen,
-    dialogDeleteAppOpen,
     getApplications,
     showApplication,
     createApplication,

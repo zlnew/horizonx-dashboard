@@ -14,9 +14,10 @@ const onOpen = (open: boolean) => {
 
 <template>
   <Dialog
+    #="{ close }"
     default-open
     @update:open="onOpen"
   >
-    <slot />
+    <slot :close="close" />
   </Dialog>
 </template>

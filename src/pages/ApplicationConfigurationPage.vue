@@ -1,15 +1,9 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, defineAsyncComponent, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { EditIcon, PlusIcon, XIcon } from 'lucide-vue-next'
 import DataNotFound from '@/components/DataNotFound.vue'
 import DockerComposeCode from '@/components/DockerComposeCode.vue'
-import ApplicationCreateEnvVarDialog from '@/components/dialogs/ApplicationCreateEnvVarDialog.vue'
-import ApplicationDeleteDialog from '@/components/dialogs/ApplicationDeleteDialog.vue'
-import ApplicationDeleteEnvVarDialog from '@/components/dialogs/ApplicationDeleteEnvVarDialog.vue'
-import ApplicationUpdateDialog from '@/components/dialogs/ApplicationUpdateDialog.vue'
-import ApplicationUpdateDockerComposeDialog from '@/components/dialogs/ApplicationUpdateDockerComposeDialog.vue'
-import ApplicationUpdateEnvVarDialog from '@/components/dialogs/ApplicationUpdateEnvVarDialog.vue'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -20,6 +14,7 @@ import {
   CardTitle
 } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table'
+import { dialog } from '@/composables/dialog'
 import { usePageMeta } from '@/composables/page-meta'
 import useApplicationStore from '@/stores/application'
 
@@ -49,11 +44,17 @@ usePageMeta({
 onMounted(() => {})
 
 const showUpdateDockerComposeDialog = () => {
-  applicationStore.dialogUpdateDockerComposeOpen = true
+  dialog.open(
+    defineAsyncComponent(
+      () => import('@/components/dialogs/ApplicationUpdateDockerComposeDialog.vue')
+    )
+  )
 }
 
 const showDeleteDialog = () => {
-  applicationStore.dialogDeleteAppOpen = true
+  dialog.open(
+    defineAsyncComponent(() => import('@/components/dialogs/ApplicationDeleteDialog.vue'))
+  )
 }
 </script>
 
@@ -154,13 +155,4 @@ const showDeleteDialog = () => {
       </CardContent>
     </Card>
   </section>
-
-  <Teleport to="body">
-    <ApplicationUpdateDialog />
-    <ApplicationUpdateDockerComposeDialog />
-    <ApplicationCreateEnvVarDialog />
-    <ApplicationUpdateEnvVarDialog />
-    <ApplicationDeleteEnvVarDialog />
-    <ApplicationDeleteDialog />
-  </Teleport>
 </template>
