@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
+import DialogRenderer from '@/components/DialogRenderer.vue'
 import { Toaster } from '@/components/ui/sonner'
 import { getHealth } from '@/composables/fetch'
 
@@ -16,5 +17,6 @@ onMounted(async () => {
 
 <template>
   <RouterView />
+  <DialogRenderer />
   <Toaster position="top-center" />
 </template>
