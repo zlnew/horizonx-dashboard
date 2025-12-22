@@ -12,10 +12,6 @@ const useServerStore = defineStore('server', () => {
 
   const selectedServer = ref<Server | null>(null)
 
-  const dialogRegisterOpen = ref(false)
-  const dialogUpdateOpen = ref(false)
-  const dialogDeleteOpen = ref(false)
-
   const getServers = async () => {
     loading.value = true
     refetch.value = false
@@ -75,9 +71,6 @@ const useServerStore = defineStore('server', () => {
     refetch.value = false
     notFound.value = false
     selectedServer.value = null
-    dialogRegisterOpen.value = false
-    dialogUpdateOpen.value = false
-    dialogDeleteOpen.value = false
   }
 
   return {
@@ -86,9 +79,6 @@ const useServerStore = defineStore('server', () => {
     refetch,
     notFound,
     selectedServer,
-    dialogRegisterOpen,
-    dialogUpdateOpen,
-    dialogDeleteOpen,
     getServers,
     registerServer,
     updateServer,

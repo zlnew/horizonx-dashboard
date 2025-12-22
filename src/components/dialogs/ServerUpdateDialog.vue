@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { onMounted, ref } from 'vue'
 import { toTypedSchema } from '@vee-validate/zod'
 import { Form, type FormContext, type GenericObject } from 'vee-validate'
 import { toast } from 'vue-sonner'
 import z from 'zod'
+import DialogRoot from '@/components/DialogRoot.vue'
 import { Button } from '@/components/ui/button'
 import {
-  Dialog,
   DialogClose,
   DialogContent,
   DialogDescription,
@@ -28,23 +28,16 @@ const formSchema = toTypedSchema(
   })
 )
 
-watch(
-  () => serverStore.dialogUpdateOpen,
-  (open) => {
-    if (open) {
-      if (serverStore.selectedServer) {
-        veeForm.value?.setValues({
-          name: serverStore.selectedServer.name,
-          ip_address: serverStore.selectedServer.ip_address
-        })
-      }
-    } else {
-      serverStore.selectedServer = null
-    }
+onMounted(() => {
+  if (serverStore.selectedServer) {
+    veeForm.value?.setValues({
+      name: serverStore.selectedServer.name,
+      ip_address: serverStore.selectedServer.ip_address
+    })
   }
-)
+})
 
-const updateServer = async (values: GenericObject) => {
+const updateServer = async (values: GenericObject, closeDialog: () => void) => {
   if (!serverStore.selectedServer?.id) {
     return
   }
@@ -54,9 +47,9 @@ const updateServer = async (values: GenericObject) => {
     if (res.message) {
       toast.success(res.message)
     }
-    serverStore.dialogUpdateOpen = false
     serverStore.selectedServer = null
     serverStore.refetch = true
+    closeDialog()
   } catch (error) {
     const fetchError = error as Error
     toast.error(fetchError.message)
@@ -71,7 +64,7 @@ const updateServer = async (values: GenericObject) => {
     as=""
     :validation-schema="formSchema"
   >
-    <Dialog v-model:open="serverStore.dialogUpdateOpen">
+    <DialogRoot #="{ close }">
       <DialogContent class="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Update server</DialogTitle>
@@ -84,7 +77,7 @@ const updateServer = async (values: GenericObject) => {
         <form
           id="serverUpdateDialogForm"
           class="space-y-4"
-          @submit.prevent="handleSubmit($event, updateServer)"
+          @submit.prevent="handleSubmit((values) => updateServer(values, close))"
         >
           <FormField
             v-slot="{ componentField }"
@@ -125,6 +118,6 @@ const updateServer = async (values: GenericObject) => {
           </Button>
         </DialogFooter>
       </DialogContent>
-    </Dialog>
+    </DialogRoot>
   </Form>
 </template>

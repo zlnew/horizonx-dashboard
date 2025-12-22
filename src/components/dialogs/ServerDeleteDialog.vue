@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { watch } from 'vue'
 import { toast } from 'vue-sonner'
+import DialogRoot from '@/components/DialogRoot.vue'
 import { Button } from '@/components/ui/button'
 import {
-  Dialog,
   DialogClose,
   DialogContent,
   DialogDescription,
@@ -15,17 +14,7 @@ import useServerStore from '@/stores/server'
 
 const serverStore = useServerStore()
 
-watch(
-  () => serverStore.dialogDeleteOpen,
-  (open) => {
-    if (open) {
-    } else {
-      serverStore.selectedServer = null
-    }
-  }
-)
-
-const deleteServer = async () => {
+const deleteServer = async (closeDialog: () => void) => {
   if (!serverStore.selectedServer?.id) {
     return
   }
@@ -36,9 +25,9 @@ const deleteServer = async () => {
       toast.success(res.message)
     }
 
-    serverStore.dialogDeleteOpen = false
     serverStore.selectedServer = null
     serverStore.refetch = true
+    closeDialog()
   } catch (error) {
     const fetchError = error as Error
     toast.error(fetchError.message)
@@ -47,7 +36,7 @@ const deleteServer = async () => {
 </script>
 
 <template>
-  <Dialog v-model:open="serverStore.dialogDeleteOpen">
+  <DialogRoot #="{ close }">
     <DialogContent class="sm:max-w-[425px]">
       <DialogHeader>
         <DialogTitle>Delete server</DialogTitle>
@@ -63,11 +52,11 @@ const deleteServer = async () => {
         <Button
           type="button"
           variant="destructive"
-          @click="deleteServer"
+          @click="deleteServer(close)"
         >
           Delete
         </Button>
       </DialogFooter>
     </DialogContent>
-  </Dialog>
+  </DialogRoot>
 </template>

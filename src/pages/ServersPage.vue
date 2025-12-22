@@ -1,13 +1,10 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, watch } from 'vue'
+import { defineAsyncComponent, onMounted, onUnmounted, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { PlusIcon, RefreshCwIcon, ServerIcon, SquarePenIcon, TrashIcon } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
 import DataLoading from '@/components/DataLoading.vue'
 import DataNotFound from '@/components/DataNotFound.vue'
-import ServerDeleteDialog from '@/components/dialogs/ServerDeleteDialog.vue'
-import ServerRegisterDialog from '@/components/dialogs/ServerRegisterDialog.vue'
-import ServerUpdateDialog from '@/components/dialogs/ServerUpdateDialog.vue'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -18,6 +15,7 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
+import { dialog } from '@/composables/dialog'
 import { usePageMeta } from '@/composables/page-meta'
 import useWebSocket from '@/composables/web-socket'
 import WSEvent from '@/constants/ws-event'
@@ -74,17 +72,17 @@ const handleRefresh = () => {
 }
 
 const showRegisterModal = () => {
-  serverStore.dialogRegisterOpen = true
+  dialog.open(defineAsyncComponent(() => import('@/components/dialogs/ServerRegisterDialog.vue')))
 }
 
 const showUpdateModal = (server: Server) => {
   serverStore.selectedServer = server
-  serverStore.dialogUpdateOpen = true
+  dialog.open(defineAsyncComponent(() => import('@/components/dialogs/ServerUpdateDialog.vue')))
 }
 
 const showDeleteModal = (server: Server) => {
   serverStore.selectedServer = server
-  serverStore.dialogDeleteOpen = true
+  dialog.open(defineAsyncComponent(() => import('@/components/dialogs/ServerDeleteDialog.vue')))
 }
 </script>
 
@@ -191,10 +189,4 @@ const showDeleteModal = (server: Server) => {
     <DataLoading v-else-if="loading" />
     <DataNotFound v-else-if="notFound" />
   </section>
-
-  <Teleport to="body">
-    <ServerRegisterDialog />
-    <ServerUpdateDialog />
-    <ServerDeleteDialog />
-  </Teleport>
 </template>

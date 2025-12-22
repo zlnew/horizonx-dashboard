@@ -6,9 +6,9 @@ import { CheckIcon, CopyIcon } from 'lucide-vue-next'
 import { Form, type GenericObject } from 'vee-validate'
 import { toast } from 'vue-sonner'
 import z from 'zod'
+import DialogRoot from '@/components/DialogRoot.vue'
 import { Button } from '@/components/ui/button'
 import {
-  Dialog,
   DialogClose,
   DialogContent,
   DialogDescription,
@@ -33,20 +33,6 @@ const formSchema = toTypedSchema(
     name: z.string(),
     ip_address: z.string()
   })
-)
-
-watch(
-  () => serverStore.dialogRegisterOpen,
-  (open) => {
-    if (open) {
-    } else {
-      setTimeout(() => {
-        registerMessage.value = null
-        registeredServer.value = null
-        token.value = null
-      }, 150)
-    }
-  }
 )
 
 watch(tokenCopied, (clipCopied) => {
@@ -84,7 +70,7 @@ const registerServer = async (values: GenericObject) => {
     as=""
     :validation-schema="formSchema"
   >
-    <Dialog v-model:open="serverStore.dialogRegisterOpen">
+    <DialogRoot>
       <DialogContent
         :class="registerMessage && registeredServer && token ? 'md:max-w-lg' : 'sm:max-w-[425px]'"
       >
@@ -149,7 +135,7 @@ const registerServer = async (values: GenericObject) => {
           <form
             id="serverCreateDialogForm"
             class="space-y-4"
-            @submit.prevent="handleSubmit($event, registerServer)"
+            @submit.prevent="handleSubmit((values) => registerServer(values))"
           >
             <FormField
               v-slot="{ componentField }"
@@ -191,6 +177,6 @@ const registerServer = async (values: GenericObject) => {
           </DialogFooter>
         </template>
       </DialogContent>
-    </Dialog>
+    </DialogRoot>
   </Form>
 </template>
