@@ -22,6 +22,15 @@ watch(copied, (state) => {
   }
 })
 
+watch(
+  () => code,
+  (newCode) => {
+    if (newCode) {
+      hightlightedCode.value = hljs.highlight(newCode, { language: 'yaml' }).value
+    }
+  }
+)
+
 onMounted(() => {
   hljs.registerLanguage('yaml', yaml)
   hightlightedCode.value = hljs.highlight(code, { language: 'yaml' }).value
