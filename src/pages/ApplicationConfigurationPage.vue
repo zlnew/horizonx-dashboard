@@ -17,10 +17,13 @@ import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table'
 import { dialog } from '@/composables/dialog'
 import { usePageMeta } from '@/composables/page-meta'
 import useApplicationStore from '@/stores/application'
+import useApplicationEnvStore from '@/stores/application-env'
 
 const applicationStore = useApplicationStore()
+const applicationEnvStore = useApplicationEnvStore()
 
 const { selectedApplication } = storeToRefs(applicationStore)
+const { selectedEnvironment } = storeToRefs(applicationEnvStore)
 
 const pageTitle = computed(() => `${selectedApplication.value?.name} · Configuration`)
 
@@ -48,6 +51,26 @@ const showUpdateDockerComposeDialog = () => {
     defineAsyncComponent(
       () => import('@/components/dialogs/ApplicationUpdateDockerComposeDialog.vue')
     )
+  )
+}
+
+const showCreateEnvVarDialog = () => {
+  dialog.open(
+    defineAsyncComponent(() => import('@/components/dialogs/ApplicationCreateEnvVarDialog.vue'))
+  )
+}
+
+const showUpdateEnvVarDialog = (env: EnvironmentVariable) => {
+  selectedEnvironment.value = env
+  dialog.open(
+    defineAsyncComponent(() => import('@/components/dialogs/ApplicationUpdateEnvVarDialog.vue'))
+  )
+}
+
+const showDeleteEnvVarDialog = (env: EnvironmentVariable) => {
+  selectedEnvironment.value = env
+  dialog.open(
+    defineAsyncComponent(() => import('@/components/dialogs/ApplicationDeleteEnvVarDialog.vue'))
   )
 }
 
@@ -93,7 +116,7 @@ const showDeleteDialog = () => {
           Key–value pairs injected into the application at runtime.
         </CardDescription>
         <CardAction>
-          <Button>
+          <Button @click="showCreateEnvVarDialog">
             <PlusIcon />
             Add variable
           </Button>
@@ -116,6 +139,7 @@ const showDeleteDialog = () => {
                       size="icon-sm"
                       variant="outline"
                       aria-label="Edit env var"
+                      @click="showUpdateEnvVarDialog(env)"
                     >
                       <EditIcon />
                     </Button>
@@ -124,6 +148,7 @@ const showDeleteDialog = () => {
                       size="icon-sm"
                       variant="destructive"
                       aria-label="Delete env var"
+                      @click="showDeleteEnvVarDialog(env)"
                     >
                       <XIcon />
                     </Button>

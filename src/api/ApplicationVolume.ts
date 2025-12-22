@@ -1,10 +1,10 @@
 import Api from './Api'
 
-class ApplicationVolume extends Api {
+class ApplicationVolumeApi extends Api {
   constructor(applicationId: number) {
     super()
     this.resource = `applications/${applicationId}/volumes`
   }
 }
 
-export default ApplicationVolume
+export default ApplicationVolumeApi
