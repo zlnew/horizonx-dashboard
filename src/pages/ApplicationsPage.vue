@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onMounted, onUnmounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { ChevronRightIcon, LayoutGridIcon, PlusIcon } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
@@ -37,6 +37,10 @@ usePageMeta({
 
 onMounted(() => {
   fetchApplications()
+})
+
+onUnmounted(() => {
+  applicationStore.cleanupState()
 })
 
 const fetchApplications = async () => {

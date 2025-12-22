@@ -4,9 +4,9 @@ import { IdCardLanyardIcon } from 'lucide-vue-next'
 import { Form, type GenericObject } from 'vee-validate'
 import { toast } from 'vue-sonner'
 import z from 'zod'
+import DialogRoot from '@/components/DialogRoot.vue'
 import { Button } from '@/components/ui/button'
 import {
-  Dialog,
   DialogClose,
   DialogContent,
   DialogDescription,
@@ -37,14 +37,15 @@ const formSchema = toTypedSchema(
   })
 )
 
-const createUser = async (values: GenericObject) => {
+const createUser = async (values: GenericObject, closeDialog: () => void) => {
   try {
     const res = await userStore.createUser(values)
     if (res.message) {
       toast.success(res.message)
     }
-    userStore.dialogCreateOpen = false
+
     userStore.refetch = true
+    closeDialog()
   } catch (error) {
     const fetchError = error as Error
     toast.error(fetchError.message)
@@ -58,7 +59,7 @@ const createUser = async (values: GenericObject) => {
     as=""
     :validation-schema="formSchema"
   >
-    <Dialog v-model:open="userStore.dialogCreateOpen">
+    <DialogRoot #="{ close }">
       <DialogContent class="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Create new user</DialogTitle>
@@ -71,7 +72,7 @@ const createUser = async (values: GenericObject) => {
         <form
           id="userCreateDialogForm"
           class="space-y-4"
-          @submit.prevent="handleSubmit($event, createUser)"
+          @submit.prevent="handleSubmit((values) => createUser(values, close))"
         >
           <FormField
             v-slot="{ componentField }"
@@ -164,6 +165,6 @@ const createUser = async (values: GenericObject) => {
           </Button>
         </DialogFooter>
       </DialogContent>
-    </Dialog>
+    </DialogRoot>
   </Form>
 </template>

@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { onMounted, ref } from 'vue'
 import { toTypedSchema } from '@vee-validate/zod'
 import { IdCardLanyardIcon } from 'lucide-vue-next'
 import { Form, type FormContext, type GenericObject } from 'vee-validate'
 import { toast } from 'vue-sonner'
 import z from 'zod'
+import DialogRoot from '@/components/DialogRoot.vue'
 import { Button } from '@/components/ui/button'
 import {
-  Dialog,
   DialogClose,
   DialogContent,
   DialogDescription,
@@ -39,24 +39,17 @@ const formSchema = toTypedSchema(
   })
 )
 
-watch(
-  () => userStore.dialogUpdateOpen,
-  (open) => {
-    if (open) {
-      if (userStore.selectedUser) {
-        veeForm.value?.setValues({
-          name: userStore.selectedUser.name,
-          email: userStore.selectedUser.email,
-          role_id: userStore.selectedUser.role_id
-        })
-      }
-    } else {
-      userStore.selectedUser = null
-    }
+onMounted(() => {
+  if (userStore.selectedUser) {
+    veeForm.value?.setValues({
+      name: userStore.selectedUser.name,
+      email: userStore.selectedUser.email,
+      role_id: userStore.selectedUser.role_id
+    })
   }
-)
+})
 
-const updateUser = async (values: GenericObject) => {
+const updateUser = async (values: GenericObject, closeDialog: () => void) => {
   if (!userStore.selectedUser?.id) {
     return
   }
@@ -66,9 +59,10 @@ const updateUser = async (values: GenericObject) => {
     if (res.message) {
       toast.success(res.message)
     }
-    userStore.dialogUpdateOpen = false
+
     userStore.selectedUser = null
     userStore.refetch = true
+    closeDialog()
   } catch (error) {
     const fetchError = error as Error
     toast.error(fetchError.message)
@@ -83,7 +77,7 @@ const updateUser = async (values: GenericObject) => {
     as=""
     :validation-schema="formSchema"
   >
-    <Dialog v-model:open="userStore.dialogUpdateOpen">
+    <DialogRoot #="{ close }">
       <DialogContent class="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Update user</DialogTitle>
@@ -96,7 +90,7 @@ const updateUser = async (values: GenericObject) => {
         <form
           id="userCreateDialogForm"
           class="space-y-4"
-          @submit.prevent="handleSubmit($event, updateUser)"
+          @submit.prevent="handleSubmit((values) => updateUser(values, close))"
         >
           <FormField
             v-slot="{ componentField }"
@@ -189,6 +183,6 @@ const updateUser = async (values: GenericObject) => {
           </Button>
         </DialogFooter>
       </DialogContent>
-    </Dialog>
+    </DialogRoot>
   </Form>
 </template>

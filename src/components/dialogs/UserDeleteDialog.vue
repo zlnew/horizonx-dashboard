@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { watch } from 'vue'
 import { toast } from 'vue-sonner'
+import DialogRoot from '@/components/DialogRoot.vue'
 import { Button } from '@/components/ui/button'
 import {
-  Dialog,
   DialogClose,
   DialogContent,
   DialogDescription,
@@ -15,17 +14,7 @@ import useUserStore from '@/stores/user'
 
 const userStore = useUserStore()
 
-watch(
-  () => userStore.dialogDeleteOpen,
-  (open) => {
-    if (open) {
-    } else {
-      userStore.selectedUser = null
-    }
-  }
-)
-
-const deleteUser = async () => {
+const deleteUser = async (closeDialog: () => void) => {
   if (!userStore.selectedUser?.id) {
     return
   }
@@ -36,9 +25,9 @@ const deleteUser = async () => {
       toast.success(res.message)
     }
 
-    userStore.dialogDeleteOpen = false
     userStore.selectedUser = null
     userStore.refetch = true
+    closeDialog()
   } catch (error) {
     const fetchError = error as Error
     toast.error(fetchError.message)
@@ -47,7 +36,7 @@ const deleteUser = async () => {
 </script>
 
 <template>
-  <Dialog v-model:open="userStore.dialogDeleteOpen">
+  <DialogRoot #="{ close }">
     <DialogContent class="sm:max-w-[425px]">
       <DialogHeader>
         <DialogTitle>Delete user</DialogTitle>
@@ -63,11 +52,11 @@ const deleteUser = async () => {
         <Button
           type="button"
           variant="destructive"
-          @click="deleteUser"
+          @click="deleteUser(close)"
         >
           Delete
         </Button>
       </DialogFooter>
     </DialogContent>
-  </Dialog>
+  </DialogRoot>
 </template>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, watch } from 'vue'
+import { computed, defineAsyncComponent, onMounted, onUnmounted, watch } from 'vue'
 import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import {
@@ -17,9 +17,6 @@ import DataLoading from '@/components/DataLoading.vue'
 import DataNotFound from '@/components/DataNotFound.vue'
 import RoleBadge from '@/components/RoleBadge.vue'
 import RoutePagination from '@/components/RoutePagination.vue'
-import UserCreateDialog from '@/components/dialogs/UserCreateDialog.vue'
-import UserDeleteDialog from '@/components/dialogs/UserDeleteDialog.vue'
-import UserUpdateDialog from '@/components/dialogs/UserUpdateDialog.vue'
 import { Button } from '@/components/ui/button'
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group'
 import {
@@ -38,6 +35,7 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
+import { dialog } from '@/composables/dialog'
 import { usePageMeta } from '@/composables/page-meta'
 import useUserStore from '@/stores/user'
 
@@ -121,17 +119,17 @@ const handleRefresh = () => {
 }
 
 const showCreateModal = () => {
-  userStore.dialogCreateOpen = true
+  dialog.open(defineAsyncComponent(() => import('@/components/dialogs/UserCreateDialog.vue')))
 }
 
 const showUpdateModal = (user: User) => {
   userStore.selectedUser = user
-  userStore.dialogUpdateOpen = true
+  dialog.open(defineAsyncComponent(() => import('@/components/dialogs/UserUpdateDialog.vue')))
 }
 
 const showDeleteModal = (user: User) => {
   userStore.selectedUser = user
-  userStore.dialogDeleteOpen = true
+  dialog.open(defineAsyncComponent(() => import('@/components/dialogs/UserDeleteDialog.vue')))
 }
 </script>
 
@@ -269,10 +267,4 @@ const showDeleteModal = (user: User) => {
     <DataLoading v-else-if="loading" />
     <DataNotFound v-else-if="notFound" />
   </section>
-
-  <Teleport to="body">
-    <UserCreateDialog />
-    <UserUpdateDialog />
-    <UserDeleteDialog />
-  </Teleport>
 </template>
