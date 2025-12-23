@@ -1,18 +1,17 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { onMounted, onUnmounted, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { BoltIcon, FileClock, GaugeIcon } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
 import { Item, ItemContent, ItemGroup, ItemSeparator, ItemTitle } from '@/components/ui/item'
 import useApplicationStore from '@/stores/application'
+import useApplicationDeploymentStore from '@/stores/application-deployment'
 
-const route = useRoute()
 const applicationStore = useApplicationStore()
+const applicationDeploymentStore = useApplicationDeploymentStore()
 
-const { selectedApplication, refetch, loading } = storeToRefs(applicationStore)
-
-const appID = computed(() => Number(route.params.id))
+const { appID, selectedApplication, refetch, loading } = storeToRefs(applicationStore)
+const { refetch: dRefetch } = storeToRefs(applicationDeploymentStore)
 
 const menu = [
   {
@@ -38,8 +37,15 @@ watch(refetch, (refetched) => {
   }
 })
 
+watch(dRefetch, (refetched) => {
+  if (refetched) {
+    fetchDeployments()
+  }
+})
+
 onMounted(() => {
   fetchApplication()
+  fetchDeployments()
 })
 
 onUnmounted(() => {
@@ -60,6 +66,15 @@ const fetchApplication = async () => {
     toast.error(fetchError.message)
   } finally {
     loading.value = false
+  }
+}
+
+const fetchDeployments = async () => {
+  try {
+    await applicationDeploymentStore.getDeployments(appID.value)
+  } catch (error) {
+    const fetchError = error as Error
+    toast.error(fetchError.message)
   }
 }
 </script>

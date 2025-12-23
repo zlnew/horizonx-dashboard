@@ -1,8 +1,10 @@
 const ApplicationStatus = {
-  STOPPED: 'stopped',
+  DEPLOYING: 'deploying',
   STARTING: 'starting',
-  RUNNING: 'running',
+  STOPPING: 'stopping',
   RESTARTING: 'restarting',
+  RUNNING: 'running',
+  STOPPED: 'stopped',
   FAILED: 'failed'
 }
 export default ApplicationStatus

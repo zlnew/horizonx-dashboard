@@ -5,7 +5,7 @@ class ApplicationApi extends Api {
 
   public async deploy<T>(resourceId: number) {
     const { data, error } = await this.fetch(`${this.resource}/${resourceId}/deploy`)
-      .get()
+      .post()
       .json<T>()
 
     return this.handleResponse<T>(data.value, error.value)

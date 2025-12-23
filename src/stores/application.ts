@@ -1,4 +1,5 @@
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
+import { useRoute } from 'vue-router'
 import { defineStore } from 'pinia'
 import ApplicationApi from '@/api/Application'
 
@@ -11,6 +12,9 @@ const useApplicationStore = defineStore('application', () => {
   const notFound = ref(false)
 
   const selectedApplication = ref<Application | null>(null)
+
+  const route = useRoute()
+  const appID = computed(() => Number(route.params.id))
 
   const getApplications = async (criteria: ApplicationCriteria = {}) => {
     loading.value = true
@@ -67,7 +71,7 @@ const useApplicationStore = defineStore('application', () => {
 
   const deployApplication = async (applicationID: number) => {
     try {
-      return await api.deploy<ApiResponse<Application>>(applicationID)
+      return await api.deploy<ApiResponse<Deployment>>(applicationID)
     } catch (error) {
       throw error
     }
@@ -75,7 +79,7 @@ const useApplicationStore = defineStore('application', () => {
 
   const startApplication = async (applicationID: number) => {
     try {
-      return await api.start<ApiResponse<Application>>(applicationID)
+      return await api.start<ApiResponse>(applicationID)
     } catch (error) {
       throw error
     }
@@ -83,7 +87,7 @@ const useApplicationStore = defineStore('application', () => {
 
   const stopApplication = async (applicationID: number) => {
     try {
-      return await api.stop<ApiResponse<Application>>(applicationID)
+      return await api.stop<ApiResponse>(applicationID)
     } catch (error) {
       throw error
     }
@@ -91,7 +95,7 @@ const useApplicationStore = defineStore('application', () => {
 
   const restartApplication = async (applicationID: number) => {
     try {
-      return await api.restart<ApiResponse<Application>>(applicationID)
+      return await api.restart<ApiResponse>(applicationID)
     } catch (error) {
       throw error
     }
@@ -111,6 +115,7 @@ const useApplicationStore = defineStore('application', () => {
     refetch,
     notFound,
     selectedApplication,
+    appID,
     getApplications,
     showApplication,
     createApplication,

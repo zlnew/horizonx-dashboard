@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent, onMounted } from 'vue'
+import { computed, defineAsyncComponent } from 'vue'
 import { storeToRefs } from 'pinia'
 import { EditIcon } from 'lucide-vue-next'
 import AppStatusBadge from '@/components/AppStatusBadge.vue'
+import DataLoading from '@/components/DataLoading.vue'
 import DataNotFound from '@/components/DataNotFound.vue'
+import DeploymentItem from '@/components/DeploymentItem.vue'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -13,15 +15,23 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
+import { ItemGroup, ItemSeparator } from '@/components/ui/item'
 import { useDate } from '@/composables/date'
 import { dialog } from '@/composables/dialog'
 import { usePageMeta } from '@/composables/page-meta'
 import useApplicationStore from '@/stores/application'
+import useApplicationDeploymentStore from '@/stores/application-deployment'
 
 const { formatDate } = useDate()
 const applicationStore = useApplicationStore()
+const applicationDeploymentStore = useApplicationDeploymentStore()
 
-const { selectedApplication } = storeToRefs(applicationStore)
+const { appID, selectedApplication } = storeToRefs(applicationStore)
+const {
+  recentDeployments,
+  loading: dLoading,
+  notFound: dNotFound
+} = storeToRefs(applicationDeploymentStore)
 
 const pageTitle = computed(() => `${selectedApplication.value?.name} · Overview`)
 
@@ -41,8 +51,6 @@ usePageMeta({
     }
   ])
 })
-
-onMounted(() => {})
 
 const showUpdateDialog = () => {
   dialog.open(
@@ -123,16 +131,26 @@ const showUpdateDialog = () => {
         <CardDescription>Latest deployment activity for this application.</CardDescription>
         <CardAction>
           <Button variant="link">
-            <RouterLink
-              :to="{ name: 'applications.deploys', params: { id: selectedApplication?.id } }"
-            >
+            <RouterLink :to="{ name: 'applications.deploys', params: { id: appID } }">
               View all deployments
             </RouterLink>
           </Button>
         </CardAction>
       </CardHeader>
       <CardContent>
-        <DataNotFound />
+        <div v-if="recentDeployments.length">
+          <ItemGroup>
+            <template
+              v-for="(deploy, index) in recentDeployments"
+              :key="index"
+            >
+              <DeploymentItem :data="deploy" />
+              <ItemSeparator v-if="index !== recentDeployments.length - 1" />
+            </template>
+          </ItemGroup>
+        </div>
+        <DataLoading v-else-if="dLoading" />
+        <DataNotFound v-else-if="dNotFound" />
       </CardContent>
     </Card>
   </section>
