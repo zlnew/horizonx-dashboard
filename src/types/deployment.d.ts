@@ -14,3 +14,23 @@ type Deployment = {
   application: Application | null
   deployer: User | null
 }
+
+type EventDeploymentStatusChanged = {
+  deployment_id: number
+  application_id: number
+  status: string
+}
+
+type EventDeploymentLogsUpdated = {
+  deployment_id: number
+  application_id: number
+  logs: string
+  is_partial: boolean
+}
+
+type EventDeploymentCommitInfoReceived = {
+  deployment_id: number
+  application_id: number
+  commit_hash: string
+  commit_message: string
+}

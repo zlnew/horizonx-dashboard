@@ -20,5 +20,5 @@ type Criteria = {
 
 type Breadcrumb = {
   label: string
-  to: { name: string; params?: Record<string, string> }
+  to: { name: string; params?: Record<string, string | number> }
 }

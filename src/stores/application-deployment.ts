@@ -1,4 +1,5 @@
 import { computed, ref } from 'vue'
+import { useRoute } from 'vue-router'
 import { defineStore } from 'pinia'
 import ApplicationDeploymentApi from '@/api/ApplicationDeployment'
 
@@ -12,6 +13,8 @@ const useApplicationDeploymentStore = defineStore('application-deployment', () =
 
   const selectedDeployment = ref<Deployment | null>(null)
 
+  const route = useRoute()
+  const deploymentID = computed(() => Number(route.params.deploymentID))
   const recentDeployments = computed(() => deployments.value.slice(0, 3))
 
   const getDeployments = async (appID: number) => {
@@ -57,6 +60,7 @@ const useApplicationDeploymentStore = defineStore('application-deployment', () =
     refetch,
     notFound,
     selectedDeployment,
+    deploymentID,
     recentDeployments,
     getDeployments,
     showDeployment,

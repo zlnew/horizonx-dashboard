@@ -93,11 +93,11 @@ const fetchApplications = async () => {
             <CardHeader>
               <CardTitle>{{ app.name }}</CardTitle>
               <CardDescription>
-                <span>Last deployment: </span>
+                <span>Last deployed: </span>
                 <span class="text-neutral-200">
                   {{
                     app.last_deployment_at
-                      ? formatDate(new Date(app.last_deployment_at), 'DD MMM YYYY')
+                      ? formatDate(new Date(app.last_deployment_at), 'DD MMM, YYYY HH:mm')
                       : '-'
                   }}
                 </span>

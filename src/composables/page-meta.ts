@@ -7,6 +7,10 @@ type PageMetaOptions = {
   breadcrumb?: MaybeRef<Breadcrumb[]>
 }
 
+export const defineBreadcrumbs = (value: Breadcrumb[]) => {
+  return value
+}
+
 export function usePageMeta(options: PageMetaOptions) {
   const appStore = useAppStore()
   const { title, breadcrumb } = storeToRefs(appStore)
