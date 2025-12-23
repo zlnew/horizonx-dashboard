@@ -1,7 +1,8 @@
 type Job = {
   id: number
   server_id: string
-  application_id: string | null
+  application_id: number | null
+  deployment_id: number | null
   job_type: string
   status: string
   output_log: string

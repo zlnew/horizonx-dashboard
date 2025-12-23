@@ -47,9 +47,7 @@ const updateApplication = async (values: GenericObject, closeDialog: () => void)
       name: values.name,
       repo_url: applicationStore.selectedApplication.repo_url,
       branch: values.branch,
-      docker_compose_raw: applicationStore.selectedApplication.docker_compose_raw ?? '',
-      env_vars: null,
-      volumes: null
+      env_vars: null
     })
 
     if (res.message) {

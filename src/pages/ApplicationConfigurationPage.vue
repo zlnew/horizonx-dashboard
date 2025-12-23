@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent, onMounted } from 'vue'
+import { computed, defineAsyncComponent } from 'vue'
 import { storeToRefs } from 'pinia'
 import { EditIcon, PlusIcon, XIcon } from 'lucide-vue-next'
 import DataNotFound from '@/components/DataNotFound.vue'
-import DockerComposeCode from '@/components/DockerComposeCode.vue'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -44,16 +43,6 @@ usePageMeta({
   ])
 })
 
-onMounted(() => {})
-
-const showUpdateDockerComposeDialog = () => {
-  dialog.open(
-    defineAsyncComponent(
-      () => import('@/components/dialogs/ApplicationUpdateDockerComposeDialog.vue')
-    )
-  )
-}
-
 const showCreateEnvVarDialog = () => {
   dialog.open(
     defineAsyncComponent(() => import('@/components/dialogs/ApplicationCreateEnvVarDialog.vue'))
@@ -83,32 +72,6 @@ const showDeleteDialog = () => {
 
 <template>
   <section>
-    <Card>
-      <CardHeader>
-        <CardTitle>Docker Compose File</CardTitle>
-        <CardDescription>
-          The source of truth for how this application runs in production.
-        </CardDescription>
-        <CardAction>
-          <Button
-            type="button"
-            size="icon-lg"
-            variant="ghost"
-            @click="showUpdateDockerComposeDialog"
-          >
-            <EditIcon />
-          </Button>
-        </CardAction>
-      </CardHeader>
-      <CardContent>
-        <template v-if="selectedApplication?.docker_compose_raw">
-          <DockerComposeCode :code="selectedApplication?.docker_compose_raw" />
-        </template>
-      </CardContent>
-    </Card>
-  </section>
-
-  <section class="mt-8">
     <Card>
       <CardHeader>
         <CardTitle>Environment Variables</CardTitle>

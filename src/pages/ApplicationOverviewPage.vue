@@ -130,10 +130,10 @@ const showUpdateDialog = () => {
             </RouterLink>
           </Button>
         </CardAction>
-        <CardContent>
-          <DataNotFound />
-        </CardContent>
       </CardHeader>
+      <CardContent>
+        <DataNotFound />
+      </CardContent>
     </Card>
   </section>
 </template>

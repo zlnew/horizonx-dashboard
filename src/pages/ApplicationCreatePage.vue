@@ -2,27 +2,12 @@
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { toTypedSchema } from '@vee-validate/zod'
-import {
-  CheckCircleIcon,
-  FolderIcon,
-  PlusIcon,
-  SlidersIcon,
-  TerminalIcon,
-  XIcon
-} from 'lucide-vue-next'
+import { CheckCircleIcon, FolderIcon, PlusIcon, SlidersIcon, XIcon } from 'lucide-vue-next'
 import { useFieldArray, useForm, useFormValues } from 'vee-validate'
 import { toast } from 'vue-sonner'
 import z from 'zod'
-import DockerComposeCode from '@/components/DockerComposeCode.vue'
 import { Button } from '@/components/ui/button'
-import {
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage
-} from '@/components/ui/form'
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import {
   Stepper,
@@ -41,7 +26,6 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
-import { Textarea } from '@/components/ui/textarea'
 import { usePageMeta } from '@/composables/page-meta'
 import useAppStore from '@/stores/app'
 import useApplicationStore from '@/stores/application'
@@ -60,18 +44,12 @@ const steps = [
   },
   {
     step: 2,
-    title: 'Build Configuration',
-    description: 'Configure how you app is built',
-    icon: TerminalIcon
-  },
-  {
-    step: 3,
     title: 'Environment Variables',
     description: 'Set required runtime variables',
     icon: SlidersIcon
   },
   {
-    step: 4,
+    step: 3,
     title: 'Finalize',
     description: 'Review and finalize you setup',
     icon: CheckCircleIcon
@@ -84,9 +62,6 @@ const formSchema = [
     name: z.string(),
     repo_url: z.string(),
     branch: z.string()
-  }),
-  z.object({
-    docker_compose_raw: z.string()
   }),
   z.object({
     env_vars: z.array(
@@ -297,28 +272,6 @@ const onSubmit = handleSubmit(async () => {
           </template>
 
           <template v-if="stepIndex === 2">
-            <FormField
-              v-slot="{ componentField }"
-              name="docker_compose_raw"
-            >
-              <FormItem>
-                <FormLabel>Docker Compose Configuration</FormLabel>
-                <FormControl>
-                  <Textarea
-                    rows="16"
-                    placeholder="Paste your docker-compose.yml configuration here"
-                    class="font-mono text-sm"
-                    v-bind="componentField"
-                  />
-                </FormControl>
-                <FormDescription>
-                  This configuration will be used to build and run your application containers.
-                </FormDescription>
-              </FormItem>
-            </FormField>
-          </template>
-
-          <template v-if="stepIndex === 3">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -393,7 +346,7 @@ const onSubmit = handleSubmit(async () => {
             </Table>
           </template>
 
-          <template v-if="stepIndex === 4">
+          <template v-if="stepIndex === 3">
             <div class="space-y-6">
               <!-- Project -->
               <div class="rounded-lg border p-4">
@@ -410,14 +363,6 @@ const onSubmit = handleSubmit(async () => {
                   <div><strong>URL:</strong> {{ value?.repo_url }}</div>
                   <div><strong>Branch:</strong> {{ value?.branch }}</div>
                 </div>
-              </div>
-
-              <!-- Build -->
-              <div class="rounded-lg border p-4">
-                <h3 class="mb-2 font-semibold">Build Configuration</h3>
-                <template v-if="value?.docker_compose_raw">
-                  <DockerComposeCode :code="value.docker_compose_raw" />
-                </template>
               </div>
 
               <!-- Env Vars -->
@@ -461,7 +406,7 @@ const onSubmit = handleSubmit(async () => {
             </Button>
             <div class="flex items-center gap-3">
               <Button
-                v-if="stepIndex !== 4"
+                v-if="stepIndex !== 3"
                 type="button"
                 size="sm"
                 @click="goNext(nextStep)"
@@ -469,7 +414,7 @@ const onSubmit = handleSubmit(async () => {
                 Next
               </Button>
               <Button
-                v-if="stepIndex === 4"
+                v-if="stepIndex === 3"
                 size="sm"
                 type="submit"
               >
