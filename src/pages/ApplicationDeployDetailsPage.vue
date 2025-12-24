@@ -25,10 +25,10 @@ import useApplicationDeploymentStore from '@/stores/application-deployment'
 const { subscribe } = useWebSocket()
 const { formatDate, formatDuration } = useDate()
 const applicationStore = useApplicationStore()
-const applicationDeployment = useApplicationDeploymentStore()
+const applicationDeploymentStore = useApplicationDeploymentStore()
 
 const { selectedApplication: application, appID } = storeToRefs(applicationStore)
-const { selectedDeployment: deployment, deploymentID } = storeToRefs(applicationDeployment)
+const { selectedDeployment: deployment, deploymentID } = storeToRefs(applicationDeploymentStore)
 const logsContainer = ref<HTMLElement | null>(null)
 const loading = ref(false)
 
@@ -94,13 +94,14 @@ onMounted(() => {
 
 onUnmounted(() => {
   deploymentSub?.unsubscribe()
+  applicationDeploymentStore.selectedDeployment = null
 })
 
 const fetchDeployment = async () => {
   loading.value = true
 
   try {
-    const res = await applicationDeployment.showDeployment(appID.value, deploymentID.value)
+    const res = await applicationDeploymentStore.showDeployment(appID.value, deploymentID.value)
     deployment.value = res ?? null
     listenDeploymentEvents()
   } catch (error) {

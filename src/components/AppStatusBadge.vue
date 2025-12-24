@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { Badge } from '@/components/ui/badge'
 import ApplicationStatus from '@/constants/application-status'
+import { appStatusLabel } from '@/mapper/application'
 
 const { status } = defineProps<{
   status: string
@@ -31,5 +32,5 @@ const variant = computed(() => {
 </script>
 
 <template>
-  <Badge :variant="variant">{{ status }}</Badge>
+  <Badge :variant="variant">{{ appStatusLabel(status) }}</Badge>
 </template>

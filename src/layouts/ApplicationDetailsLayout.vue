@@ -5,8 +5,9 @@ import {
   BanIcon,
   BoltIcon,
   ChevronDownIcon,
-  FileClock,
+  FileClockIcon,
   GaugeIcon,
+  LogsIcon,
   PackagePlusIcon,
   PlayIcon,
   RefreshCcwIcon
@@ -60,7 +61,12 @@ const menu = [
   {
     label: 'Deploys',
     to: { name: 'applications.deploys', params: { id: appID.value } },
-    icon: FileClock
+    icon: FileClockIcon
+  },
+  {
+    label: 'Logs',
+    to: { name: 'applications.logs', params: { id: appID.value } },
+    icon: LogsIcon
   }
 ]
 
@@ -84,6 +90,7 @@ onMounted(() => {
 onUnmounted(() => {
   applicationSub?.unsubscribe()
   applicationStore.cleanupState()
+  applicationDeploymentStore.cleanupState()
 })
 
 const fetchApplication = async () => {

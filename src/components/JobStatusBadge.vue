@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { Badge } from '@/components/ui/badge'
-import DeploymentStatus from '@/constants/deployment-status'
-import { deployStatusLabel } from '@/mapper/deployment'
+import JobStatus from '@/constants/job-status'
+import { jobStatusLabel } from '@/mapper/job'
 
 const { status } = defineProps<{
   status: string
@@ -10,16 +10,16 @@ const { status } = defineProps<{
 
 const variant = computed(() => {
   switch (status) {
-    case DeploymentStatus.FAILED:
+    case JobStatus.FAILED:
       return 'destructive'
 
-    case DeploymentStatus.PENDING:
+    case JobStatus.QUEUED:
       return 'outline'
 
-    case DeploymentStatus.DEPLOYING:
+    case JobStatus.RUNNING:
       return 'secondary'
 
-    case DeploymentStatus.SUCCESS:
+    case JobStatus.SUCCESS:
       return 'default'
 
     default:
@@ -29,5 +29,5 @@ const variant = computed(() => {
 </script>
 
 <template>
-  <Badge :variant="variant">{{ deployStatusLabel(status) }}</Badge>
+  <Badge :variant="variant">{{ jobStatusLabel(status) }}</Badge>
 </template>
