@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
+import { onBeforeRouteUpdate } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useClipboard } from '@vueuse/core'
 import { CheckIcon, ClipboardIcon } from 'lucide-vue-next'
@@ -75,6 +76,10 @@ watch(
     if (validStatus.includes(status ?? '')) {
       deploymentSub?.unsubscribe()
     }
+
+    if (status === DeploymentStatus.SUCCESS) {
+      fetchDeployment(deploymentID.value)
+    }
   }
 )
 
@@ -89,7 +94,12 @@ watch(
 )
 
 onMounted(() => {
-  fetchDeployment()
+  fetchDeployment(deploymentID.value)
+})
+
+onBeforeRouteUpdate((to) => {
+  const deploymentID = Number(to.params.deploymentID)
+  fetchDeployment(deploymentID)
 })
 
 onUnmounted(() => {
@@ -97,11 +107,11 @@ onUnmounted(() => {
   applicationDeploymentStore.selectedDeployment = null
 })
 
-const fetchDeployment = async () => {
+const fetchDeployment = async (deploymentID: number) => {
   loading.value = true
 
   try {
-    const res = await applicationDeploymentStore.showDeployment(appID.value, deploymentID.value)
+    const res = await applicationDeploymentStore.showDeployment(appID.value, deploymentID)
     deployment.value = res ?? null
     listenDeploymentEvents()
   } catch (error) {
@@ -131,6 +141,9 @@ const listenDeploymentEvents = () => {
 
     if (msg.event === WSEvent.DEPLOYMENT_LOGS_UPDATED) {
       const payload = msg.payload as EventDeploymentLogsUpdated
+      if (typeof deployment.value.build_logs !== 'string') {
+        deployment.value.build_logs = ''
+      }
       deployment.value.build_logs += payload.logs
       return
     }
