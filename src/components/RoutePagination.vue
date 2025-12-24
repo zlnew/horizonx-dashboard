@@ -41,9 +41,9 @@ const toPage = (page: number) => {
 <template>
   <Pagination
     v-slot="{ page }"
-    :itemsPerPage="meta.per_page"
+    :items-per-page="meta.per_page"
     :total="meta.total"
-    :default-page="meta.current_page"
+    :page="meta.current_page"
   >
     <PaginationContent v-slot="{ items }">
       <PaginationPrevious @click="prev" />
