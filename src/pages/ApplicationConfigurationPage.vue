@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, defineAsyncComponent } from 'vue'
 import { storeToRefs } from 'pinia'
-import { EditIcon, PlusIcon, XIcon } from 'lucide-vue-next'
+import { EditIcon, PlusIcon, Trash2Icon } from 'lucide-vue-next'
 import DataNotFound from '@/components/DataNotFound.vue'
 import { Button } from '@/components/ui/button'
 import {
@@ -93,15 +93,16 @@ const showDeleteDialog = () => {
                 v-for="(env, index) in selectedApplication.env_vars"
                 :key="index"
               >
-                <TableCell class="font-bold text-neutral-400">{{ env.key }}</TableCell>
-                <TableCell class="font-bold">{{ env.value }}</TableCell>
+                <TableCell class="font-bold">{{ env.key }}</TableCell>
+                <TableCell class="font-bold text-neutral-400">{{ env.value }}</TableCell>
                 <TableCell>
                   <div class="flex items-center justify-end gap-2">
                     <Button
                       type="button"
                       size="icon-sm"
-                      variant="outline"
+                      variant="ghost"
                       aria-label="Edit env var"
+                      class="text-neutral-400"
                       @click="showUpdateEnvVarDialog(env)"
                     >
                       <EditIcon />
@@ -109,11 +110,12 @@ const showDeleteDialog = () => {
                     <Button
                       type="button"
                       size="icon-sm"
-                      variant="destructive"
+                      variant="ghost"
                       aria-label="Delete env var"
+                      class="text-neutral-400"
                       @click="showDeleteEnvVarDialog(env)"
                     >
-                      <XIcon />
+                      <Trash2Icon />
                     </Button>
                   </div>
                 </TableCell>
