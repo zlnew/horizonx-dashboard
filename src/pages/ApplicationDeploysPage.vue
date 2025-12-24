@@ -1,16 +1,20 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent } from 'vue'
+import { computed, defineAsyncComponent, onMounted } from 'vue'
+import { onBeforeRouteUpdate, useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { PackagePlusIcon } from 'lucide-vue-next'
+import { toast } from 'vue-sonner'
 import DataLoading from '@/components/DataLoading.vue'
 import DataNotFound from '@/components/DataNotFound.vue'
 import DeploymentItem from '@/components/DeploymentItem.vue'
+import RoutePagination from '@/components/RoutePagination.vue'
 import { Button } from '@/components/ui/button'
 import {
   Card,
   CardAction,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
@@ -20,13 +24,17 @@ import { usePageMeta } from '@/composables/page-meta'
 import useApplicationStore from '@/stores/application'
 import useApplicationDeploymentStore from '@/stores/application-deployment'
 
+type Criteria = DeploymentCriteria
+
+const route = useRoute()
 const applicationStore = useApplicationStore()
 const applicationDeploymentStore = useApplicationDeploymentStore()
 
-const { selectedApplication, canDeployApp } = storeToRefs(applicationStore)
-const { deployments, loading, notFound } = storeToRefs(applicationDeploymentStore)
+const { selectedApplication, appID, canDeployApp } = storeToRefs(applicationStore)
+const { deployments, meta, loading, notFound } = storeToRefs(applicationDeploymentStore)
 
 const pageTitle = computed(() => `${selectedApplication.value?.name} · Deploys`)
+const criteria = computed(() => route.query as Criteria)
 
 usePageMeta({
   title: pageTitle,
@@ -44,6 +52,28 @@ usePageMeta({
     }
   ])
 })
+
+onMounted(() => {
+  fetchDeployments(criteria.value)
+})
+
+onBeforeRouteUpdate((to) => {
+  const criteria = to.query as Criteria
+  fetchDeployments(criteria)
+})
+
+const fetchDeployments = async (criteria: Criteria) => {
+  try {
+    await applicationDeploymentStore.getDeployments(appID.value, {
+      ...criteria,
+      paginate: true,
+      limit: 5
+    })
+  } catch (error) {
+    const fetchError = error as Error
+    toast.error(fetchError.message)
+  }
+}
 
 const showDeployConfirmation = () => {
   dialog.open(
@@ -88,6 +118,12 @@ const showDeployConfirmation = () => {
         <DataLoading v-else-if="loading" />
         <DataNotFound v-else-if="notFound" />
       </CardContent>
+      <CardFooter>
+        <RoutePagination
+          v-if="meta"
+          :meta="meta"
+        />
+      </CardFooter>
     </Card>
   </section>
 </template>

@@ -27,11 +27,9 @@ import { dialog } from '@/composables/dialog'
 import useWebSocket from '@/composables/web-socket'
 import WSEvent from '@/constants/ws-event'
 import useApplicationStore from '@/stores/application'
-import useApplicationDeploymentStore from '@/stores/application-deployment'
 
 const { subscribe } = useWebSocket()
 const applicationStore = useApplicationStore()
-const applicationDeploymentStore = useApplicationDeploymentStore()
 
 const {
   appID,
@@ -43,7 +41,6 @@ const {
   canStopApp,
   canRestartApp
 } = storeToRefs(applicationStore)
-const { refetch: dRefetch } = storeToRefs(applicationDeploymentStore)
 
 let applicationSub: { unsubscribe: () => void }
 
@@ -76,21 +73,13 @@ watch(refetch, (refetched) => {
   }
 })
 
-watch(dRefetch, (refetched) => {
-  if (refetched) {
-    fetchDeployments()
-  }
-})
-
 onMounted(() => {
   fetchApplication()
-  fetchDeployments()
 })
 
 onUnmounted(() => {
   applicationSub?.unsubscribe()
   applicationStore.cleanupState()
-  applicationDeploymentStore.cleanupState()
 })
 
 const fetchApplication = async () => {
@@ -108,15 +97,6 @@ const fetchApplication = async () => {
     toast.error(fetchError.message)
   } finally {
     loading.value = false
-  }
-}
-
-const fetchDeployments = async () => {
-  try {
-    await applicationDeploymentStore.getDeployments(appID.value)
-  } catch (error) {
-    const fetchError = error as Error
-    toast.error(fetchError.message)
   }
 }
 

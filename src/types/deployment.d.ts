@@ -15,6 +15,12 @@ type Deployment = {
   deployer: User | null
 }
 
+type DeploymentCriteria = Criteria & {
+  application_id?: string | null
+  deployed_by?: string | null
+  statuses?: string | null
+}
+
 type EventDeploymentStatusChanged = {
   deployment_id: number
   application_id: number

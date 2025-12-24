@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent } from 'vue'
+import { computed, defineAsyncComponent, onMounted, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { EditIcon } from 'lucide-vue-next'
+import { toast } from 'vue-sonner'
 import AppStatusBadge from '@/components/AppStatusBadge.vue'
 import DataLoading from '@/components/DataLoading.vue'
 import DataNotFound from '@/components/DataNotFound.vue'
@@ -27,11 +28,8 @@ const applicationStore = useApplicationStore()
 const applicationDeploymentStore = useApplicationDeploymentStore()
 
 const { appID, selectedApplication, canUpdateApp } = storeToRefs(applicationStore)
-const {
-  recentDeployments,
-  loading: dLoading,
-  notFound: dNotFound
-} = storeToRefs(applicationDeploymentStore)
+const { loading: dLoading, notFound: dNotFound } = storeToRefs(applicationDeploymentStore)
+const recentDeployments = ref<Deployment[]>([])
 
 const pageTitle = computed(() => `${selectedApplication.value?.name} · Overview`)
 
@@ -51,6 +49,20 @@ usePageMeta({
     }
   ])
 })
+
+onMounted(() => {
+  fetchRecentDeployments()
+})
+
+const fetchRecentDeployments = async () => {
+  try {
+    const res = await applicationDeploymentStore.getRecentDeployments(appID.value)
+    recentDeployments.value = res ?? []
+  } catch (error) {
+    const fetchError = error as Error
+    toast.error(fetchError.message)
+  }
+}
 
 const showUpdateDialog = () => {
   dialog.open(
