@@ -1,17 +1,50 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, watch } from 'vue'
+import { defineAsyncComponent, onMounted, onUnmounted, watch } from 'vue'
 import { storeToRefs } from 'pinia'
-import { BoltIcon, FileClock, GaugeIcon } from 'lucide-vue-next'
+import {
+  BanIcon,
+  BoltIcon,
+  ChevronDownIcon,
+  FileClock,
+  GaugeIcon,
+  PackagePlusIcon,
+  PlayIcon,
+  RefreshCcwIcon
+} from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
+import AppStatusBadge from '@/components/AppStatusBadge.vue'
+import { Button } from '@/components/ui/button'
+import { Card, CardAction, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu'
 import { Item, ItemContent, ItemGroup, ItemSeparator, ItemTitle } from '@/components/ui/item'
+import { dialog } from '@/composables/dialog'
+import useWebSocket from '@/composables/web-socket'
+import WSEvent from '@/constants/ws-event'
 import useApplicationStore from '@/stores/application'
 import useApplicationDeploymentStore from '@/stores/application-deployment'
 
+const { subscribe } = useWebSocket()
 const applicationStore = useApplicationStore()
 const applicationDeploymentStore = useApplicationDeploymentStore()
 
-const { appID, selectedApplication, refetch, loading } = storeToRefs(applicationStore)
+const {
+  appID,
+  selectedApplication: application,
+  refetch,
+  loading,
+  canDeployApp,
+  canStartApp,
+  canStopApp,
+  canRestartApp
+} = storeToRefs(applicationStore)
 const { refetch: dRefetch } = storeToRefs(applicationDeploymentStore)
+
+let applicationSub: { unsubscribe: () => void }
 
 const menu = [
   {
@@ -49,6 +82,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
+  applicationSub?.unsubscribe()
   applicationStore.cleanupState()
 })
 
@@ -59,8 +93,9 @@ const fetchApplication = async () => {
   try {
     const res = await applicationStore.showApplication(appID.value)
     if (res) {
-      selectedApplication.value = res
+      application.value = res
     }
+    listenApplicationEvents()
   } catch (error) {
     const fetchError = error as Error
     toast.error(fetchError.message)
@@ -76,6 +111,53 @@ const fetchDeployments = async () => {
     const fetchError = error as Error
     toast.error(fetchError.message)
   }
+}
+
+const listenApplicationEvents = () => {
+  if (!application.value?.id) {
+    return
+  }
+
+  applicationSub = subscribe(`application:${application.value.id}`, (msg) => {
+    if (!application.value) {
+      return
+    }
+
+    if (msg.event === WSEvent.APPLICATION_STATUS_CHANGED) {
+      const payload = msg.payload as EventApplicationStatusChanged
+      application.value.status = payload.status
+    }
+  })
+}
+
+const showDeployConfirmation = () => {
+  dialog.open(
+    defineAsyncComponent(
+      () => import('@/components/dialogs/ApplicationDeployConfirmationDialog.vue')
+    )
+  )
+}
+
+const showStartConfirmation = () => {
+  dialog.open(
+    defineAsyncComponent(
+      () => import('@/components/dialogs/ApplicationStartConfirmationDialog.vue')
+    )
+  )
+}
+
+const showStopConfirmation = () => {
+  dialog.open(
+    defineAsyncComponent(() => import('@/components/dialogs/ApplicationStopConfirmationDialog.vue'))
+  )
+}
+
+const showRestartConfirmation = () => {
+  dialog.open(
+    defineAsyncComponent(
+      () => import('@/components/dialogs/ApplicationRestartConfirmationDialog.vue')
+    )
+  )
 }
 </script>
 
@@ -112,8 +194,65 @@ const fetchDeployments = async () => {
       </ItemGroup>
     </div>
 
-    <div class="xl:col-span-3">
-      <RouterView />
-    </div>
+    <template v-if="application">
+      <div class="xl:col-span-3">
+        <section>
+          <Card>
+            <CardHeader>
+              <CardTitle>{{ application.name }}</CardTitle>
+              <CardDescription class="mt-4">
+                <div class="flex items-center gap-2">
+                  <AppStatusBadge :status="application.status" />
+                  <span>&middot;</span>
+                  <span>{{ application.repo_url }}</span>
+                </div>
+              </CardDescription>
+              <CardAction>
+                <DropdownMenu>
+                  <DropdownMenuTrigger as-child>
+                    <Button variant="outline">
+                      <span>Action</span>
+                      <ChevronDownIcon />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem
+                      :disabled="!canDeployApp"
+                      @click="showDeployConfirmation"
+                    >
+                      <PackagePlusIcon />
+                      <span>New Deploy</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      :disabled="!canRestartApp"
+                      @click="showRestartConfirmation"
+                    >
+                      <RefreshCcwIcon />
+                      <span>Restart</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      :disabled="!canStartApp"
+                      @click="showStartConfirmation"
+                    >
+                      <PlayIcon />
+                      <span>Start</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      :disabled="!canStopApp"
+                      @click="showStopConfirmation"
+                    >
+                      <BanIcon />
+                      <span>Stop</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </CardAction>
+            </CardHeader>
+          </Card>
+        </section>
+
+        <RouterView />
+      </div>
+    </template>
   </div>
 </template>

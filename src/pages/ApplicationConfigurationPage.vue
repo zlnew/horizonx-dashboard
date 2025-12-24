@@ -21,7 +21,7 @@ import useApplicationEnvStore from '@/stores/application-env'
 const applicationStore = useApplicationStore()
 const applicationEnvStore = useApplicationEnvStore()
 
-const { selectedApplication } = storeToRefs(applicationStore)
+const { selectedApplication, canDeleteApp } = storeToRefs(applicationStore)
 const { selectedEnvironment } = storeToRefs(applicationEnvStore)
 
 const pageTitle = computed(() => `${selectedApplication.value?.name} · Configuration`)
@@ -71,7 +71,7 @@ const showDeleteDialog = () => {
 </script>
 
 <template>
-  <section>
+  <section class="mt-8">
     <Card>
       <CardHeader>
         <CardTitle>Environment Variables</CardTitle>
@@ -136,6 +136,7 @@ const showDeleteDialog = () => {
         <Button
           type="button"
           variant="destructive"
+          :disabled="!canDeleteApp"
           @click="showDeleteDialog"
         >
           Permanently delete application

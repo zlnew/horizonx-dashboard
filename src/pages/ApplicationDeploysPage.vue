@@ -23,7 +23,7 @@ import useApplicationDeploymentStore from '@/stores/application-deployment'
 const applicationStore = useApplicationStore()
 const applicationDeploymentStore = useApplicationDeploymentStore()
 
-const { selectedApplication } = storeToRefs(applicationStore)
+const { selectedApplication, canDeployApp } = storeToRefs(applicationStore)
 const { deployments, loading, notFound } = storeToRefs(applicationDeploymentStore)
 
 const pageTitle = computed(() => `${selectedApplication.value?.name} · Deploys`)
@@ -55,7 +55,7 @@ const showDeployConfirmation = () => {
 </script>
 
 <template>
-  <section>
+  <section class="mt-8">
     <Card>
       <CardHeader>
         <CardTitle>Deploys</CardTitle>
@@ -65,6 +65,7 @@ const showDeployConfirmation = () => {
         <CardAction>
           <Button
             type="button"
+            :disabled="!canDeployApp"
             @click="showDeployConfirmation"
           >
             <PackagePlusIcon />

@@ -2,6 +2,7 @@ import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { defineStore } from 'pinia'
 import ApplicationApi from '@/api/Application'
+import ApplicationStatus from '@/constants/application-status'
 
 const useApplicationStore = defineStore('application', () => {
   const api = new ApplicationApi()
@@ -15,6 +16,48 @@ const useApplicationStore = defineStore('application', () => {
 
   const route = useRoute()
   const appID = computed(() => Number(route.params.id))
+
+  const canUpdateApp = computed(() => {
+    const validStates = [
+      ApplicationStatus.RUNNING,
+      ApplicationStatus.STOPPED,
+      ApplicationStatus.FAILED
+    ]
+    return validStates.includes(selectedApplication.value?.status ?? '')
+  })
+
+  const canDeleteApp = computed(() => {
+    const validStates = [
+      ApplicationStatus.RUNNING,
+      ApplicationStatus.STOPPED,
+      ApplicationStatus.FAILED
+    ]
+    return validStates.includes(selectedApplication.value?.status ?? '')
+  })
+
+  const canDeployApp = computed(() => {
+    const validStates = [
+      ApplicationStatus.RUNNING,
+      ApplicationStatus.STOPPED,
+      ApplicationStatus.FAILED
+    ]
+    return validStates.includes(selectedApplication.value?.status ?? '')
+  })
+
+  const canStartApp = computed(() => {
+    const validStates = [ApplicationStatus.STOPPED]
+    return validStates.includes(selectedApplication.value?.status ?? '')
+  })
+
+  const canStopApp = computed(() => {
+    const validStates = [ApplicationStatus.RUNNING]
+    return validStates.includes(selectedApplication.value?.status ?? '')
+  })
+
+  const canRestartApp = computed(() => {
+    const validStates = [ApplicationStatus.RUNNING, ApplicationStatus.FAILED]
+    return validStates.includes(selectedApplication.value?.status ?? '')
+  })
 
   const getApplications = async (criteria: ApplicationCriteria = {}) => {
     loading.value = true
@@ -116,6 +159,12 @@ const useApplicationStore = defineStore('application', () => {
     notFound,
     selectedApplication,
     appID,
+    canUpdateApp,
+    canDeleteApp,
+    canDeployApp,
+    canStartApp,
+    canStopApp,
+    canRestartApp,
     getApplications,
     showApplication,
     createApplication,

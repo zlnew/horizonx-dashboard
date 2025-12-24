@@ -26,7 +26,7 @@ const { formatDate } = useDate()
 const applicationStore = useApplicationStore()
 const applicationDeploymentStore = useApplicationDeploymentStore()
 
-const { appID, selectedApplication } = storeToRefs(applicationStore)
+const { appID, selectedApplication, canUpdateApp } = storeToRefs(applicationStore)
 const {
   recentDeployments,
   loading: dLoading,
@@ -60,7 +60,7 @@ const showUpdateDialog = () => {
 </script>
 
 <template>
-  <section>
+  <section class="mt-8">
     <Card>
       <CardHeader>
         <CardTitle>Application Details</CardTitle>
@@ -72,6 +72,7 @@ const showUpdateDialog = () => {
             type="button"
             size="icon-lg"
             variant="ghost"
+            :disabled="!canUpdateApp"
             @click="showUpdateDialog"
           >
             <EditIcon />

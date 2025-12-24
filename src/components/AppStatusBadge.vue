@@ -8,23 +8,25 @@ const { status } = defineProps<{
 }>()
 
 const variant = computed(() => {
-  if (status === ApplicationStatus.FAILED) {
-    return 'destructive'
-  }
+  switch (status) {
+    case ApplicationStatus.FAILED:
+      return 'destructive'
 
-  if (status === ApplicationStatus.STOPPED) {
-    return 'outline'
-  }
+    case ApplicationStatus.STOPPED:
+      return 'outline'
 
-  if (status === ApplicationStatus.STARTING) {
-    return 'secondary'
-  }
+    case ApplicationStatus.STARTING:
+    case ApplicationStatus.RESTARTING:
+    case ApplicationStatus.DEPLOYING:
+    case ApplicationStatus.STOPPING:
+      return 'secondary'
 
-  if (status === ApplicationStatus.RESTARTING) {
-    return 'secondary'
-  }
+    case ApplicationStatus.RUNNING:
+      return 'default'
 
-  return 'default'
+    default:
+      return 'default'
+  }
 })
 </script>
 

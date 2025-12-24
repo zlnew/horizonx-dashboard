@@ -146,10 +146,10 @@ const listenDeploymentEvents = () => {
 
 <template>
   <template v-if="application && deployment">
-    <section>
+    <section class="mt-8">
       <Card>
         <CardHeader>
-          <CardTitle>Deployment Details for {{ application.name }}</CardTitle>
+          <CardTitle>Deployment Details</CardTitle>
           <CardDescription>
             <div class="flex items-center gap-2 text-neutral-400">
               <span>

@@ -8,19 +8,22 @@ const { status } = defineProps<{
 }>()
 
 const variant = computed(() => {
-  if (status === DeploymentStatus.FAILED) {
-    return 'destructive'
-  }
+  switch (status) {
+    case DeploymentStatus.FAILED:
+      return 'destructive'
 
-  if (status === DeploymentStatus.PENDING) {
-    return 'outline'
-  }
+    case DeploymentStatus.PENDING:
+      return 'outline'
 
-  if (status === DeploymentStatus.DEPLOYING) {
-    return 'secondary'
-  }
+    case DeploymentStatus.DEPLOYING:
+      return 'secondary'
 
-  return 'default'
+    case DeploymentStatus.SUCCESS:
+      return 'default'
+
+    default:
+      return 'default'
+  }
 })
 </script>
 
