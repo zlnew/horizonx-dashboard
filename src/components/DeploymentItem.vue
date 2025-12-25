@@ -13,7 +13,10 @@ const { formatDate, formatDuration } = useDate()
 </script>
 
 <template>
-  <Item as-child>
+  <Item
+    as-child
+    class="rounded-none"
+  >
     <RouterLink
       :to="{
         name: 'applications.deploys.show',

@@ -34,11 +34,11 @@ let subServerMetrics: { unsubscribe: () => void } | null = null
 const selectedServer = computed(() => servers.value.find((s) => s.id === appStore.serverID))
 
 usePageMeta({
-  title: 'Servers Metrics',
+  title: 'System Monitor',
   breadcrumb: [
     {
-      label: 'Servers Metrics',
-      to: { name: 'servers.metrics' }
+      label: 'System Monitor',
+      to: { name: 'system-monitor' }
     }
   ]
 })

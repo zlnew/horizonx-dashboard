@@ -4,7 +4,9 @@ import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { toTypedSchema } from '@vee-validate/zod'
 import { useForm } from 'vee-validate'
+import { toast } from 'vue-sonner'
 import { z } from 'zod'
+import ServerApi from '@/api/Server'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -16,6 +18,7 @@ import useAuthStore from '@/stores/auth'
 const router = useRouter()
 const appStore = useAppStore()
 const authStore = useAuthStore()
+const { serverID } = storeToRefs(appStore)
 const { loginError } = storeToRefs(authStore)
 
 const formSchema = toTypedSchema(
@@ -37,8 +40,29 @@ onBeforeUnmount(() => {
   loginError.value = null
 })
 
+const getServers = async () => {
+  try {
+    const res = await new ServerApi().get<ApiResponse<Server[]>>()
+    return res.data
+  } catch (error) {
+    const fetchError = error as Error
+    toast.error(fetchError.message)
+  }
+}
+
 const onSubmit = form.handleSubmit((values) => {
-  authStore.login(values).then(() => {
+  authStore.login(values).then(async () => {
+    const servers = await getServers()
+
+    if (!servers?.find((s) => s.id === serverID.value)) {
+      serverID.value = ''
+    }
+
+    if (serverID.value === '') {
+      router.push({ path: '/servers/select' })
+      return
+    }
+
     router.push({ path: '/' })
   })
 })

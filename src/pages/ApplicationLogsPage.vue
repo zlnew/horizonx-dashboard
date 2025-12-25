@@ -110,7 +110,10 @@ const fetchJobs = async (criteria: Criteria) => {
               v-for="(job, index) in jobs"
               :key="index"
             >
-              <Item as-child>
+              <Item
+                as-child
+                class="rounded-none"
+              >
                 <RouterLink
                   :to="{
                     name: 'applications.logs.show',

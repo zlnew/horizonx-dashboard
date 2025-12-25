@@ -172,45 +172,22 @@ const handleLogout = () => {
               <SidebarMenuItem>
                 <SidebarMenuButton
                   as-child
+                  :is-active="route.name === 'system-monitor'"
+                >
+                  <RouterLink :to="{ name: 'system-monitor' }">
+                    <ChartColumnBigIcon />
+                    <span>System Monitor</span>
+                  </RouterLink>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  as-child
                   :is-active="route.name === 'applications'"
                 >
                   <RouterLink :to="{ name: 'applications' }">
                     <LayoutGridIcon />
                     <span>Applications</span>
-                  </RouterLink>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  as-child
-                  :is-active="route.name === 'servers'"
-                >
-                  <RouterLink :to="{ name: 'servers' }">
-                    <ServerIcon />
-                    <span>Servers</span>
-                  </RouterLink>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  as-child
-                  :is-active="route.name === 'server.metrics'"
-                >
-                  <RouterLink :to="{ name: 'server.metrics' }">
-                    <ChartColumnBigIcon />
-                    <span>Server Metrics</span>
-                  </RouterLink>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  as-child
-                  :is-active="route.name === 'members'"
-                >
-                  <RouterLink :to="{ name: 'members' }">
-                    <UsersIcon />
-                    <span>Members</span>
                   </RouterLink>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -236,6 +213,18 @@ const handleLogout = () => {
                 <DropdownMenuItem>
                   <UserIcon />
                   <span>Profile</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem as-child>
+                  <RouterLink :to="{ name: 'servers' }">
+                    <ServerIcon />
+                    <span>Servers</span>
+                  </RouterLink>
+                </DropdownMenuItem>
+                <DropdownMenuItem as-child>
+                  <RouterLink :to="{ name: 'members' }">
+                    <UsersIcon />
+                    <span>Members</span>
+                  </RouterLink>
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   variant="destructive"
@@ -332,6 +321,18 @@ const handleLogout = () => {
         <CommandEmpty>No results found.</CommandEmpty>
         <CommandGroup heading="Suggestions">
           <CommandItem
+            value="system monitor"
+            as-child
+          >
+            <RouterLink
+              :to="{ name: 'system-monitor' }"
+              @click.capture="close"
+            >
+              <ChartColumnBigIcon />
+              <span>System Monitor</span>
+            </RouterLink>
+          </CommandItem>
+          <CommandItem
             value="applications"
             as-child
           >
@@ -353,18 +354,6 @@ const handleLogout = () => {
             >
               <ServerIcon />
               <span>Servers</span>
-            </RouterLink>
-          </CommandItem>
-          <CommandItem
-            value="server metrics"
-            as-child
-          >
-            <RouterLink
-              :to="{ name: 'server.metrics' }"
-              @click.capture="close"
-            >
-              <ChartColumnBigIcon />
-              <span>Server Metrics</span>
             </RouterLink>
           </CommandItem>
           <CommandItem

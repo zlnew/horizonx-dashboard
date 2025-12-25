@@ -17,8 +17,13 @@ const router = createRouter({
       ]
     },
     {
+      name: 'servers.select',
+      path: '/servers/select',
+      component: () => import('@/pages/ServerSelectPage.vue')
+    },
+    {
       path: '/',
-      redirect: { name: 'applications' },
+      redirect: { name: 'system-monitor' },
       component: MainLayout,
       children: [
         {
@@ -78,9 +83,9 @@ const router = createRouter({
           component: () => import('@/pages/ServersPage.vue')
         },
         {
-          name: 'server.metrics',
-          path: 'server-metrics',
-          component: () => import('@/pages/ServerMetricsPage.vue')
+          name: 'system-monitor',
+          path: 'system-monitor',
+          component: () => import('@/pages/SystemMonitorPage.vue')
         },
         {
           name: 'members',
