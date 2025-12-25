@@ -28,6 +28,8 @@ import { dialog } from '@/composables/dialog'
 import { usePageMeta } from '@/composables/page-meta'
 import useUserStore from '@/stores/user'
 
+type Criteria = UserCriteria
+
 const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()

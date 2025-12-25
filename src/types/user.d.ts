@@ -10,6 +10,10 @@ type User = {
   permissions: Permission[] | null
 }
 
+type UserCriteria = Criteria & {
+  roles?: string | null
+}
+
 type Role = {
   id: number
   name: string

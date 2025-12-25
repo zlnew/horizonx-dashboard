@@ -15,7 +15,7 @@ const useUserStore = defineStore('user', () => {
 
   const selectedUser = ref<User | null>(null)
 
-  const getUsers = async (criteria: Criteria = {}) => {
+  const getUsers = async (criteria: UserCriteria = {}) => {
     loading.value = true
     refetch.value = false
     notFound.value = false
