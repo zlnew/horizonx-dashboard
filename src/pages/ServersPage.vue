@@ -1,12 +1,21 @@
 <script setup lang="ts">
-import { defineAsyncComponent, onMounted, onUnmounted, watch } from 'vue'
+import { computed, defineAsyncComponent, onMounted, onUnmounted, watch } from 'vue'
+import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
-import { PlusIcon, RefreshCwIcon, ServerIcon, SquarePenIcon, TrashIcon } from 'lucide-vue-next'
+import {
+  PlusIcon,
+  RefreshCwIcon,
+  SearchIcon,
+  ServerIcon,
+  SquarePenIcon,
+  TrashIcon
+} from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
 import DataLoading from '@/components/DataLoading.vue'
 import DataNotFound from '@/components/DataNotFound.vue'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group'
 import {
   Table,
   TableBody,
@@ -21,15 +30,21 @@ import useWebSocket from '@/composables/web-socket'
 import WSEvent from '@/constants/ws-event'
 import useServerStore from '@/stores/server'
 
+type Criteria = ServerCriteria
+
+const route = useRoute()
+const router = useRouter()
 const serverStore = useServerStore()
-const { servers, loading, refetch, notFound } = storeToRefs(serverStore)
+const { servers, loading, refetch, notFound, search } = storeToRefs(serverStore)
 
 const { subscribe } = useWebSocket()
 let sub: { unsubscribe: () => void }
 
+const criteria = computed(() => route.query as Criteria)
+
 watch(refetch, (refetched) => {
   if (refetched) {
-    fetchServers()
+    fetchServers(criteria.value)
   }
 })
 
@@ -44,13 +59,22 @@ usePageMeta({
 })
 
 onMounted(() => {
-  fetchServers()
+  search.value = criteria.value.search ?? ''
 
-  sub = subscribe<ServerStatus>('server_status', (msg) => {
+  fetchServers(criteria.value)
+
+  sub = subscribe<EventServerStatusChanged>('servers', (msg) => {
     if (msg.event === WSEvent.SERVER_STATUS_CHANGED) {
       serverStore.updateServerStatus(msg.payload)
     }
   })
+})
+
+onBeforeRouteUpdate((to) => {
+  const criteria = to.query as Criteria
+
+  search.value = criteria.search ?? ''
+  fetchServers(criteria)
 })
 
 onUnmounted(() => {
@@ -58,13 +82,23 @@ onUnmounted(() => {
   serverStore.cleanupState()
 })
 
-const fetchServers = async () => {
+const fetchServers = async (criteria: Criteria) => {
   try {
-    await serverStore.getServers()
+    await serverStore.getServers(criteria)
   } catch (error) {
     const fetchError = error as Error
     toast.error(fetchError.message)
   }
+}
+
+const handleSearch = () => {
+  router.push({
+    query: {
+      ...route.query,
+      page: 1,
+      search: search.value
+    }
+  })
 }
 
 const handleRefresh = () => {
@@ -115,7 +149,18 @@ const showDeleteModal = (server: Server) => {
 
   <section class="mt-8 space-y-4">
     <div class="flex flex-wrap-reverse items-center justify-between gap-4 sm:flex-wrap">
-      <div class="flex-auto sm:flex-1"></div>
+      <div class="flex-auto sm:flex-1">
+        <InputGroup>
+          <InputGroupInput
+            v-model="search"
+            placeholder="Search&hellip;"
+            @keyup.enter="handleSearch"
+          />
+          <InputGroupAddon>
+            <SearchIcon />
+          </InputGroupAddon>
+        </InputGroup>
+      </div>
       <div class="flex w-full items-center justify-end gap-2 sm:w-auto">
         <Button
           type="button"

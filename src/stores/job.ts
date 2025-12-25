@@ -19,7 +19,7 @@ const useJobStore = defineStore('job', () => {
   const route = useRoute()
   const jobID = computed(() => Number(route.params.jobID))
 
-  const getJobs = async (criteria: JobCriteria) => {
+  const getJobs = async (criteria: JobCriteria = {}) => {
     loading.value = true
     refetch.value = false
     notFound.value = false

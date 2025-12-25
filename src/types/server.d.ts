@@ -7,7 +7,11 @@ type Server = {
   updated_at: string
 }
 
-type ServerStatus = {
+type ServerCriteria = Criteria & {
+  is_online?: boolean
+}
+
+type EventServerStatusChanged = {
   server_id: string
   is_online: boolean
 }

@@ -7,26 +7,15 @@ import {
   RefreshCwIcon,
   SearchIcon,
   SquarePenIcon,
-  TableOfContentsIcon,
   TrashIcon,
   UsersIcon
 } from 'lucide-vue-next'
-import type { AcceptableValue } from 'reka-ui'
 import { toast } from 'vue-sonner'
 import DataLoading from '@/components/DataLoading.vue'
 import DataNotFound from '@/components/DataNotFound.vue'
 import RoleBadge from '@/components/RoleBadge.vue'
-import RoutePagination from '@/components/RoutePagination.vue'
 import { Button } from '@/components/ui/button'
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group'
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select'
 import {
   Table,
   TableBody,
@@ -42,7 +31,7 @@ import useUserStore from '@/stores/user'
 const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()
-const { users, meta, loading, refetch, notFound, perPage, search } = storeToRefs(userStore)
+const { users, loading, refetch, notFound, search } = storeToRefs(userStore)
 
 const criteria = computed(() => route.query as Criteria)
 
@@ -64,7 +53,6 @@ usePageMeta({
 
 onMounted(() => {
   search.value = criteria.value.search ?? ''
-  perPage.value = criteria.value.limit ?? 20
 
   fetchUsers(criteria.value)
 })
@@ -73,7 +61,6 @@ onBeforeRouteUpdate((to) => {
   const criteria = to.query as Criteria
 
   search.value = criteria.search ?? ''
-  perPage.value = criteria.limit ?? 20
 
   fetchUsers(criteria)
 })
@@ -84,11 +71,7 @@ onUnmounted(() => {
 
 const fetchUsers = async (criteria: Criteria) => {
   try {
-    await userStore.getUsers({
-      ...criteria,
-      paginate: true,
-      limit: criteria.limit ?? 20
-    })
+    await userStore.getUsers(criteria)
   } catch (error) {
     const fetchError = error as Error
     toast.error(fetchError.message)
@@ -101,15 +84,6 @@ const handleSearch = () => {
       ...route.query,
       page: 1,
       search: search.value
-    }
-  })
-}
-
-const handlePerPage = (perPage: AcceptableValue) => {
-  router.push({
-    query: {
-      ...route.query,
-      limit: perPage?.toString()
     }
   })
 }
@@ -175,24 +149,6 @@ const showDeleteModal = (user: User) => {
         </InputGroup>
       </div>
       <div class="flex w-full items-center justify-end gap-2 sm:w-auto">
-        <Select
-          v-model="perPage"
-          @update:modelValue="handlePerPage"
-        >
-          <SelectTrigger>
-            <div class="text-neutral-400">
-              <TableOfContentsIcon />
-            </div>
-            <SelectValue placeholder="Per Page" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectItem :value="20">20</SelectItem>
-              <SelectItem :value="60">60</SelectItem>
-              <SelectItem :value="100">100</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
         <Button
           type="button"
           variant="outline"
@@ -223,9 +179,7 @@ const showDeleteModal = (user: User) => {
               v-for="(row, index) in users"
               :key="index"
             >
-              <TableCell>
-                {{ meta ? (meta?.current_page - 1) * meta.per_page + index + 1 : 0 }}.
-              </TableCell>
+              <TableCell>{{ index + 1 }}.</TableCell>
               <TableCell class="font-bold">{{ row.name }}</TableCell>
               <TableCell>{{ row.email }}</TableCell>
               <TableCell>
@@ -257,11 +211,6 @@ const showDeleteModal = (user: User) => {
           </TableBody>
         </Table>
       </div>
-
-      <RoutePagination
-        v-if="meta"
-        :meta="meta"
-      />
     </template>
 
     <DataLoading v-else-if="loading" />

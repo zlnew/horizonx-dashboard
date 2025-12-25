@@ -6,27 +6,29 @@ const useServerStore = defineStore('server', () => {
   const api = new ServerApi()
 
   const servers = ref<Server[]>([])
+  const meta = ref<Meta | null>(null)
   const loading = ref(false)
   const refetch = ref(false)
   const notFound = ref(false)
+  const perPage = ref(10)
+  const search = ref('')
 
   const selectedServer = ref<Server | null>(null)
 
-  const getServers = async () => {
+  const getServers = async (criteria: ServerCriteria = {}) => {
     loading.value = true
     refetch.value = false
     notFound.value = false
 
     try {
-      const res = await api.get<ApiResponse<Server[]>>()
+      const res = await api.get<ApiResponse<Server[]>>(criteria)
 
       if (!res.data?.length) {
         notFound.value = true
       }
 
       servers.value = res.data ?? []
-
-      return res
+      meta.value = res.meta ?? null
     } catch (error) {
       throw error
     } finally {
@@ -58,7 +60,7 @@ const useServerStore = defineStore('server', () => {
     }
   }
 
-  const updateServerStatus = (status: ServerStatus) => {
+  const updateServerStatus = (status: EventServerStatusChanged) => {
     const idx = servers.value.findIndex((s) => s.id === status.server_id)
     if (idx != -1 && servers.value[idx]) {
       servers.value[idx].is_online = status.is_online
@@ -67,17 +69,23 @@ const useServerStore = defineStore('server', () => {
 
   const cleanupState = () => {
     servers.value = []
+    meta.value = null
     loading.value = false
     refetch.value = false
     notFound.value = false
+    perPage.value = 10
+    search.value = ''
     selectedServer.value = null
   }
 
   return {
     servers,
+    meta,
     loading,
     refetch,
     notFound,
+    perPage,
+    search,
     selectedServer,
     getServers,
     registerServer,

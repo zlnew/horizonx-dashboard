@@ -19,7 +19,7 @@ const useApplicationDeploymentStore = defineStore('application-deployment', () =
   const route = useRoute()
   const deploymentID = computed(() => Number(route.params.deploymentID))
 
-  const getDeployments = async (appID: number, criteria: DeploymentCriteria) => {
+  const getDeployments = async (appID: number, criteria: DeploymentCriteria = {}) => {
     loading.value = true
     refetch.value = false
     notFound.value = false

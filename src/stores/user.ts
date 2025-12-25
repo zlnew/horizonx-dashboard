@@ -10,12 +10,12 @@ const useUserStore = defineStore('user', () => {
   const loading = ref(false)
   const refetch = ref(false)
   const notFound = ref(false)
-  const perPage = ref(20)
+  const perPage = ref(10)
   const search = ref('')
 
   const selectedUser = ref<User | null>(null)
 
-  const getUsers = async (criteria: Criteria) => {
+  const getUsers = async (criteria: Criteria = {}) => {
     loading.value = true
     refetch.value = false
     notFound.value = false
@@ -64,9 +64,12 @@ const useUserStore = defineStore('user', () => {
 
   const cleanupState = () => {
     users.value = []
+    meta.value = null
     loading.value = false
     refetch.value = false
     notFound.value = false
+    perPage.value = 10
+    search.value = ''
     selectedUser.value = null
   }
 

@@ -44,7 +44,7 @@ usePageMeta({
 })
 
 onMounted(() => {
-  subServerStatus = subscribe<ServerStatus>('server_status', (msg) => {
+  subServerStatus = subscribe<EventServerStatusChanged>('server_status', (msg) => {
     if (msg.event === WSEvent.SERVER_STATUS_CHANGED) {
       serverStore.updateServerStatus(msg.payload)
     }
