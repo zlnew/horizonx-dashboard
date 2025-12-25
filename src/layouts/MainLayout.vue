@@ -85,6 +85,10 @@ onMounted(() => {
   window.addEventListener('keydown', onKeydown)
   connectWs()
   fetchServers()
+
+  if (serverID.value === '') {
+    router.replace({ name: 'servers.select' })
+  }
 })
 
 onBeforeUnmount(() => {
