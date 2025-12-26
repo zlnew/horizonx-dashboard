@@ -11,6 +11,7 @@ const { status } = defineProps<{
 const variant = computed(() => {
   switch (status) {
     case JobStatus.FAILED:
+    case JobStatus.EXPIRED:
       return 'destructive'
 
     case JobStatus.QUEUED:

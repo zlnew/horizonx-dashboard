@@ -1,7 +1,7 @@
 const JobType = {
-  DEPLOY_APP: 'deploy_app',
-  START_APP: 'start_app',
-  STOP_APP: 'stop_app',
-  RESTART_APP: 'restart_app'
+  APP_DEPLOY: 'app_deploy',
+  APP_START: 'app_start',
+  APP_STOP: 'app_stop',
+  APP_RESTART: 'app_restart'
 }
 export default JobType

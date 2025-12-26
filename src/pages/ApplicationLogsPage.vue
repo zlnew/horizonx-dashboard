@@ -121,7 +121,7 @@ const fetchJobs = async (criteria: Criteria) => {
                   }"
                 >
                   <ItemContent>
-                    <ItemTitle>{{ jobTypeLabel(job.job_type) }}</ItemTitle>
+                    <ItemTitle>{{ jobTypeLabel(job.type) }}</ItemTitle>
                     <ItemDescription class="mt-2">
                       <div class="flex items-center gap-2">
                         <JobStatusBadge :status="job.status" />

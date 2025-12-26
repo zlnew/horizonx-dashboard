@@ -20,6 +20,7 @@ import useWebSocket from '@/composables/web-socket'
 import JobStatus from '@/constants/job-status'
 import WSEvent from '@/constants/ws-event'
 import { jobTypeLabel } from '@/mapper/job'
+import { logLevelLabel } from '@/mapper/log'
 import useApplicationStore from '@/stores/application'
 import useJobStore from '@/stores/job'
 
@@ -135,7 +136,7 @@ const listenJobEvents = () => {
           <CardTitle>Log Details</CardTitle>
           <CardDescription>
             <div class="flex items-center gap-2 text-neutral-400">
-              <span class="font-bold">{{ jobTypeLabel(job.job_type) }}</span>
+              <span class="font-bold">{{ jobTypeLabel(job.type) }}</span>
               <span>&middot;</span>
               <span>
                 {{
@@ -179,8 +180,29 @@ const listenJobEvents = () => {
           </CardAction>
         </CardHeader>
         <CardContent>
-          <div class="bg-background h-84 overflow-auto rounded-lg p-4 font-mono text-xs">
-            <pre>{{ job.output_log || 'Waiting for output…' }}</pre>
+          <div class="bg-background h-84 space-y-1 overflow-auto rounded-lg p-4 font-mono text-xs">
+            <template v-if="job.logs?.length">
+              <div
+                v-for="(l, i) in job.logs"
+                :key="i"
+                class="flex gap-3"
+              >
+                <span class="text-muted min-w-4">{{ i + 1 }}</span>
+                <span class="text-muted-foreground text-nowrap">
+                  {{ formatDate(new Date(l.timestamp), 'DD-MM-YYYY HH:mm:ss') }}
+                </span>
+                <span class="font-semibold text-nowrap">
+                  {{ logLevelLabel(l.level) }}
+                </span>
+                <span class="flex-1 text-nowrap wrap-break-word">
+                  {{ l.message }}
+                </span>
+              </div>
+            </template>
+
+            <template v-else>
+              <div class="text-muted-foreground">no logs yet</div>
+            </template>
           </div>
         </CardContent>
       </Card>

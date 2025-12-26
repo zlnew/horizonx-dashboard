@@ -3,14 +3,14 @@ import JobType from '@/constants/job-type'
 
 export const jobTypeLabel = (type: string) => {
   switch (type) {
-    case JobType.DEPLOY_APP:
-      return 'Deploy Application'
-    case JobType.START_APP:
-      return 'Start Application'
-    case JobType.STOP_APP:
-      return 'Stop Application'
-    case JobType.RESTART_APP:
-      return 'Restart Application'
+    case JobType.APP_DEPLOY:
+      return 'Deploying Application'
+    case JobType.APP_START:
+      return 'Starting Application'
+    case JobType.APP_STOP:
+      return 'Stopping Application'
+    case JobType.APP_RESTART:
+      return 'Restarting Application'
   }
 }
 

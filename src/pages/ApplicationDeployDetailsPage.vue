@@ -20,6 +20,7 @@ import { defineBreadcrumbs, usePageMeta } from '@/composables/page-meta'
 import useWebSocket from '@/composables/web-socket'
 import DeploymentStatus from '@/constants/deployment-status'
 import WSEvent from '@/constants/ws-event'
+import { logLevelLabel } from '@/mapper/log'
 import useApplicationStore from '@/stores/application'
 import useApplicationDeploymentStore from '@/stores/application-deployment'
 
@@ -34,6 +35,7 @@ const logsContainer = ref<HTMLElement | null>(null)
 const loading = ref(false)
 
 let deploymentSub: { unsubscribe: () => void }
+let logSub: { unsubscribe: () => void }
 
 usePageMeta({
   title: 'Details',
@@ -75,16 +77,13 @@ watch(
     const validStatus = [DeploymentStatus.SUCCESS, DeploymentStatus.FAILED]
     if (validStatus.includes(status ?? '')) {
       deploymentSub?.unsubscribe()
-    }
-
-    if (status === DeploymentStatus.SUCCESS) {
-      fetchDeployment(deploymentID.value)
+      logSub?.unsubscribe()
     }
   }
 )
 
 watch(
-  () => deployment.value?.build_logs,
+  () => deployment.value?.logs?.length,
   async () => {
     await nextTick()
     if (!logsContainer.value) return
@@ -104,6 +103,7 @@ onBeforeRouteUpdate((to) => {
 
 onUnmounted(() => {
   deploymentSub?.unsubscribe()
+  logSub?.unsubscribe()
   applicationDeploymentStore.selectedDeployment = null
 })
 
@@ -139,19 +139,27 @@ const listenDeploymentEvents = () => {
       return
     }
 
-    if (msg.event === WSEvent.DEPLOYMENT_LOGS_UPDATED) {
-      const payload = msg.payload as EventDeploymentLogsUpdated
-      if (typeof deployment.value.build_logs !== 'string') {
-        deployment.value.build_logs = ''
-      }
-      deployment.value.build_logs += payload.logs
-      return
-    }
-
     if (msg.event === WSEvent.DEPLOYMENT_COMMIT_INFO_RECEIVED) {
       const payload = msg.payload as EventDeploymentCommitInfoReceived
       deployment.value.commit_hash = payload.commit_hash
       deployment.value.commit_message = payload.commit_message
+      return
+    }
+  })
+
+  logSub = subscribe('logs', (msg) => {
+    if (!deployment.value) {
+      return
+    }
+
+    if (msg.event === WSEvent.LOG_RECEIVED) {
+      const payload = msg.payload as EventLogReceived
+      if (payload.deployment_id === deployment.value.id) {
+        if (!deployment.value.logs?.length) {
+          deployment.value.logs = []
+        }
+        deployment.value.logs.push(payload)
+      }
       return
     }
   })
@@ -227,9 +235,30 @@ const listenDeploymentEvents = () => {
         <CardContent>
           <div
             ref="logsContainer"
-            class="bg-background h-84 overflow-auto rounded-lg p-4 font-mono text-xs"
+            class="bg-background h-84 space-y-1 overflow-auto rounded-lg p-4 font-mono text-xs"
           >
-            <pre>{{ deployment.build_logs || 'Waiting for build logs…' }}</pre>
+            <template v-if="deployment.logs?.length">
+              <div
+                v-for="(l, i) in deployment.logs"
+                :key="i"
+                class="flex gap-3"
+              >
+                <span class="text-muted min-w-4">{{ i + 1 }}</span>
+                <span class="text-muted-foreground text-nowrap">
+                  {{ formatDate(new Date(l.timestamp), 'DD-MM-YYYY HH:mm:ss') }}
+                </span>
+                <span class="font-semibold text-nowrap">
+                  {{ logLevelLabel(l.level) }}
+                </span>
+                <span class="flex-1 text-nowrap wrap-break-word">
+                  {{ l.message }}
+                </span>
+              </div>
+            </template>
+
+            <template v-else>
+              <div class="text-muted-foreground">no logs yet</div>
+            </template>
           </div>
         </CardContent>
       </Card>

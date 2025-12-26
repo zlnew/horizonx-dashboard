@@ -5,14 +5,13 @@ type Deployment = {
   commit_hash: string | null
   commit_message: string | null
   status: string
-  build_logs: string | null
   triggered_at: string
   started_at: string | null
   finished_at: string | null
   deployed_by: number | null
 
-  application: Application | null
   deployer: User | null
+  logs?: Log[]
 }
 
 type DeploymentCriteria = Criteria & {
@@ -25,13 +24,6 @@ type EventDeploymentStatusChanged = {
   deployment_id: number
   application_id: number
   status: string
-}
-
-type EventDeploymentLogsUpdated = {
-  deployment_id: number
-  application_id: number
-  logs: string
-  is_partial: boolean
 }
 
 type EventDeploymentCommitInfoReceived = {

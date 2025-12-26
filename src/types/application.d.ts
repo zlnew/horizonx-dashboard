@@ -15,6 +15,7 @@ type Application = {
 
   server: Server | null
   env_vars: EnvironmentVariable[] | null
+  logs: Log[] | null
 }
 
 type ApplicationCreateRequest = {
