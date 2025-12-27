@@ -27,11 +27,16 @@ const { formatDate } = useDate()
 const applicationStore = useApplicationStore()
 const applicationDeploymentStore = useApplicationDeploymentStore()
 
-const { appID, selectedApplication, canUpdateApp } = storeToRefs(applicationStore)
+const {
+  selectedApplication: application,
+  loading,
+  appID,
+  canUpdateApp
+} = storeToRefs(applicationStore)
 const { loading: dLoading, notFound: dNotFound } = storeToRefs(applicationDeploymentStore)
 const recentDeployments = ref<Deployment[]>([])
 
-const pageTitle = computed(() => `${selectedApplication.value?.name} · Overview`)
+const pageTitle = computed(() => `${application.value?.name} · Overview`)
 
 usePageMeta({
   title: pageTitle,
@@ -44,7 +49,7 @@ usePageMeta({
       label: pageTitle.value,
       to: {
         name: 'applications.overview',
-        params: { id: String(selectedApplication.value?.id) }
+        params: { id: String(application.value?.id) }
       }
     }
   ])
@@ -92,47 +97,46 @@ const showUpdateDialog = () => {
         </CardAction>
       </CardHeader>
       <CardContent>
-        <template v-if="selectedApplication">
+        <template v-if="application">
           <ul class="space-y-4">
-            <li class="grid grid-cols-4">
-              <div class="text-neutral-400">Name:</div>
-              <div class="col-span-3 font-bold">{{ selectedApplication.name }}</div>
+            <li class="grid md:grid-cols-4">
+              <div class="text-sm text-neutral-400 md:text-base">Name:</div>
+              <div class="font-bold md:col-span-3">{{ application.name }}</div>
             </li>
-            <li class="grid grid-cols-4">
-              <div class="text-neutral-400">Repository:</div>
-              <div class="col-span-3 font-bold">{{ selectedApplication.repo_url }}</div>
+            <li class="grid md:grid-cols-4">
+              <div class="text-sm text-neutral-400 md:text-base">Repository:</div>
+              <div class="font-bold md:col-span-3">{{ application.repo_url }}</div>
             </li>
-            <li class="grid grid-cols-4">
-              <div class="text-neutral-400">Branch:</div>
-              <div class="col-span-3 font-bold">{{ selectedApplication.branch }}</div>
+            <li class="grid md:grid-cols-4">
+              <div class="text-sm text-neutral-400 md:text-base">Branch:</div>
+              <div class="font-bold md:col-span-3">{{ application.branch }}</div>
             </li>
-            <li class="grid grid-cols-4">
-              <div class="text-neutral-400">Status:</div>
-              <div class="col-span-3 font-bold">
-                <AppStatusBadge :status="selectedApplication.status" />
+            <li class="grid md:grid-cols-4">
+              <div class="text-sm text-neutral-400 md:text-base">Status:</div>
+              <div class="font-bold md:col-span-3">
+                <AppStatusBadge :status="application.status" />
               </div>
             </li>
-            <li class="grid grid-cols-4">
-              <div class="text-neutral-400">Last Deployed:</div>
-              <div class="col-span-3 font-bold">
+            <li class="grid md:grid-cols-4">
+              <div class="text-sm text-neutral-400 md:text-base">Last Deployed:</div>
+              <div class="font-bold md:col-span-3">
                 {{
-                  selectedApplication.last_deployment_at
-                    ? formatDate(
-                        new Date(selectedApplication.last_deployment_at),
-                        'DD MMM, YYYY HH:MM'
-                      )
+                  application.last_deployment_at
+                    ? formatDate(new Date(application.last_deployment_at), 'DD MMM, YYYY HH:MM')
                     : '-'
                 }}
               </div>
             </li>
-            <li class="grid grid-cols-4">
-              <div class="text-neutral-400">Created:</div>
-              <div class="col-span-3 font-bold">
-                {{ formatDate(new Date(selectedApplication.created_at), 'DD MMM, YYYY HH:MM') }}
+            <li class="grid md:grid-cols-4">
+              <div class="text-sm text-neutral-400 md:text-base">Created:</div>
+              <div class="font-bold md:col-span-3">
+                {{ formatDate(new Date(application.created_at), 'DD MMM, YYYY HH:MM') }}
               </div>
             </li>
           </ul>
         </template>
+        <DataLoading v-else-if="loading" />
+        <DataNotFound v-else />
       </CardContent>
     </Card>
   </section>

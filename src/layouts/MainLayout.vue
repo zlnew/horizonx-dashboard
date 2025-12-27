@@ -252,7 +252,7 @@ const handleLogout = () => {
         <div class="flex w-full items-center justify-between gap-8 px-4 sm:px-8">
           <div class="flex items-center gap-2">
             <SidebarTrigger class="-ml-1" />
-            <Breadcrumb>
+            <Breadcrumb class="hidden lg:block">
               <BreadcrumbList>
                 <template
                   v-for="(br, index) in breadcrumb"

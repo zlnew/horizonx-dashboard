@@ -173,7 +173,7 @@ const handleLogsCopy = (copy: (text: string) => Promise<void>) => {
         <CardHeader>
           <CardTitle>Activity Details</CardTitle>
           <CardDescription>
-            <div class="flex items-center gap-2 text-neutral-400">
+            <div class="flex flex-wrap items-center gap-1 text-neutral-400">
               <span class="font-bold">{{ jobTypeLabel(job.type) }}</span>
               <span>&middot;</span>
               <span>

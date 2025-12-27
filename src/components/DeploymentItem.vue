@@ -3,19 +3,18 @@ import { ChevronRightIcon } from 'lucide-vue-next'
 import AppDeployBadge from '@/components/AppDeployBadge.vue'
 import { Item, ItemActions, ItemContent, ItemDescription, ItemTitle } from '@/components/ui/item'
 import { useDate } from '@/composables/date'
-import DeploymentStatus from '@/constants/deployment-status'
 
 defineProps<{
   data: Deployment
 }>()
 
-const { formatDate, formatDuration } = useDate()
+const { formatDate } = useDate()
 </script>
 
 <template>
   <Item
     as-child
-    class="rounded-none"
+    class="rounded-none px-0 md:px-4"
   >
     <RouterLink
       :to="{
@@ -24,34 +23,20 @@ const { formatDate, formatDuration } = useDate()
       }"
     >
       <ItemContent>
-        <ItemTitle>
-          <div class="flex items-center gap-2">
-            <span class="font-mono font-bold">
-              {{ data.branch }}@{{ data.commit_hash ?? '~' }}
-            </span>
-            <AppDeployBadge :status="data.status" />
-          </div>
-        </ItemTitle>
+        <ItemTitle>{{ data.branch }}@{{ data.commit_hash ?? '~' }}</ItemTitle>
         <ItemDescription>
-          {{ data.commit_message ?? 'No deploy message' }}
+          <div class="space-y-2">
+            <div>{{ data.commit_message ?? 'No deploy message' }}</div>
+            <div class="flex items-center gap-2">
+              <AppDeployBadge :status="data.status" />
+              <span>&middot;</span>
+              <span>{{ formatDate(new Date(data.triggered_at), 'DD MMM, YYYY HH:mm') }}</span>
+            </div>
+          </div>
         </ItemDescription>
       </ItemContent>
       <ItemActions>
-        <div class="flex items-center gap-4">
-          <div class="flex flex-col gap-2">
-            <div>
-              {{ formatDate(new Date(data.triggered_at), 'DD MMM, YYYY HH:mm') }}
-            </div>
-            <div
-              v-if="data.started_at && data.finished_at && data.status === DeploymentStatus.SUCCESS"
-              class="text-sm text-neutral-400"
-            >
-              Deployed in
-              {{ formatDuration(new Date(data.started_at), new Date(data.finished_at)) }}
-            </div>
-          </div>
-          <ChevronRightIcon class="size-4" />
-        </div>
+        <ChevronRightIcon class="size-4" />
       </ItemActions>
     </RouterLink>
   </Item>

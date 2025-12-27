@@ -144,7 +144,7 @@ const listenJobEvents = () => {
             >
               <Item
                 as-child
-                class="rounded-none"
+                class="rounded-none px-0 md:px-4"
               >
                 <RouterLink
                   :to="{

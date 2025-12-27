@@ -14,8 +14,10 @@ import {
 } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
 import AppStatusBadge from '@/components/AppStatusBadge.vue'
+import DataLoading from '@/components/DataLoading.vue'
+import DataNotFound from '@/components/DataNotFound.vue'
 import { Button } from '@/components/ui/button'
-import { Card, CardAction, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -187,13 +189,6 @@ const showRestartConfirmation = () => {
           <Card>
             <CardHeader>
               <CardTitle>{{ application.name }}</CardTitle>
-              <CardDescription class="mt-4">
-                <div class="flex items-center gap-2">
-                  <AppStatusBadge :status="application.status" />
-                  <span>&middot;</span>
-                  <span>{{ application.repo_url }}</span>
-                </div>
-              </CardDescription>
               <CardAction>
                 <DropdownMenu>
                   <DropdownMenuTrigger as-child>
@@ -235,11 +230,21 @@ const showRestartConfirmation = () => {
                 </DropdownMenu>
               </CardAction>
             </CardHeader>
+            <CardContent>
+              <div class="text-muted-foreground flex items-center gap-2 text-sm">
+                <AppStatusBadge :status="application.status" />
+                <span>&middot;</span>
+                <span>{{ application.repo_url }}</span>
+              </div>
+            </CardContent>
           </Card>
         </section>
 
         <RouterView />
       </div>
     </template>
+
+    <DataLoading v-else-if="loading" />
+    <DataNotFound v-else />
   </div>
 </template>
