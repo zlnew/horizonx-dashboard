@@ -20,6 +20,25 @@ type DeploymentCriteria = Criteria & {
   statuses?: string | null
 }
 
+type EventDeploymentCreated = {
+  deployment_id: number
+  application_id: number
+  deployed_by: number
+  triggered_at: string
+}
+
+type EventDeploymentStarted = {
+  deployment_id: number
+  application_id: number
+  started_at: string
+}
+
+type EventDeploymentFinished = {
+  deployment_id: number
+  application_id: number
+  finished_at: number
+}
+
 type EventDeploymentStatusChanged = {
   deployment_id: number
   application_id: number

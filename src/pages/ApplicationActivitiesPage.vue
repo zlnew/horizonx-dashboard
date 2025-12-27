@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, watch } from 'vue'
+import { computed, onMounted, onUnmounted, watch } from 'vue'
 import { onBeforeRouteUpdate, useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { ChevronRightIcon } from 'lucide-vue-next'
@@ -27,6 +27,8 @@ import {
 } from '@/components/ui/item'
 import { useDate } from '@/composables/date'
 import { defineBreadcrumbs, usePageMeta } from '@/composables/page-meta'
+import useWebSocket from '@/composables/web-socket'
+import WSEvent from '@/constants/ws-event'
 import { jobTypeLabel } from '@/mapper/job'
 import useApplicationStore from '@/stores/application'
 import useJobStore from '@/stores/job'
@@ -35,14 +37,16 @@ type Criteria = JobCriteria
 
 const route = useRoute()
 const { formatDate } = useDate()
+const { subscribe } = useWebSocket()
 const applicationStore = useApplicationStore()
 const jobStore = useJobStore()
 
 const { selectedApplication: application, appID } = storeToRefs(applicationStore)
 const { jobs, meta, refetch, loading, notFound } = storeToRefs(jobStore)
 
-const pageTitle = computed(() => `${application.value?.name} · Logs`)
+let jobSub: { unsubscribe: () => void }
 
+const pageTitle = computed(() => `${application.value?.name} · Activities`)
 const criteria = computed(() => route.query as Criteria)
 
 usePageMeta({
@@ -56,7 +60,7 @@ usePageMeta({
       {
         label: pageTitle.value,
         to: {
-          name: 'applications.logs',
+          name: 'applications.activities',
           params: { id: String(application.value?.id) }
         }
       }
@@ -79,6 +83,10 @@ onBeforeRouteUpdate((to) => {
   fetchJobs(criteria)
 })
 
+onUnmounted(() => {
+  jobSub?.unsubscribe()
+})
+
 const fetchJobs = async (criteria: Criteria) => {
   try {
     await jobStore.getJobs({
@@ -87,10 +95,33 @@ const fetchJobs = async (criteria: Criteria) => {
       limit: 5,
       application_id: appID.value.toString()
     })
+    listenJobEvents()
   } catch (error) {
     const fetchError = error as Error
     toast.error(fetchError.message)
   }
+}
+
+const listenJobEvents = () => {
+  jobSub = subscribe('jobs', (msg) => {
+    if (msg.event === WSEvent.JOB_CREATED) {
+      fetchJobs(criteria.value)
+      return
+    }
+
+    if (msg.event === WSEvent.JOB_FINISHED) {
+      fetchJobs(criteria.value)
+      return
+    }
+
+    if (msg.event === WSEvent.JOB_STATUS_CHANGED) {
+      const payload = msg.payload as EventJobStatusChanged
+      const idx = jobs.value.findIndex((j) => j.id === payload.job_id)
+      if (idx != -1 && jobs.value[idx]) {
+        jobs.value[idx].status = payload.status
+      }
+    }
+  })
 }
 </script>
 
@@ -98,9 +129,10 @@ const fetchJobs = async (criteria: Criteria) => {
   <section class="mt-8">
     <Card>
       <CardHeader>
-        <CardTitle>Logs</CardTitle>
+        <CardTitle>Activities</CardTitle>
         <CardDescription>
-          A list of recent jobs executed for this application, showing their status and queued time.
+          Track recent activities for this application, including execution status and when each job
+          entered the queue.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -116,7 +148,7 @@ const fetchJobs = async (criteria: Criteria) => {
               >
                 <RouterLink
                   :to="{
-                    name: 'applications.logs.show',
+                    name: 'applications.activities.show',
                     params: { id: job.application_id, jobID: job.id }
                   }"
                 >

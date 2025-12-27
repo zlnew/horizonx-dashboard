@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent, onMounted } from 'vue'
+import { computed, defineAsyncComponent, onMounted, onUnmounted } from 'vue'
 import { onBeforeRouteUpdate, useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { PackagePlusIcon } from 'lucide-vue-next'
@@ -21,17 +21,22 @@ import {
 import { ItemGroup, ItemSeparator } from '@/components/ui/item'
 import { dialog } from '@/composables/dialog'
 import { usePageMeta } from '@/composables/page-meta'
+import useWebSocket from '@/composables/web-socket'
+import WSEvent from '@/constants/ws-event'
 import useApplicationStore from '@/stores/application'
 import useApplicationDeploymentStore from '@/stores/application-deployment'
 
 type Criteria = DeploymentCriteria
 
 const route = useRoute()
+const { subscribe } = useWebSocket()
 const applicationStore = useApplicationStore()
 const applicationDeploymentStore = useApplicationDeploymentStore()
 
 const { selectedApplication, appID, canDeployApp } = storeToRefs(applicationStore)
 const { deployments, meta, loading, notFound } = storeToRefs(applicationDeploymentStore)
+
+let deploymentSub: { unsubscribe: () => void }
 
 const pageTitle = computed(() => `${selectedApplication.value?.name} · Deploys`)
 const criteria = computed(() => route.query as Criteria)
@@ -62,6 +67,10 @@ onBeforeRouteUpdate((to) => {
   fetchDeployments(criteria)
 })
 
+onUnmounted(() => {
+  deploymentSub?.unsubscribe()
+})
+
 const fetchDeployments = async (criteria: Criteria) => {
   try {
     await applicationDeploymentStore.getDeployments(appID.value, {
@@ -69,10 +78,33 @@ const fetchDeployments = async (criteria: Criteria) => {
       paginate: true,
       limit: 5
     })
+    listenDeploymentEvents()
   } catch (error) {
     const fetchError = error as Error
     toast.error(fetchError.message)
   }
+}
+
+const listenDeploymentEvents = () => {
+  deploymentSub = subscribe('deployments', (msg) => {
+    if (msg.event === WSEvent.DEPLOYMENT_CREATED) {
+      fetchDeployments(criteria.value)
+      return
+    }
+
+    if (msg.event === WSEvent.DEPLOYMENT_FINISHED) {
+      fetchDeployments(criteria.value)
+      return
+    }
+
+    if (msg.event === WSEvent.DEPLOYMENT_STATUS_CHANGED) {
+      const payload = msg.payload as EventDeploymentStatusChanged
+      const idx = deployments.value.findIndex((j) => j.id === payload.deployment_id)
+      if (idx != -1 && deployments.value[idx]) {
+        deployments.value[idx].status = payload.status
+      }
+    }
+  })
 }
 
 const showDeployConfirmation = () => {

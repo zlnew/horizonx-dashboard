@@ -1,10 +1,13 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
+import { onBeforeRouteUpdate } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useClipboard } from '@vueuse/core'
 import { CheckIcon, ClipboardIcon } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
 import AppDeployBadge from '@/components/AppDeployBadge.vue'
+import DataLoading from '@/components/DataLoading.vue'
+import DataNotFound from '@/components/DataNotFound.vue'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -31,9 +34,11 @@ const jobStore = useJobStore()
 
 const { selectedApplication: application, appID } = storeToRefs(applicationStore)
 const { selectedJob: job, jobID } = storeToRefs(jobStore)
+const logsContainer = ref<HTMLElement | null>(null)
 const loading = ref(false)
 
 let jobSub: { unsubscribe: () => void }
+let logSub: { unsubscribe: () => void }
 
 usePageMeta({
   title: 'Details',
@@ -44,16 +49,16 @@ usePageMeta({
         to: { name: 'applications' }
       },
       {
-        label: `${application.value?.name} · Logs`,
+        label: `${application.value?.name} · Activities`,
         to: {
-          name: 'applications.logs',
+          name: 'applications.activities',
           params: { id: appID.value.toString() }
         }
       },
       {
         label: 'Details',
         to: {
-          name: 'applications.logs.show',
+          name: 'applications.activities.show',
           params: { id: appID.value.toString(), deploymentID: jobID.value.toString() }
         }
       }
@@ -61,38 +66,44 @@ usePageMeta({
   )
 })
 
-const { copy: copyOutputLog, copied: copiedOutputLog } = useClipboard()
+const { copy: copyLogs, copied: copiedLogs } = useClipboard()
 
-watch(copiedOutputLog, (copied) => {
+watch(copiedLogs, (copied) => {
   if (copied) {
-    toast.success('Copied output log')
+    toast.success('Logs copied!')
   }
 })
 
 watch(
-  () => job.value?.status,
-  (status) => {
-    const validStatus = [JobStatus.SUCCESS, JobStatus.FAILED]
-    if (validStatus.includes(status ?? '')) {
-      jobSub?.unsubscribe()
-    }
+  () => job.value?.logs?.length,
+  async () => {
+    await nextTick()
+    if (!logsContainer.value) return
+
+    logsContainer.value.scrollTop = logsContainer.value.scrollHeight
   }
 )
 
 onMounted(() => {
-  fetchJob()
+  fetchJob(jobID.value)
+})
+
+onBeforeRouteUpdate((to) => {
+  const jobID = Number(to.params.jobID)
+  fetchJob(jobID)
 })
 
 onUnmounted(() => {
   jobSub?.unsubscribe()
+  logSub?.unsubscribe()
   jobStore.selectedJob = null
 })
 
-const fetchJob = async () => {
+const fetchJob = async (jobID: number) => {
   loading.value = true
 
   try {
-    const res = await jobStore.showJob(jobID.value)
+    const res = await jobStore.showJob(jobID)
     job.value = res ?? null
     listenJobEvents()
   } catch (error) {
@@ -121,10 +132,37 @@ const listenJobEvents = () => {
     }
 
     if (msg.event === WSEvent.JOB_FINISHED) {
-      fetchJob()
+      const payload = msg.payload as EventJobFinished
+      fetchJob(payload.job_id)
+
+      jobSub?.unsubscribe()
+      logSub?.unsubscribe()
+
       return
     }
   })
+
+  logSub = subscribe('logs', (msg) => {
+    if (!job.value) {
+      return
+    }
+
+    if (msg.event === WSEvent.LOG_RECEIVED) {
+      const payload = msg.payload as EventLogReceived
+      if (payload.job_id === job.value.id) {
+        if (!job.value.logs?.length) {
+          job.value.logs = []
+        }
+        job.value.logs.push(payload)
+      }
+      return
+    }
+  })
+}
+
+const handleLogsCopy = (copy: (text: string) => Promise<void>) => {
+  const logs = job.value?.logs?.map((l) => l.context?.line ?? '') ?? []
+  copy(logs.join('\n'))
 }
 </script>
 
@@ -133,7 +171,7 @@ const listenJobEvents = () => {
     <section class="mt-8">
       <Card>
         <CardHeader>
-          <CardTitle>Log Details</CardTitle>
+          <CardTitle>Activity Details</CardTitle>
           <CardDescription>
             <div class="flex items-center gap-2 text-neutral-400">
               <span class="font-bold">{{ jobTypeLabel(job.type) }}</span>
@@ -166,21 +204,24 @@ const listenJobEvents = () => {
     <section class="mt-8">
       <Card>
         <CardHeader>
-          <CardTitle>Output</CardTitle>
-          <CardDescription>Detailed output generated during the process.</CardDescription>
+          <CardTitle>Logs</CardTitle>
+          <CardDescription>Detailed logs generated during the process.</CardDescription>
           <CardAction>
             <Button
               variant="secondary"
               size="icon-lg"
-              @click="copyOutputLog"
+              @click="handleLogsCopy(copyLogs)"
             >
-              <CheckIcon v-if="copiedOutputLog" />
+              <CheckIcon v-if="copiedLogs" />
               <ClipboardIcon v-else />
             </Button>
           </CardAction>
         </CardHeader>
         <CardContent>
-          <div class="bg-background h-84 space-y-1 overflow-auto rounded-lg p-4 font-mono text-xs">
+          <div
+            ref="logsContainer"
+            class="bg-background h-84 space-y-1 overflow-auto rounded-lg p-4 font-mono text-xs"
+          >
             <template v-if="job.logs?.length">
               <div
                 v-for="(l, i) in job.logs"
@@ -208,4 +249,7 @@ const listenJobEvents = () => {
       </Card>
     </section>
   </template>
+
+  <DataLoading v-else-if="loading" />
+  <DataNotFound v-else />
 </template>

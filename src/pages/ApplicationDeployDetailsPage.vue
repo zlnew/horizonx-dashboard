@@ -6,6 +6,8 @@ import { useClipboard } from '@vueuse/core'
 import { CheckIcon, ClipboardIcon } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
 import AppDeployBadge from '@/components/AppDeployBadge.vue'
+import DataLoading from '@/components/DataLoading.vue'
+import DataNotFound from '@/components/DataNotFound.vue'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -63,24 +65,13 @@ usePageMeta({
   )
 })
 
-const { copy: copyBuildLogs, copied: copiedBuildLogs } = useClipboard()
+const { copy: copyLogs, copied: copiedLogs } = useClipboard()
 
-watch(copiedBuildLogs, (copied) => {
+watch(copiedLogs, (copied) => {
   if (copied) {
-    toast.success('Copied build logs')
+    toast.success('Logs copied!')
   }
 })
-
-watch(
-  () => deployment.value?.status,
-  (status) => {
-    const validStatus = [DeploymentStatus.SUCCESS, DeploymentStatus.FAILED]
-    if (validStatus.includes(status ?? '')) {
-      deploymentSub?.unsubscribe()
-      logSub?.unsubscribe()
-    }
-  }
-)
 
 watch(
   () => deployment.value?.logs?.length,
@@ -145,6 +136,16 @@ const listenDeploymentEvents = () => {
       deployment.value.commit_message = payload.commit_message
       return
     }
+
+    if (msg.event === WSEvent.DEPLOYMENT_FINISHED) {
+      const payload = msg.payload as EventDeploymentFinished
+      fetchDeployment(payload.deployment_id)
+
+      deploymentSub?.unsubscribe()
+      logSub?.unsubscribe()
+
+      return
+    }
   })
 
   logSub = subscribe('logs', (msg) => {
@@ -164,10 +165,15 @@ const listenDeploymentEvents = () => {
     }
   })
 }
+
+const handleLogsCopy = (copy: (text: string) => Promise<void>) => {
+  const logs = deployment.value?.logs?.map((l) => l.context?.line ?? '') ?? []
+  copy(logs.join('\n'))
+}
 </script>
 
 <template>
-  <template v-if="application && deployment">
+  <template v-if="deployment">
     <section class="mt-8">
       <Card>
         <CardHeader>
@@ -225,9 +231,9 @@ const listenDeploymentEvents = () => {
             <Button
               variant="secondary"
               size="icon-lg"
-              @click="copyBuildLogs"
+              @click="handleLogsCopy(copyLogs)"
             >
-              <CheckIcon v-if="copiedBuildLogs" />
+              <CheckIcon v-if="copiedLogs" />
               <ClipboardIcon v-else />
             </Button>
           </CardAction>
@@ -264,4 +270,7 @@ const listenDeploymentEvents = () => {
       </Card>
     </section>
   </template>
+
+  <DataLoading v-else-if="loading" />
+  <DataNotFound v-else />
 </template>

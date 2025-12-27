@@ -64,14 +64,14 @@ const router = createRouter({
                   component: () => import('@/pages/ApplicationDeployDetailsPage.vue')
                 },
                 {
-                  name: 'applications.logs',
-                  path: 'logs',
-                  component: () => import('@/pages/ApplicationLogsPage.vue')
+                  name: 'applications.activities',
+                  path: 'activities',
+                  component: () => import('@/pages/ApplicationActivitiesPage.vue')
                 },
                 {
-                  name: 'applications.logs.show',
-                  path: 'logs/:jobID',
-                  component: () => import('@/pages/ApplicationLogDetailsPage.vue')
+                  name: 'applications.activities.show',
+                  path: 'activities/:jobID',
+                  component: () => import('@/pages/ApplicationActivityDetailsPage.vue')
                 }
               ]
             }

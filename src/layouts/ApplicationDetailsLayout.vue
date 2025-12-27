@@ -61,8 +61,8 @@ const menu = [
     icon: FileClockIcon
   },
   {
-    label: 'Logs',
-    to: { name: 'applications.logs', params: { id: appID.value } },
+    label: 'Activities',
+    to: { name: 'applications.activities', params: { id: appID.value } },
     icon: LogsIcon
   }
 ]

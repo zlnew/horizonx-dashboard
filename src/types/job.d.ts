@@ -24,8 +24,8 @@ type JobCriteria = Criteria & {
 }
 
 type EventJobCreated = {
-  trace_id: string
   job_id: number
+  trace_id: string
   server_id: string
   application_id: number | null
   deployment_id: number | null
@@ -33,8 +33,8 @@ type EventJobCreated = {
 }
 
 type EventJobStarted = {
-  trace_id: string
   job_id: number
+  trace_id: string
   server_id: string
   application_id: number | null
   deployment_id: number | null
@@ -42,8 +42,8 @@ type EventJobStarted = {
 }
 
 type EventJobFinished = {
-  trace_id: string
   job_id: number
+  trace_id: string
   server_id: string
   application_id: number | null
   deployment_id: number | null
@@ -52,7 +52,7 @@ type EventJobFinished = {
 }
 
 type EventJobStatusChanged = {
-  trace_id: string
   job_id: number
+  trace_id: string
   status: string
 }
