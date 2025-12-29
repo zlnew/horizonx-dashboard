@@ -10,7 +10,6 @@ const store = useLoadingStore()
     class="bg-foreground fixed top-0 left-0 z-60 h-0.5 w-full origin-left transition-transform duration-200"
     :style="{ transform: `scaleX(${store.progress})` }"
   />
-  <router-view />
 </template>
 
 <style lang="css" scoped>
