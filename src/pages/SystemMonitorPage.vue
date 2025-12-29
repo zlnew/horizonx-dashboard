@@ -31,7 +31,7 @@ const { subscribe } = useWebSocket()
 let subServerStatus: { unsubscribe: () => void } | null = null
 let subServerMetrics: { unsubscribe: () => void } | null = null
 
-const selectedServer = computed(() => servers.value.find((s) => s.id === appStore.serverID))
+const server = computed(() => servers.value.find((s) => s.id === appStore.serverID))
 
 usePageMeta({
   title: 'System Monitor',
@@ -107,19 +107,19 @@ const fetchLatestMetrics = async () => {
               <div class="flex flex-col gap-0">
                 <div class="text-xl">System Monitor</div>
 
-                <template v-if="!selectedServer?.is_online">
-                  <span class="text-sm text-neutral-400">Agent Unreachable</span>
+                <template v-if="!server?.is_online">
+                  <span class="text-sm text-neutral-400">-</span>
                 </template>
 
                 <template v-else>
                   <div
-                    v-if="metrics"
+                    v-if="server"
                     class="flex flex-wrap items-center gap-2 text-sm"
                   >
-                    <span>@{{ metrics.os_info.hostname }}</span>
+                    <span>@{{ server.os_info?.hostname ?? '-' }}</span>
                     &middot;
                     <span class="text-neutral-400">
-                      {{ metrics.os_info.name }}
+                      {{ server.os_info?.kernel_version ?? '-' }}
                     </span>
                   </div>
                   <div
@@ -133,7 +133,7 @@ const fetchLatestMetrics = async () => {
               </div>
             </div>
 
-            <template v-if="selectedServer?.is_online">
+            <template v-if="server?.is_online">
               <div
                 v-if="metrics"
                 class="flex items-center gap-2 text-lg text-neutral-400"
@@ -152,7 +152,7 @@ const fetchLatestMetrics = async () => {
     </Item>
   </section>
 
-  <template v-if="!selectedServer?.is_online">
+  <template v-if="!server?.is_online">
     <AgentIsOffline />
   </template>
 

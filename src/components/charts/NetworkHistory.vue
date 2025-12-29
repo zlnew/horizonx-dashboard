@@ -40,8 +40,8 @@ watch(
 
     chartData.value.push({
       timestamp: recordedAt,
-      download: val.network.rx_speed,
-      upload: val.network.tx_speed
+      download: val.network.rx_speed_mbs,
+      upload: val.network.tx_speed_mbs
     })
 
     while (chartData.value.length > 0 && chartData.value[0]!.timestamp.getTime() < cutoff) {

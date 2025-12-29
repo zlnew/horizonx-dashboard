@@ -5,6 +5,8 @@ type Server = {
   is_online: boolean
   created_at: string
   updated_at: string
+
+  os_info?: OsInfo | null
 }
 
 type ServerCriteria = Criteria & {

@@ -90,20 +90,21 @@ const { metrics } = storeToRefs(metricsStore)
 
               <div
                 v-for="card in metrics.gpu"
-                :key="card.id"
+                :key="card.card"
                 class="border-accent bg-accent space-y-4 rounded-lg border p-4"
               >
                 <div class="flex flex-wrap items-center justify-between gap-4">
-                  <div class="space-y-1">
-                    <div class="font-bold">{{ card.vendor }}</div>
-                    <div class="text-neutral-400">{{ card.model }}</div>
+                  <div class="flex items-center gap-2">
+                    <div class="font-bold">{{ card.vendor.toUpperCase() }}</div>
+                    <div>&middot;</div>
+                    <div class="text-neutral-400">{{ card.card }}</div>
                   </div>
 
                   <div class="flex flex-wrap items-center justify-end gap-2">
                     <div class="bg-foreground/10 flex items-center gap-1 rounded-lg px-2 py-1">
                       <AudioLinesIcon :size="16" />
-                      <span>{{ formatNumber(card.core_usage_percent, 0, 0) }}</span>
-                      <span class="text-sm text-neutral-400">%</span>
+                      <span>{{ formatNumber(card.frequency_mhz, 0, 0) }}</span>
+                      <span class="text-sm text-neutral-400">Mhz</span>
                     </div>
 
                     <div class="bg-foreground/10 flex items-center gap-1 rounded-lg px-2 py-1">
@@ -120,31 +121,18 @@ const { metrics } = storeToRefs(metricsStore)
                   </div>
                 </div>
 
-                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <div class="bg-foreground/10 gap-4 rounded-lg p-4">
-                    <div class="space-y-2">
-                      <div class="text-sm text-neutral-400">VRAM</div>
-                      <div class="flex items-center gap-1">
-                        <span class="text-neutral-300">{{
-                          formatNumber(card.vram_used_gb, 0, 2)
-                        }}</span>
-                        /
-                        <span>{{ formatNumber(card.vram_total_gb, 0, 2) }}</span>
-                        <span class="text-sm text-neutral-400">GB</span>
-                      </div>
-                      <Progress :model-value="card.vram_percent" />
+                <div class="bg-foreground/10 gap-4 rounded-lg p-4">
+                  <div class="space-y-2">
+                    <div class="text-sm text-neutral-400">VRAM</div>
+                    <div class="flex items-center gap-1">
+                      <span class="text-neutral-300">{{
+                        formatNumber(card.vram_used_gb, 0, 2)
+                      }}</span>
+                      /
+                      <span>{{ formatNumber(card.vram_total_gb, 0, 2) }}</span>
+                      <span class="text-sm text-neutral-400">GB</span>
                     </div>
-                  </div>
-
-                  <div class="bg-foreground/10 gap-4 rounded-lg p-4">
-                    <div class="space-y-2">
-                      <div class="text-sm text-neutral-400">Fan Speed</div>
-                      <div class="flex items-center gap-1">
-                        <span>{{ formatNumber(card.fan_speed_percent, 0, 0) }}</span>
-                        <span class="text-sm text-neutral-400">%</span>
-                      </div>
-                      <Progress :model-value="card.fan_speed_percent" />
-                    </div>
+                    <Progress :model-value="card.vram_percent" />
                   </div>
                 </div>
               </div>

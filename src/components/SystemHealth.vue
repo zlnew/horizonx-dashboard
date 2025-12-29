@@ -20,11 +20,10 @@ const gpuUsageAvg = computed(() => {
 })
 
 const diskUsageAvg = computed(() => {
-  const fss = metrics.value?.disk.filter((d) => d.filesystems?.length).flatMap((d) => d.filesystems)
-  if (!fss?.length) return 0
-
-  const total = fss.reduce((sum, fs) => sum + (fs?.percent ?? 0), 0)
-  return total / fss.length
+  if (!metrics.value) return 0
+  const diskTotal = metrics.value.disk.length
+  const utllTotal = metrics.value.disk.reduce((sum, d) => sum + d.util_pct, 0)
+  return utllTotal / diskTotal
 })
 </script>
 
@@ -55,10 +54,7 @@ const diskUsageAvg = computed(() => {
         </CardContent>
       </Card>
 
-      <Card
-        v-for="gpu in metrics.gpu"
-        :key="gpu.model"
-      >
+      <Card>
         <CardContent>
           <div class="space-y-4">
             <div class="flex items-start justify-between gap-4">

@@ -1,6 +1,5 @@
 type Metrics = {
   server_id: string
-  os_info: OsInfo
   cpu: CPUMetric
   gpu: GPUMetric[]
   memory: MemoryMetric
@@ -8,8 +7,6 @@ type Metrics = {
   network: NetworkMetric
   uptime_seconds: number
   recorded_at: string
-
-  server: Server | null
 }
 
 type OsInfo = {
@@ -28,24 +25,22 @@ type CPUMetric = {
 }
 
 type GPUMetric = {
-  id: number
   card: string
   vendor: string
-  model: string
   temperature: number
   core_usage_percent: number
+  frequency_mhz: number
   vram_total_gb: number
   vram_used_gb: number
   vram_percent: number
   power_watt: number
-  fan_speed_percent: number
 }
 
 type MemoryMetric = {
   total_gb: number
   used_gb: number
-  available_gb: number
   usage_percent: number
+  available_gb: number
   swap_total_gb: number
   swap_free_gb: number
   swap_used_gb: number
@@ -64,14 +59,17 @@ type DiskMetric = {
   name: string
   raw_size_gb: number
   temperature: number
+  read_mbps: number
+  write_mbps: number
+  util_pct: number
   filesystems: FilesystemUsage[] | null
 }
 
 type NetworkMetric = {
   rx_bytes: number
   tx_bytes: number
-  rx_speed: number
-  tx_speed: number
+  rx_speed_mbs: number
+  tx_speed_mbs: number
 }
 
 type CpuUsageHistory = {
