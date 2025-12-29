@@ -81,6 +81,19 @@ const { user } = storeToRefs(authStore)
 const servers = ref<Server[]>([])
 const commandOpen = ref(false)
 
+const menu = [
+  {
+    label: 'System Monitor',
+    to: { name: 'system-monitor' },
+    icon: ChartColumnBigIcon
+  },
+  {
+    label: 'Applications',
+    to: { name: 'applications' },
+    icon: LayoutGridIcon
+  }
+]
+
 onMounted(() => {
   window.addEventListener('keydown', onKeydown)
   connectWs()
@@ -173,25 +186,17 @@ const handleLogout = () => {
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarGroupLabel>Dashboard</SidebarGroupLabel>
-              <SidebarMenuItem>
+              <SidebarMenuItem
+                v-for="(m, i) in menu"
+                :key="i"
+              >
                 <SidebarMenuButton
                   as-child
-                  :is-active="route.name === 'system-monitor'"
+                  :is-active="route.name === m.to.name"
                 >
-                  <RouterLink :to="{ name: 'system-monitor' }">
-                    <ChartColumnBigIcon />
-                    <span>System Monitor</span>
-                  </RouterLink>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  as-child
-                  :is-active="route.name === 'applications'"
-                >
-                  <RouterLink :to="{ name: 'applications' }">
-                    <LayoutGridIcon />
-                    <span>Applications</span>
+                  <RouterLink :to="m.to">
+                    <component :is="m.icon" />
+                    <span>{{ m.label }}</span>
                   </RouterLink>
                 </SidebarMenuButton>
               </SidebarMenuItem>
