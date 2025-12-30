@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { watch } from 'vue'
+import { onMounted, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { VisArea, VisAxis, VisLine, VisXYContainer } from '@unovis/vue'
+import { toast } from 'vue-sonner'
+import ServerApi from '@/api/Server'
 import {
   type ChartConfig,
   ChartContainer,
@@ -11,22 +13,24 @@ import {
   componentToString
 } from '@/components/ui/chart'
 import { useDate } from '@/composables/date'
+import useAppStore from '@/stores/app'
 import useMetricsStore from '@/stores/metrics'
 
-type ChartData = NetHistory
+type ChartData = NetSpeedPoint
 
+const appStore = useAppStore()
 const metricsStore = useMetricsStore()
-const { metrics, netHistory: chartData } = storeToRefs(metricsStore)
+const { metrics, netSpeedPoint: chartData } = storeToRefs(metricsStore)
 const { formatDate } = useDate()
 
 const chartConfig = {
-  download: {
+  rx_mbs: {
     label: 'Download',
     color: 'var(--color-primary)'
   },
-  upload: {
+  tx_mbs: {
     label: 'Upload',
-    color: 'var(--color-accent)'
+    color: 'var(--color-primary)'
   }
 } satisfies ChartConfig
 
@@ -36,20 +40,41 @@ watch(
     if (!val?.network || !val.recorded_at) return
 
     const recordedAt = new Date(val.recorded_at)
-    const cutoff = recordedAt.getTime() - 5 * 60 * 1000
+    const cutoff = recordedAt.getTime() - 15 * 60 * 1000
 
     chartData.value.push({
-      timestamp: recordedAt,
-      download: val.network.rx_speed_mbs.ema,
-      upload: val.network.tx_speed_mbs.ema
+      at: recordedAt,
+      rx_mbs: val.network.rx_speed_mbs.ema,
+      tx_mbs: val.network.tx_speed_mbs.ema
     })
 
-    while (chartData.value.length > 0 && chartData.value[0]!.timestamp.getTime() < cutoff) {
+    while (chartData.value.length > 0 && chartData.value[0]!.at.getTime() < cutoff) {
       chartData.value.shift()
     }
   },
   { deep: true }
 )
+
+onMounted(() => {
+  fetchHistory()
+})
+
+const fetchHistory = async () => {
+  try {
+    const res = await new ServerApi().getNetSpeedHistory<ApiResponse<NetSpeedPoint[]>>(
+      appStore.serverID
+    )
+
+    chartData.value =
+      res.data?.map((d) => ({
+        ...d,
+        at: new Date(d.at)
+      })) ?? []
+  } catch (error) {
+    const fetchError = error as Error
+    toast.error(fetchError.message)
+  }
+}
 </script>
 
 <template>
@@ -62,28 +87,28 @@ watch(
       :y-domain="[0, 100]"
     >
       <VisArea
-        :x="(d: ChartData) => d.timestamp"
-        :y="(d: ChartData) => d.download"
-        :color="chartConfig.download.color"
-        :opacity="0.2"
+        :x="(d: ChartData) => d.at"
+        :y="(d: ChartData) => d.rx_mbs"
+        :color="chartConfig.rx_mbs.color"
+        :opacity="0.4"
       />
       <VisLine
-        :x="(d: ChartData) => d.timestamp"
-        :y="(d: ChartData) => d.download"
-        :color="chartConfig.download.color"
+        :x="(d: ChartData) => d.at"
+        :y="(d: ChartData) => d.rx_mbs"
+        :color="chartConfig.rx_mbs.color"
         :stroke-width="2"
       />
 
       <VisArea
-        :x="(d: ChartData) => d.timestamp"
-        :y="(d: ChartData) => d.upload"
-        :color="chartConfig.upload.color"
+        :x="(d: ChartData) => d.at"
+        :y="(d: ChartData) => d.tx_mbs"
+        :color="chartConfig.tx_mbs.color"
         :opacity="0.2"
       />
       <VisLine
-        :x="(d: ChartData) => d.timestamp"
-        :y="(d: ChartData) => d.upload"
-        :color="chartConfig.upload.color"
+        :x="(d: ChartData) => d.at"
+        :y="(d: ChartData) => d.tx_mbs"
+        :color="chartConfig.tx_mbs.color"
         :stroke-width="2"
       />
 

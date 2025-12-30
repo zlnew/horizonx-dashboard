@@ -3,8 +3,8 @@ import { defineStore } from 'pinia'
 
 const useMetricsStore = defineStore('metrics', () => {
   const metrics = ref<Metrics | null>(null)
-  const cpuUsageHistory = ref<CpuUsageHistory[]>([])
-  const netHistory = ref<NetHistory[]>([])
+  const cpuUsagePoint = ref<CpuUsagePoint[]>([])
+  const netSpeedPoint = ref<NetSpeedPoint[]>([])
 
   const cleanupState = () => {
     metrics.value = null
@@ -12,8 +12,8 @@ const useMetricsStore = defineStore('metrics', () => {
 
   return {
     metrics,
-    cpuUsageHistory,
-    netHistory,
+    cpuUsagePoint,
+    netSpeedPoint,
     cleanupState
   }
 })

@@ -77,13 +77,13 @@ type NetworkMetric = {
   tx_speed_mbs: Signal
 }
 
-type CpuUsageHistory = {
-  timestamp: Date
-  usage: number
+type CpuUsagePoint = {
+  at: Date
+  usage_percent: number
 }
 
-type NetHistory = {
-  timestamp: Date
-  download: number
-  upload: number
+type NetSpeedPoint = {
+  at: Date
+  rx_mbs: number
+  tx_mbs: number
 }

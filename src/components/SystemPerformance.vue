@@ -67,7 +67,7 @@ const { metrics } = storeToRefs(metricsStore)
 
             <div class="flex items-center justify-between gap-4">
               <div class="font-bold">Usage Over Time</div>
-              <div class="text-sm text-neutral-400">Past 5 minutes</div>
+              <div class="text-sm text-neutral-400">Past 15 minutes</div>
             </div>
 
             <CpuUsageHistory />
@@ -147,7 +147,7 @@ const { metrics } = storeToRefs(metricsStore)
                 <div class="space-y-1">
                   <div class="text-lg font-bold">Network Activity</div>
                   <div class="text-sm text-neutral-400">
-                    Upload and download speeds over the past 5 minutes.
+                    Upload and download speeds over the past 15 minutes.
                   </div>
                 </div>
 
