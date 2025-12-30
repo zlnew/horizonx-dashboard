@@ -50,11 +50,8 @@ onMounted(() => {
     }
   })
 
-  subServerMetrics = subscribe<Metrics>('server_metrics', (msg) => {
-    if (
-      msg.event === WSEvent.SERVER_METRICS_RECEIVED &&
-      msg.payload.server_id === appStore.serverID
-    ) {
+  subServerMetrics = subscribe<Metrics>(`server_metrics:${appStore.serverID}`, (msg) => {
+    if (msg.event === WSEvent.SERVER_METRICS_RECEIVED) {
       metrics.value = msg.payload
     }
   })
