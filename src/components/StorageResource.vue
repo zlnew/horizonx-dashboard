@@ -98,7 +98,7 @@ const swapUsedPct = () => {
                     class="bg-foreground/10 flex items-center gap-1 rounded-lg px-2 py-1"
                   >
                     <ThermometerIcon :size="16" />
-                    <span>{{ formatNumber(disk.temperature, 0, 0) }}</span>
+                    <span>{{ formatNumber(disk.temperature.ema, 0, 0) }}</span>
                     <span class="text-sm text-neutral-400">°C</span>
                   </div>
                 </div>

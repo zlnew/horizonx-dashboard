@@ -15,14 +15,14 @@ const gpuUsageAvg = computed(() => {
   const gpus = metrics.value?.gpu
   if (!gpus?.length) return 0
 
-  const total = gpus.reduce((sum, gpu) => sum + gpu.core_usage_percent, 0)
+  const total = gpus.reduce((sum, gpu) => sum + gpu.core_usage_percent.ema, 0)
   return total / gpus.length
 })
 
 const diskUsageAvg = computed(() => {
   if (!metrics.value) return 0
   const diskTotal = metrics.value.disk.length
-  const utllTotal = metrics.value.disk.reduce((sum, d) => sum + d.util_pct, 0)
+  const utllTotal = metrics.value.disk.reduce((sum, d) => sum + d.util_pct.ema, 0)
   return utllTotal / diskTotal
 })
 </script>
@@ -45,10 +45,10 @@ const diskUsageAvg = computed(() => {
             <div class="flex flex-col gap-4">
               <div class="text-sm text-neutral-400">CPU Usage</div>
               <div class="flex items-center gap-1">
-                <span class="text-2xl">{{ formatNumber(metrics.cpu.usage, 0, 2) }}</span>
+                <span class="text-2xl">{{ formatNumber(metrics.cpu.usage.ema, 0, 2) }}</span>
                 <span class="text-lg text-neutral-400">%</span>
               </div>
-              <Progress :model-value="metrics.cpu.usage" />
+              <Progress :model-value="metrics.cpu.usage.ema" />
             </div>
           </div>
         </CardContent>

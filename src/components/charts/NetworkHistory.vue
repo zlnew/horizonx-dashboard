@@ -40,8 +40,8 @@ watch(
 
     chartData.value.push({
       timestamp: recordedAt,
-      download: val.network.rx_speed_mbs,
-      upload: val.network.tx_speed_mbs
+      download: val.network.rx_speed_mbs.ema,
+      upload: val.network.tx_speed_mbs.ema
     })
 
     while (chartData.value.length > 0 && chartData.value[0]!.timestamp.getTime() < cutoff) {
@@ -59,7 +59,7 @@ watch(
   >
     <VisXYContainer
       :data="chartData"
-      :y-domain="[0, 200]"
+      :y-domain="[0, 100]"
     >
       <VisArea
         :x="(d: ChartData) => d.timestamp"

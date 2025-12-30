@@ -36,7 +36,7 @@ watch(
 
     chartData.value.push({
       timestamp: recordedAt,
-      usage: val.cpu.usage
+      usage: val.cpu.usage.ema
     })
 
     while (chartData.value.length > 0 && chartData.value[0]!.timestamp.getTime() < cutoff) {

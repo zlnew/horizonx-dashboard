@@ -34,19 +34,19 @@ const { metrics } = storeToRefs(metricsStore)
               <div class="flex flex-wrap items-center justify-end gap-2">
                 <div class="bg-accent flex items-center gap-1 rounded-lg px-2 py-1">
                   <AudioLinesIcon :size="16" />
-                  <span>{{ formatNumber(metrics.cpu.frequency, 0, 0) }}</span>
+                  <span>{{ formatNumber(metrics.cpu.frequency.ema, 0, 0) }}</span>
                   <span class="text-sm text-neutral-400">Mhz</span>
                 </div>
 
                 <div class="bg-accent flex items-center gap-1 rounded-lg px-2 py-1">
                   <ThermometerIcon :size="16" />
-                  <span>{{ formatNumber(metrics.cpu.temperature, 0, 0) }}</span>
+                  <span>{{ formatNumber(metrics.cpu.temperature.ema, 0, 0) }}</span>
                   <span class="text-sm text-neutral-400">°C</span>
                 </div>
 
                 <div class="bg-accent flex items-center gap-1 rounded-lg px-2 py-1">
                   <ZapIcon :size="16" />
-                  <span>{{ formatNumber(metrics.cpu.power_watt, 0, 1) }}</span>
+                  <span>{{ formatNumber(metrics.cpu.power_watt.ema, 0, 1) }}</span>
                   <span class="text-sm text-neutral-400">W</span>
                 </div>
               </div>
@@ -59,7 +59,7 @@ const { metrics } = storeToRefs(metricsStore)
                 class="flex items-center justify-between gap-2"
               >
                 <div class="w-8 text-sm text-neutral-400">{{ `C${index}` }}</div>
-                <Progress :model-value="usage" />
+                <Progress :model-value="usage.ema" />
               </div>
             </div>
 
@@ -103,19 +103,19 @@ const { metrics } = storeToRefs(metricsStore)
                   <div class="flex flex-wrap items-center justify-end gap-2">
                     <div class="bg-foreground/10 flex items-center gap-1 rounded-lg px-2 py-1">
                       <AudioLinesIcon :size="16" />
-                      <span>{{ formatNumber(card.frequency_mhz, 0, 0) }}</span>
+                      <span>{{ formatNumber(card.frequency_mhz.ema, 0, 0) }}</span>
                       <span class="text-sm text-neutral-400">Mhz</span>
                     </div>
 
                     <div class="bg-foreground/10 flex items-center gap-1 rounded-lg px-2 py-1">
                       <ThermometerIcon :size="16" />
-                      <span>{{ formatNumber(card.temperature, 0, 0) }}</span>
+                      <span>{{ formatNumber(card.temperature.ema, 0, 0) }}</span>
                       <span class="text-sm text-neutral-400">°C</span>
                     </div>
 
                     <div class="bg-foreground/10 flex items-center gap-1 rounded-lg px-2 py-1">
                       <ZapIcon :size="16" />
-                      <span>{{ formatNumber(card.power_watt, 0, 1) }}</span>
+                      <span>{{ formatNumber(card.power_watt.ema, 0, 1) }}</span>
                       <span class="text-sm text-neutral-400">W</span>
                     </div>
                   </div>

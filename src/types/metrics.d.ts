@@ -9,6 +9,11 @@ type Metrics = {
   recorded_at: string
 }
 
+type Signal = {
+  raw: number
+  ema: number
+}
+
 type OsInfo = {
   hostname: string
   name: string
@@ -17,23 +22,23 @@ type OsInfo = {
 }
 
 type CPUMetric = {
-  usage: number
-  per_core: number[]
-  temperature: number
-  frequency: number
-  power_watt: number
+  usage: Signal
+  per_core: Signal[]
+  temperature: Signal
+  frequency: Signal
+  power_watt: Signal
 }
 
 type GPUMetric = {
   card: string
   vendor: string
-  temperature: number
-  core_usage_percent: number
-  frequency_mhz: number
+  temperature: Signal
+  core_usage_percent: Signal
+  frequency_mhz: Signal
   vram_total_gb: number
   vram_used_gb: number
   vram_percent: number
-  power_watt: number
+  power_watt: Signal
 }
 
 type MemoryMetric = {
@@ -58,18 +63,18 @@ type FilesystemUsage = {
 type DiskMetric = {
   name: string
   raw_size_gb: number
-  temperature: number
-  read_mbps: number
-  write_mbps: number
-  util_pct: number
+  temperature: Signal
+  read_mbps: Signal
+  write_mbps: Signal
+  util_pct: Signal
   filesystems: FilesystemUsage[] | null
 }
 
 type NetworkMetric = {
   rx_bytes: number
   tx_bytes: number
-  rx_speed_mbs: number
-  tx_speed_mbs: number
+  rx_speed_mbs: Signal
+  tx_speed_mbs: Signal
 }
 
 type CpuUsageHistory = {
