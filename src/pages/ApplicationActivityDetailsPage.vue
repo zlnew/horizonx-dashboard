@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { onBeforeRouteUpdate } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useClipboard } from '@vueuse/core'
@@ -8,6 +8,7 @@ import { toast } from 'vue-sonner'
 import AppDeployBadge from '@/components/AppDeployBadge.vue'
 import DataLoading from '@/components/DataLoading.vue'
 import DataNotFound from '@/components/DataNotFound.vue'
+import LogResult from '@/components/LogResult.vue'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -23,7 +24,6 @@ import useWebSocket from '@/composables/web-socket'
 import JobStatus from '@/constants/job-status'
 import WSEvent from '@/constants/ws-event'
 import { jobTypeLabel } from '@/mapper/job'
-import { logLevelLabel } from '@/mapper/log'
 import useApplicationStore from '@/stores/application'
 import useJobStore from '@/stores/job'
 
@@ -34,7 +34,6 @@ const jobStore = useJobStore()
 
 const { selectedApplication: application, appID } = storeToRefs(applicationStore)
 const { selectedJob: job, jobID } = storeToRefs(jobStore)
-const logsContainer = ref<HTMLElement | null>(null)
 const loading = ref(false)
 
 let jobSub: { unsubscribe: () => void }
@@ -73,16 +72,6 @@ watch(copiedLogs, (copied) => {
     toast.success('Logs copied!')
   }
 })
-
-watch(
-  () => job.value?.logs?.length,
-  async () => {
-    await nextTick()
-    if (!logsContainer.value) return
-
-    logsContainer.value.scrollTop = logsContainer.value.scrollHeight
-  }
-)
 
 onMounted(() => {
   fetchJob(jobID.value)
@@ -218,33 +207,7 @@ const handleLogsCopy = (copy: (text: string) => Promise<void>) => {
           </CardAction>
         </CardHeader>
         <CardContent>
-          <div
-            ref="logsContainer"
-            class="bg-background h-84 space-y-1 overflow-auto rounded-lg p-4 font-mono text-xs"
-          >
-            <template v-if="job.logs?.length">
-              <div
-                v-for="(l, i) in job.logs"
-                :key="i"
-                class="flex gap-3"
-              >
-                <span class="text-muted min-w-4">{{ i + 1 }}</span>
-                <span class="text-muted-foreground text-nowrap">
-                  {{ formatDate(new Date(l.timestamp), 'DD-MM-YYYY HH:mm:ss') }}
-                </span>
-                <span class="font-semibold text-nowrap">
-                  {{ logLevelLabel(l.level) }}
-                </span>
-                <span class="flex-1 text-nowrap wrap-break-word">
-                  {{ l.message }}
-                </span>
-              </div>
-            </template>
-
-            <template v-else>
-              <div class="text-muted-foreground">no logs yet</div>
-            </template>
-          </div>
+          <LogResult :data="job.logs" />
         </CardContent>
       </Card>
     </section>
