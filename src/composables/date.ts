@@ -1,12 +1,15 @@
 import { useDateFormat } from '@vueuse/core'
 
 export const useDate = () => {
-  const formatDate = (date: Date | null = null, format = 'DD-MM-YYYY') => {
+  const formatDate = (date: Date | number | string | null = null, format = 'DD-MM-YYYY') => {
     if (!date) {
       return ''
     }
 
-    const formatted = useDateFormat(date, format, { locales: 'id-ID' })
+    const formatted = useDateFormat(date, format, {
+      locales: 'en-US'
+    })
+
     return formatted.value
   }
 
