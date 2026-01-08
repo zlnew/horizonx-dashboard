@@ -16,7 +16,7 @@ type IncomingMessage<T = unknown> = {
 type InternalHandler = (msg: IncomingMessage<unknown>) => void
 
 const socket = ref<WebSocket | null>(null)
-const isConnected = ref(false)
+const connected = ref(false)
 const listeners = new Map<string, Set<(msg: IncomingMessage<unknown>) => void>>()
 const messageQueue: OutgoingMessage[] = []
 
@@ -37,8 +37,10 @@ export default function useWebSocket() {
     return new Promise((resolve) => {
       socket.value!.onopen = () => {
         console.log('⚡ WS Connected')
-        isConnected.value = true
+        connected.value = true
         reconnectAttempts = 0
+
+        resubscribeAll()
 
         while (messageQueue.length > 0) {
           const msg = messageQueue.shift()
@@ -61,11 +63,11 @@ export default function useWebSocket() {
       }
 
       socket.value!.onclose = () => {
-        isConnected.value = false
+        connected.value = false
         if (!explicitClose) {
           handleReconnect()
         } else {
-          console.log('⚡ WS Closed gracefully')
+          console.log('⚡ WS Paused (Idle/Hidden)')
         }
       }
 
@@ -74,6 +76,19 @@ export default function useWebSocket() {
         socket.value?.close()
       }
     })
+  }
+
+  const disconnect = () => {
+    explicitClose = true
+    socket.value?.close()
+  }
+
+  const sendRaw = (msg: OutgoingMessage) => {
+    if (socket.value?.readyState === WebSocket.OPEN) {
+      socket.value.send(JSON.stringify(msg))
+    } else {
+      messageQueue.push(msg)
+    }
   }
 
   const handleReconnect = () => {
@@ -86,15 +101,16 @@ export default function useWebSocket() {
     reconnectTimer = window.setTimeout(() => connect(), delay)
   }
 
-  const sendRaw = (msg: OutgoingMessage) => {
-    if (socket.value?.readyState === WebSocket.OPEN) {
-      socket.value.send(JSON.stringify(msg))
-    } else {
-      messageQueue.push(msg)
-    }
+  const resubscribeAll = () => {
+    listeners.forEach((_, channel) => {
+      sendRaw({ type: 'subscribe', channel })
+    })
   }
 
-  const subscribe = <T>(channel: string, callback: (msg: IncomingMessage<T>) => void) => {
+  const subscribe = <T>(
+    channel: string,
+    callback: (msg: IncomingMessage<T>) => void
+  ): WSSubscribtion => {
     if (!listeners.has(channel)) {
       listeners.set(channel, new Set())
       sendRaw({ type: 'subscribe', channel })
@@ -121,14 +137,9 @@ export default function useWebSocket() {
     }
   }
 
-  const disconnect = () => {
-    explicitClose = true
-    socket.value?.close()
-  }
-
   return {
     socket,
-    connected: isConnected,
+    connected,
     connect,
     disconnect,
     subscribe

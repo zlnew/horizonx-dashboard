@@ -35,8 +35,8 @@ const { selectedApplication: application, appID } = storeToRefs(applicationStore
 const { selectedDeployment: deployment, deploymentID } = storeToRefs(applicationDeploymentStore)
 const loading = ref(false)
 
-let deploymentSub: { unsubscribe: () => void }
-let logSub: { unsubscribe: () => void }
+let deploymentSub: WSSubscribtion | null = null
+let logSub: WSSubscribtion | null = null
 
 usePageMeta({
   title: 'Details',

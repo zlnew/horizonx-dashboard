@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
-import { AudioLinesIcon, ThermometerIcon, ZapIcon } from 'lucide-vue-next'
+import {
+  ArrowDownToLineIcon,
+  ArrowUpFromLineIcon,
+  AudioLinesIcon,
+  ThermometerIcon,
+  ZapIcon
+} from 'lucide-vue-next'
 import CpuUsageHistory from '@/components/charts/CpuUsageHistory.vue'
 import NetworkHistory from '@/components/charts/NetworkHistory.vue'
 import { Card, CardContent } from '@/components/ui/card'
@@ -10,7 +16,7 @@ import { useNumber } from '@/composables/number'
 import useMetricsStore from '@/stores/metrics'
 
 const metricsStore = useMetricsStore()
-const { formatNumber } = useNumber()
+const { formatNumber, formatBytes } = useNumber()
 const { metrics } = storeToRefs(metricsStore)
 </script>
 
@@ -121,8 +127,8 @@ const { metrics } = storeToRefs(metricsStore)
                   </div>
                 </div>
 
-                <div class="bg-foreground/10 gap-4 rounded-lg p-4">
-                  <div class="space-y-2">
+                <div class="bg-foreground/10 gap-4 space-y-4 rounded-lg p-4">
+                  <div class="space-y-1">
                     <div class="text-sm text-neutral-400">VRAM</div>
                     <div class="flex items-center gap-1">
                       <span class="text-neutral-300">{{
@@ -133,6 +139,17 @@ const { metrics } = storeToRefs(metricsStore)
                       <span class="text-sm text-neutral-400">GB</span>
                     </div>
                     <Progress :model-value="card.vram_percent" />
+                  </div>
+
+                  <div class="space-y-1">
+                    <div class="text-sm text-neutral-400">Core Load</div>
+                    <div class="flex items-center gap-1">
+                      <span class="text-neutral-300">{{
+                        formatNumber(card.core_usage_percent.ema, 0, 1)
+                      }}</span>
+                      <span class="text-sm text-neutral-400">%</span>
+                    </div>
+                    <Progress :model-value="card.core_usage_percent.ema" />
                   </div>
                 </div>
               </div>
@@ -148,6 +165,17 @@ const { metrics } = storeToRefs(metricsStore)
                   <div class="text-lg font-bold">Network Activity</div>
                   <div class="text-sm text-neutral-400">
                     Upload and download speeds over the past 15 minutes.
+                  </div>
+                </div>
+
+                <div class="flex flex-wrap items-center justify-end gap-2">
+                  <div class="bg-accent flex items-center gap-1 rounded-lg px-2 py-1">
+                    <ArrowDownToLineIcon :size="14" />
+                    <span>{{ formatBytes(metrics.network.rx_bytes) }}</span>
+                  </div>
+                  <div class="bg-accent flex items-center gap-1 rounded-lg px-2 py-1">
+                    <ArrowUpFromLineIcon :size="14" />
+                    <span>{{ formatBytes(metrics.network.tx_bytes) }}</span>
                   </div>
                 </div>
 

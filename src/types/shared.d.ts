@@ -22,3 +22,7 @@ type Breadcrumb = {
   label: string
   to: { name: string; params?: Record<string, string | number> }
 }
+
+type WSSubscribtion = {
+  unsubscribe: () => void
+}

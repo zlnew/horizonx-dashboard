@@ -36,8 +36,8 @@ const { selectedApplication: application, appID } = storeToRefs(applicationStore
 const { selectedJob: job, jobID } = storeToRefs(jobStore)
 const loading = ref(false)
 
-let jobSub: { unsubscribe: () => void }
-let logSub: { unsubscribe: () => void }
+let jobSub: WSSubscribtion | null = null
+let logSub: WSSubscribtion | null = null
 
 usePageMeta({
   title: 'Details',

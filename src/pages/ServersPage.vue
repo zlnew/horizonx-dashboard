@@ -38,7 +38,8 @@ const serverStore = useServerStore()
 const { servers, loading, refetch, notFound, search } = storeToRefs(serverStore)
 
 const { subscribe } = useWebSocket()
-let sub: { unsubscribe: () => void }
+
+let serverSub: WSSubscribtion | null = null
 
 const criteria = computed(() => route.query as Criteria)
 
@@ -63,7 +64,7 @@ onMounted(() => {
 
   fetchServers(criteria.value)
 
-  sub = subscribe<EventServerStatusChanged>('servers', (msg) => {
+  serverSub = subscribe<EventServerStatusChanged>('servers', (msg) => {
     if (msg.event === WSEvent.SERVER_STATUS_CHANGED) {
       serverStore.updateServerStatus(msg.payload)
     }
@@ -78,7 +79,7 @@ onBeforeRouteUpdate((to) => {
 })
 
 onUnmounted(() => {
-  sub?.unsubscribe()
+  serverSub?.unsubscribe()
   serverStore.cleanupState()
 })
 

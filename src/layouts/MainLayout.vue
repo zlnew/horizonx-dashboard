@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { onBeforeUnmount, onMounted, ref, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
+import { useDocumentVisibility, useIdle } from '@vueuse/core'
 import {
   ChartColumnBigIcon,
   ChevronUpIcon,
@@ -74,7 +75,7 @@ const route = useRoute()
 const router = useRouter()
 const appStore = useAppStore()
 const authStore = useAuthStore()
-const { connect: connectWs } = useWebSocket()
+const { connect: connectWs, disconnect: disconnectWs } = useWebSocket()
 const { breadcrumb, serverID } = storeToRefs(appStore)
 const { user } = storeToRefs(authStore)
 
@@ -94,21 +95,34 @@ const menu = [
   }
 ]
 
-onMounted(() => {
-  window.addEventListener('keydown', onKeydown)
-  connectWs()
-  fetchServers()
+const { idle } = useIdle(3 * 60 * 1000)
+const visibility = useDocumentVisibility()
 
-  if (serverID.value === '') {
-    router.replace({ name: 'servers.select' })
+watchEffect(() => {
+  if (idle.value || visibility.value === 'hidden') {
+    disconnectWs()
+  } else {
+    connectWs()
   }
 })
 
-onBeforeUnmount(() => {
-  window.removeEventListener('keydown', onKeydown)
+onMounted(() => {
+  window.addEventListener('keydown', handleSearchCommand)
+  redirectToServerSelection()
+  fetchServers()
 })
 
-const onKeydown = (e: KeyboardEvent) => {
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', handleSearchCommand)
+})
+
+const redirectToServerSelection = () => {
+  if (serverID.value === '') {
+    router.replace({ name: 'servers.select' })
+  }
+}
+
+const handleSearchCommand = (e: KeyboardEvent) => {
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
     e.preventDefault()
     commandOpen.value = !commandOpen.value

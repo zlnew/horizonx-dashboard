@@ -44,7 +44,7 @@ const {
   canRestartApp
 } = storeToRefs(applicationStore)
 
-let applicationSub: { unsubscribe: () => void }
+let applicationSub: WSSubscribtion | null = null
 
 const menu = [
   {

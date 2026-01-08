@@ -36,7 +36,7 @@ const applicationDeploymentStore = useApplicationDeploymentStore()
 const { selectedApplication, appID, canDeployApp } = storeToRefs(applicationStore)
 const { deployments, meta, loading, notFound } = storeToRefs(applicationDeploymentStore)
 
-let deploymentSub: { unsubscribe: () => void }
+let deploymentSub: WSSubscribtion | null = null
 
 const pageTitle = computed(() => `${selectedApplication.value?.name} · Deploys`)
 const criteria = computed(() => route.query as Criteria)

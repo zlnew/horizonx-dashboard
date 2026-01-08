@@ -44,7 +44,7 @@ const jobStore = useJobStore()
 const { selectedApplication: application, appID } = storeToRefs(applicationStore)
 const { jobs, meta, refetch, loading, notFound } = storeToRefs(jobStore)
 
-let jobSub: { unsubscribe: () => void }
+let jobSub: WSSubscribtion | null = null
 
 const pageTitle = computed(() => `${application.value?.name} · Activities`)
 const criteria = computed(() => route.query as Criteria)

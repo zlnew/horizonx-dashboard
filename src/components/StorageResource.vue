@@ -104,6 +104,45 @@ const swapUsedPct = () => {
                 </div>
               </div>
 
+              <div class="mt-4 grid grid-cols-2 gap-4 text-sm lg:grid-cols-4">
+                <div
+                  class="bg-foreground/10 flex flex-col items-center justify-center gap-1 rounded-lg p-2"
+                >
+                  <span class="text-xs font-medium text-neutral-400 uppercase">Read</span>
+                  <div class="flex items-end gap-1">
+                    <span class="font-mono text-lg font-bold">{{
+                      formatNumber(disk.read_mbps.ema, 0, 1)
+                    }}</span>
+                    <span class="mb-1 text-xs text-neutral-500">MB/s</span>
+                  </div>
+                </div>
+                <div
+                  class="bg-foreground/10 flex flex-col items-center justify-center gap-1 rounded-lg p-2"
+                >
+                  <span class="text-xs font-medium text-neutral-400 uppercase">Write</span>
+                  <div class="flex items-end gap-1">
+                    <span class="font-mono text-lg font-bold">{{
+                      formatNumber(disk.write_mbps.ema, 0, 1)
+                    }}</span>
+                    <span class="mb-1 text-xs text-neutral-500">MB/s</span>
+                  </div>
+                </div>
+                <div
+                  class="bg-foreground/10 col-span-2 flex flex-col items-center justify-center gap-1 rounded-lg p-2 lg:col-span-2"
+                >
+                  <div class="flex w-full items-center justify-between">
+                    <span class="text-xs font-medium text-neutral-400 uppercase">Utilization</span>
+                    <span class="font-mono font-bold"
+                      >{{ formatNumber(disk.util_pct.ema, 0, 1) }}%</span
+                    >
+                  </div>
+                  <Progress
+                    :model-value="disk.util_pct.ema"
+                    class="mt-2 h-2 w-full"
+                  />
+                </div>
+              </div>
+
               <template v-if="disk.filesystems?.length">
                 <Separator />
 

@@ -28,8 +28,8 @@ const { servers } = storeToRefs(serverStore)
 
 const { subscribe } = useWebSocket()
 
-let subServerStatus: { unsubscribe: () => void } | null = null
-let subServerMetrics: { unsubscribe: () => void } | null = null
+let subServerStatus: WSSubscribtion | null = null
+let subServerMetrics: WSSubscribtion | null = null
 
 const server = computed(() => servers.value.find((s) => s.id === appStore.serverID))
 
