@@ -21,7 +21,8 @@ const useApplicationStore = defineStore('application', () => {
     const validStates = [
       ApplicationStatus.RUNNING,
       ApplicationStatus.STOPPED,
-      ApplicationStatus.FAILED
+      ApplicationStatus.FAILED,
+      ApplicationStatus.UNKNOWN
     ]
     return validStates.includes(selectedApplication.value?.status ?? '')
   })
@@ -30,7 +31,8 @@ const useApplicationStore = defineStore('application', () => {
     const validStates = [
       ApplicationStatus.RUNNING,
       ApplicationStatus.STOPPED,
-      ApplicationStatus.FAILED
+      ApplicationStatus.FAILED,
+      ApplicationStatus.UNKNOWN
     ]
     return validStates.includes(selectedApplication.value?.status ?? '')
   })
@@ -39,7 +41,8 @@ const useApplicationStore = defineStore('application', () => {
     const validStates = [
       ApplicationStatus.RUNNING,
       ApplicationStatus.STOPPED,
-      ApplicationStatus.FAILED
+      ApplicationStatus.FAILED,
+      ApplicationStatus.UNKNOWN
     ]
     return validStates.includes(selectedApplication.value?.status ?? '')
   })
@@ -55,7 +58,7 @@ const useApplicationStore = defineStore('application', () => {
   })
 
   const canRestartApp = computed(() => {
-    const validStates = [ApplicationStatus.RUNNING, ApplicationStatus.FAILED]
+    const validStates = [ApplicationStatus.RUNNING]
     return validStates.includes(selectedApplication.value?.status ?? '')
   })
 

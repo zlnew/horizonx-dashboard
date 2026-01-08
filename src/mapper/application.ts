@@ -16,6 +16,8 @@ export const appStatusLabel = (status: string) => {
       return 'Stopped'
     case AppStatus.FAILED:
       return 'Failed'
+    case AppStatus.UNKNOWN:
+      return 'Unknown'
     default:
       return ''
   }

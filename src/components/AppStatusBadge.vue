@@ -14,6 +14,7 @@ const variant = computed(() => {
       return 'destructive'
 
     case ApplicationStatus.STOPPED:
+    case ApplicationStatus.UNKNOWN:
       return 'outline'
 
     case ApplicationStatus.STARTING:

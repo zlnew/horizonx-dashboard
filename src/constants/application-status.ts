@@ -5,6 +5,7 @@ const ApplicationStatus = {
   RESTARTING: 'restarting',
   RUNNING: 'running',
   STOPPED: 'stopped',
-  FAILED: 'failed'
+  FAILED: 'failed',
+  UNKNOWN: 'unknown'
 }
 export default ApplicationStatus
