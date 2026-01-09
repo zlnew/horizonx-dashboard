@@ -38,6 +38,8 @@ const {
   selectedApplication: application,
   refetch,
   loading,
+  canReadApp,
+  canWriteApp,
   canDeployApp,
   canStartApp,
   canStopApp,
@@ -85,6 +87,10 @@ onUnmounted(() => {
 })
 
 const fetchApplication = async () => {
+  if (!canReadApp.value) {
+    return
+  }
+
   refetch.value = false
   loading.value = true
 
@@ -189,7 +195,7 @@ const showRestartConfirmation = () => {
           <Card>
             <CardHeader>
               <CardTitle>{{ application.name }}</CardTitle>
-              <CardAction>
+              <CardAction v-if="canWriteApp">
                 <DropdownMenu>
                   <DropdownMenuTrigger as-child>
                     <Button variant="outline">

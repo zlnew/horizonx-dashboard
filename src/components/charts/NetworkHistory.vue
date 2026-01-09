@@ -20,7 +20,7 @@ type ChartData = NetSpeedPoint
 
 const appStore = useAppStore()
 const metricsStore = useMetricsStore()
-const { metrics, netSpeedPoint: chartData } = storeToRefs(metricsStore)
+const { metrics, netSpeedPoint: chartData, canReadMetrics } = storeToRefs(metricsStore)
 const { formatDate } = useDate()
 
 const chartConfig = {
@@ -60,6 +60,10 @@ onMounted(() => {
 })
 
 const fetchHistory = async () => {
+  if (!canReadMetrics.value) {
+    return
+  }
+
   try {
     const res = await new ServerApi().getNetSpeedHistory<ApiResponse<NetSpeedPoint[]>>(
       appStore.serverID

@@ -1,6 +1,12 @@
 import Api from './Api'
 
 class AuthApi extends Api {
+  public async user<T>() {
+    const { data, error } = await this.fetch('auth/user').get().json<T>()
+
+    return this.handleResponse<T>(data.value, error.value)
+  }
+
   public async register<T>(request = {}) {
     const { data, error } = await this.fetch('auth/register').post(request).json<T>()
 

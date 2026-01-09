@@ -13,7 +13,7 @@ const router = useRouter()
 const appStore = useAppStore()
 const serverStore = useServerStore()
 const { serverID } = storeToRefs(appStore)
-const { servers, refetch } = storeToRefs(serverStore)
+const { servers, refetch, canReadServer, canWriteServer } = storeToRefs(serverStore)
 
 watch(refetch, (refetched) => {
   if (refetched) {
@@ -26,6 +26,10 @@ onMounted(() => {
 })
 
 const fetchServers = async () => {
+  if (!canReadServer.value) {
+    return
+  }
+
   try {
     await serverStore.getServers()
   } catch (error) {
@@ -72,6 +76,7 @@ const showAddServerDialog = () => {
       </template>
 
       <Item
+        v-if="canWriteServer"
         variant="outline"
         class="aspect-square"
         asChild

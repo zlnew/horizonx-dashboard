@@ -33,7 +33,8 @@ type Criteria = UserCriteria
 const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()
-const { users, loading, refetch, notFound, search } = storeToRefs(userStore)
+const { users, loading, refetch, notFound, search, canReadMember, canWriteMember } =
+  storeToRefs(userStore)
 
 const criteria = computed(() => route.query as Criteria)
 
@@ -72,6 +73,10 @@ onUnmounted(() => {
 })
 
 const fetchUsers = async (criteria: Criteria) => {
+  if (!canReadMember.value) {
+    return
+  }
+
   try {
     await userStore.getUsers(criteria)
   } catch (error) {
@@ -126,6 +131,7 @@ const showDeleteModal = (user: User) => {
 
       <div class="flex items-center gap-2">
         <Button
+          v-if="canWriteMember"
           type="button"
           @click="showCreateModal"
         >
@@ -173,7 +179,12 @@ const showDeleteModal = (user: User) => {
               <TableHead>Name</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Role</TableHead>
-              <TableHead class="text-end">Action</TableHead>
+              <TableHead
+                v-if="canWriteMember"
+                class="text-end"
+              >
+                Action
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -187,7 +198,7 @@ const showDeleteModal = (user: User) => {
               <TableCell>
                 <RoleBadge :role-name="row.role.name" />
               </TableCell>
-              <TableCell>
+              <TableCell v-if="canWriteMember">
                 <div class="flex items-center justify-end gap-2">
                   <Button
                     type="button"

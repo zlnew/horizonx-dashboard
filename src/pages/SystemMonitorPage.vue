@@ -23,7 +23,7 @@ const appStore = useAppStore()
 const metricsStore = useMetricsStore()
 const serverStore = useServerStore()
 const { formatDuration } = useNumber()
-const { metrics } = storeToRefs(metricsStore)
+const { metrics, canReadMetrics } = storeToRefs(metricsStore)
 const { servers } = storeToRefs(serverStore)
 
 const { subscribe } = useWebSocket()
@@ -68,6 +68,10 @@ onUnmounted(() => {
 })
 
 const fetchServers = async () => {
+  if (!canReadMetrics.value) {
+    return
+  }
+
   try {
     await serverStore.getServers()
   } catch (error) {
@@ -77,7 +81,7 @@ const fetchServers = async () => {
 }
 
 const fetchLatestMetrics = async () => {
-  if (appStore.serverID === '') {
+  if (appStore.serverID === '' || !canReadMetrics.value) {
     return
   }
 

@@ -35,7 +35,8 @@ type Criteria = ServerCriteria
 const route = useRoute()
 const router = useRouter()
 const serverStore = useServerStore()
-const { servers, loading, refetch, notFound, search } = storeToRefs(serverStore)
+const { servers, loading, refetch, notFound, search, canReadServer, canWriteServer } =
+  storeToRefs(serverStore)
 
 const { subscribe } = useWebSocket()
 
@@ -84,6 +85,10 @@ onUnmounted(() => {
 })
 
 const fetchServers = async (criteria: Criteria) => {
+  if (!canReadServer.value) {
+    return
+  }
+
   try {
     await serverStore.getServers(criteria)
   } catch (error) {
@@ -138,6 +143,7 @@ const showDeleteModal = (server: Server) => {
 
       <div class="flex items-center gap-2">
         <Button
+          v-if="canWriteServer"
           type="button"
           @click="showRegisterModal"
         >
@@ -185,7 +191,12 @@ const showDeleteModal = (server: Server) => {
               <TableHead>Name</TableHead>
               <TableHead>IP Address</TableHead>
               <TableHead>Agent Status</TableHead>
-              <TableHead class="text-end">Action</TableHead>
+              <TableHead
+                v-if="canWriteServer"
+                class="text-end"
+              >
+                Action
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -204,7 +215,7 @@ const showDeleteModal = (server: Server) => {
                   {{ row.is_online ? 'Online' : 'Offline' }}
                 </Badge>
               </TableCell>
-              <TableCell>
+              <TableCell v-if="canWriteServer">
                 <div class="flex items-center justify-end gap-2">
                   <Button
                     type="button"

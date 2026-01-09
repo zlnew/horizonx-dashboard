@@ -41,7 +41,7 @@ const { subscribe } = useWebSocket()
 const applicationStore = useApplicationStore()
 const jobStore = useJobStore()
 
-const { selectedApplication: application, appID } = storeToRefs(applicationStore)
+const { selectedApplication: application, appID, canReadApp } = storeToRefs(applicationStore)
 const { jobs, meta, refetch, loading, notFound } = storeToRefs(jobStore)
 
 let jobSub: WSSubscribtion | null = null
@@ -88,6 +88,10 @@ onUnmounted(() => {
 })
 
 const fetchJobs = async (criteria: Criteria) => {
+  if (!canReadApp.value) {
+    return
+  }
+
   try {
     await jobStore.getJobs({
       ...criteria,

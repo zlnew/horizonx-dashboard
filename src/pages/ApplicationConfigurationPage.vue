@@ -21,7 +21,7 @@ import useApplicationEnvStore from '@/stores/application-env'
 const applicationStore = useApplicationStore()
 const applicationEnvStore = useApplicationEnvStore()
 
-const { selectedApplication, canDeleteApp } = storeToRefs(applicationStore)
+const { selectedApplication, canWriteApp, canDeleteApp } = storeToRefs(applicationStore)
 const { selectedEnvironment } = storeToRefs(applicationEnvStore)
 
 const pageTitle = computed(() => `${selectedApplication.value?.name} · Configuration`)
@@ -78,7 +78,7 @@ const showDeleteDialog = () => {
         <CardDescription>
           Key–value pairs injected into the application at runtime.
         </CardDescription>
-        <CardAction>
+        <CardAction v-if="canWriteApp">
           <Button @click="showCreateEnvVarDialog">
             <PlusIcon />
             Add variable
@@ -95,7 +95,7 @@ const showDeleteDialog = () => {
               >
                 <TableCell class="font-bold">{{ env.key }}</TableCell>
                 <TableCell class="font-bold text-neutral-400">{{ env.value }}</TableCell>
-                <TableCell>
+                <TableCell v-if="canWriteApp">
                   <div class="flex items-center justify-end gap-2">
                     <Button
                       type="button"
@@ -128,7 +128,10 @@ const showDeleteDialog = () => {
     </Card>
   </section>
 
-  <section class="mt-8">
+  <section
+    v-if="canWriteApp"
+    class="mt-8"
+  >
     <Card>
       <CardHeader>
         <CardTitle>Danger Zone</CardTitle>

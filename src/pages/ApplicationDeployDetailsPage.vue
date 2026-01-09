@@ -31,7 +31,7 @@ const { formatDate, formatDuration } = useDate()
 const applicationStore = useApplicationStore()
 const applicationDeploymentStore = useApplicationDeploymentStore()
 
-const { selectedApplication: application, appID } = storeToRefs(applicationStore)
+const { selectedApplication: application, appID, canReadApp } = storeToRefs(applicationStore)
 const { selectedDeployment: deployment, deploymentID } = storeToRefs(applicationDeploymentStore)
 const loading = ref(false)
 
@@ -88,6 +88,10 @@ onUnmounted(() => {
 })
 
 const fetchDeployment = async (deploymentID: number) => {
+  if (!canReadApp.value) {
+    return
+  }
+
   loading.value = true
 
   try {

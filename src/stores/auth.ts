@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { useLocalStorage } from '@vueuse/core'
 import AuthApi from '@/api/Auth'
@@ -13,6 +13,20 @@ const useAuthStore = defineStore('auth', () => {
 
   const loginError = ref<string | null>(null)
   const logoutError = ref<string | null>(null)
+
+  const permissions = computed(() => user.value.permissions ?? [])
+
+  const can = computed(() => {
+    const owned = new Set(permissions.value.map((p) => p.name))
+
+    return (permission: string | string[]) => {
+      if (typeof permission === 'string') {
+        return owned.has(permission)
+      }
+
+      return permission.every((p) => owned.has(p))
+    }
+  })
 
   const login = async (request: LoginRequest) => {
     loginError.value = null
@@ -48,6 +62,8 @@ const useAuthStore = defineStore('auth', () => {
     isAuthenticated,
     loginError,
     logoutError,
+    permissions,
+    can,
     login,
     logout
   }

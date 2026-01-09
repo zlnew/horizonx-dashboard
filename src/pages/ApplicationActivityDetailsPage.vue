@@ -32,7 +32,7 @@ const { formatDate, formatDuration } = useDate()
 const applicationStore = useApplicationStore()
 const jobStore = useJobStore()
 
-const { selectedApplication: application, appID } = storeToRefs(applicationStore)
+const { selectedApplication: application, appID, canReadApp } = storeToRefs(applicationStore)
 const { selectedJob: job, jobID } = storeToRefs(jobStore)
 const loading = ref(false)
 
@@ -89,6 +89,10 @@ onUnmounted(() => {
 })
 
 const fetchJob = async (jobID: number) => {
+  if (!canReadApp.value) {
+    return
+  }
+
   loading.value = true
 
   try {

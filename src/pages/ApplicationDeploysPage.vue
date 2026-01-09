@@ -33,7 +33,8 @@ const { subscribe } = useWebSocket()
 const applicationStore = useApplicationStore()
 const applicationDeploymentStore = useApplicationDeploymentStore()
 
-const { selectedApplication, appID, canDeployApp } = storeToRefs(applicationStore)
+const { selectedApplication, appID, canReadApp, canWriteApp, canDeployApp } =
+  storeToRefs(applicationStore)
 const { deployments, meta, loading, notFound } = storeToRefs(applicationDeploymentStore)
 
 let deploymentSub: WSSubscribtion | null = null
@@ -72,6 +73,10 @@ onUnmounted(() => {
 })
 
 const fetchDeployments = async (criteria: Criteria) => {
+  if (!canReadApp.value) {
+    return
+  }
+
   try {
     await applicationDeploymentStore.getDeployments(appID.value, {
       ...criteria,
@@ -124,7 +129,7 @@ const showDeployConfirmation = () => {
         <CardDescription>
           Manage deployments and view deployment history for this application.
         </CardDescription>
-        <CardAction>
+        <CardAction v-if="canWriteApp">
           <Button
             type="button"
             :disabled="!canDeployApp"

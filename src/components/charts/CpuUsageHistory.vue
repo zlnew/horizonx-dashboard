@@ -21,7 +21,7 @@ type ChartData = CpuUsagePoint
 const appStore = useAppStore()
 const metricsStore = useMetricsStore()
 const { formatDate } = useDate()
-const { metrics, cpuUsagePoint: chartData } = storeToRefs(metricsStore)
+const { metrics, cpuUsagePoint: chartData, canReadMetrics } = storeToRefs(metricsStore)
 
 const chartConfig = {
   usage_percent: {
@@ -55,6 +55,10 @@ onMounted(() => {
 })
 
 const fetchHistory = async () => {
+  if (!canReadMetrics.value) {
+    return
+  }
+
   try {
     const res = await new ServerApi().getCPUUsageHistory<ApiResponse<CpuUsagePoint[]>>(
       appStore.serverID

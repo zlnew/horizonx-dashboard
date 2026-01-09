@@ -1,6 +1,8 @@
-import { ref } from 'vue'
-import { defineStore } from 'pinia'
+import { computed, ref } from 'vue'
+import { defineStore, storeToRefs } from 'pinia'
 import UserApi from '@/api/User'
+import Permission from '@/constants/permission'
+import useAuthStore from '@/stores/auth'
 
 const useUserStore = defineStore('user', () => {
   const api = new UserApi()
@@ -14,6 +16,12 @@ const useUserStore = defineStore('user', () => {
   const search = ref('')
 
   const selectedUser = ref<User | null>(null)
+
+  const authStore = useAuthStore()
+  const { can } = storeToRefs(authStore)
+
+  const canReadMember = computed(() => can.value(Permission.MEMBER_READ))
+  const canWriteMember = computed(() => can.value(Permission.MEMBER_WRITE))
 
   const getUsers = async (criteria: UserCriteria = {}) => {
     loading.value = true
@@ -82,6 +90,8 @@ const useUserStore = defineStore('user', () => {
     perPage,
     search,
     selectedUser,
+    canReadMember,
+    canWriteMember,
     getUsers,
     createUser,
     updateUser,

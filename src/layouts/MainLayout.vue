@@ -18,6 +18,7 @@ import {
 } from 'lucide-vue-next'
 import type { AcceptableValue } from 'reka-ui'
 import { toast } from 'vue-sonner'
+import AuthApi from '@/api/Auth'
 import ServerApi from '@/api/Server'
 import {
   Breadcrumb,
@@ -109,6 +110,7 @@ watchEffect(() => {
 onMounted(() => {
   window.addEventListener('keydown', handleSearchCommand)
   redirectToServerSelection()
+  fetchUser()
   fetchServers()
 })
 
@@ -126,6 +128,18 @@ const handleSearchCommand = (e: KeyboardEvent) => {
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
     e.preventDefault()
     commandOpen.value = !commandOpen.value
+  }
+}
+
+const fetchUser = async () => {
+  try {
+    const res = await new AuthApi().user<ApiResponse<User>>()
+    if (res.data) {
+      user.value = res.data
+    }
+  } catch (error) {
+    const fetchError = error as Error
+    toast.error(fetchError.message)
   }
 }
 

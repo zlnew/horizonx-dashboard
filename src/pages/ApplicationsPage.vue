@@ -23,7 +23,7 @@ import useApplicationStore from '@/stores/application'
 const { formatDate } = useDate()
 const appStore = useAppStore()
 const applicationStore = useApplicationStore()
-const { applications, loading, notFound } = storeToRefs(applicationStore)
+const { applications, loading, notFound, canReadApp, canWriteApp } = storeToRefs(applicationStore)
 
 usePageMeta({
   title: 'Applications',
@@ -44,7 +44,7 @@ onUnmounted(() => {
 })
 
 const fetchApplications = async () => {
-  if (appStore.serverID === '') {
+  if (appStore.serverID === '' || !canReadApp.value) {
     return
   }
 
@@ -70,7 +70,10 @@ const fetchApplications = async () => {
         </div>
       </div>
 
-      <div class="flex items-center gap-2">
+      <div
+        v-if="canWriteApp"
+        class="flex items-center gap-2"
+      >
         <Button asChild>
           <RouterLink :to="{ name: 'applications.create' }">
             <PlusIcon />
@@ -84,41 +87,42 @@ const fetchApplications = async () => {
   <section class="mt-8 space-y-4">
     <template v-if="applications.length">
       <div class="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3">
-        <Card
+        <template
           v-for="app in applications"
           :key="app.id"
-          class="hover:bg-accent transition-colors"
         >
           <RouterLink :to="{ name: 'applications.overview', params: { id: app.id } }">
-            <CardHeader>
-              <CardTitle>{{ app.name }}</CardTitle>
-              <CardDescription>
-                <span>Last deployed: </span>
-                <span class="text-neutral-200">
-                  {{
-                    app.last_deployment_at
-                      ? formatDate(new Date(app.last_deployment_at), 'DD MMM, YYYY HH:mm')
-                      : '-'
-                  }}
-                </span>
-              </CardDescription>
-              <CardAction>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon-lg"
-                >
-                  <ChevronRightIcon />
-                </Button>
-              </CardAction>
-            </CardHeader>
-            <CardContent>
-              <div class="mt-4">
-                <AppStatusBadge :status="app.status" />
-              </div>
-            </CardContent>
+            <Card class="hover:bg-accent transition-colors">
+              <CardHeader>
+                <CardTitle>{{ app.name }}</CardTitle>
+                <CardDescription>
+                  <span>Last deployed: </span>
+                  <span class="text-neutral-200">
+                    {{
+                      app.last_deployment_at
+                        ? formatDate(new Date(app.last_deployment_at), 'DD MMM, YYYY HH:mm')
+                        : '-'
+                    }}
+                  </span>
+                </CardDescription>
+                <CardAction>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon-lg"
+                  >
+                    <ChevronRightIcon />
+                  </Button>
+                </CardAction>
+              </CardHeader>
+              <CardContent>
+                <div class="mt-4">
+                  <AppStatusBadge :status="app.status" />
+                </div>
+              </CardContent>
+            </Card>
           </RouterLink>
-        </Card>
+        </template>
       </div>
     </template>
 

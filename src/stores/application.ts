@@ -1,8 +1,10 @@
 import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { defineStore } from 'pinia'
+import { defineStore, storeToRefs } from 'pinia'
 import ApplicationApi from '@/api/Application'
 import ApplicationStatus from '@/constants/application-status'
+import Permission from '@/constants/permission'
+import useAuthStore from '@/stores/auth'
 
 const useApplicationStore = defineStore('application', () => {
   const api = new ApplicationApi()
@@ -16,6 +18,12 @@ const useApplicationStore = defineStore('application', () => {
 
   const route = useRoute()
   const appID = computed(() => Number(route.params.id))
+
+  const authStore = useAuthStore()
+  const { can } = storeToRefs(authStore)
+
+  const canReadApp = computed(() => can.value(Permission.APP_READ))
+  const canWriteApp = computed(() => can.value(Permission.APP_WRITE))
 
   const canUpdateApp = computed(() => {
     const validStates = [
@@ -162,6 +170,8 @@ const useApplicationStore = defineStore('application', () => {
     notFound,
     selectedApplication,
     appID,
+    canReadApp,
+    canWriteApp,
     canUpdateApp,
     canDeleteApp,
     canDeployApp,

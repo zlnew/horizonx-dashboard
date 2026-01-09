@@ -1,6 +1,8 @@
-import { ref } from 'vue'
-import { defineStore } from 'pinia'
+import { computed, ref } from 'vue'
+import { defineStore, storeToRefs } from 'pinia'
 import ServerApi from '@/api/Server'
+import Permission from '@/constants/permission'
+import useAuthStore from '@/stores/auth'
 
 const useServerStore = defineStore('server', () => {
   const api = new ServerApi()
@@ -14,6 +16,12 @@ const useServerStore = defineStore('server', () => {
   const search = ref('')
 
   const selectedServer = ref<Server | null>(null)
+
+  const authStore = useAuthStore()
+  const { can } = storeToRefs(authStore)
+
+  const canReadServer = computed(() => can.value(Permission.SERVER_READ))
+  const canWriteServer = computed(() => can.value(Permission.SERVER_WRITE))
 
   const getServers = async (criteria: ServerCriteria = {}) => {
     loading.value = true
@@ -87,6 +95,8 @@ const useServerStore = defineStore('server', () => {
     perPage,
     search,
     selectedServer,
+    canReadServer,
+    canWriteServer,
     getServers,
     registerServer,
     updateServer,

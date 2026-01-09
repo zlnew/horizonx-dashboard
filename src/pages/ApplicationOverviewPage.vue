@@ -31,6 +31,8 @@ const {
   selectedApplication: application,
   loading,
   appID,
+  canReadApp,
+  canWriteApp,
   canUpdateApp
 } = storeToRefs(applicationStore)
 const { loading: dLoading, notFound: dNotFound } = storeToRefs(applicationDeploymentStore)
@@ -60,6 +62,10 @@ onMounted(() => {
 })
 
 const fetchRecentDeployments = async () => {
+  if (!canReadApp.value) {
+    return
+  }
+
   try {
     const res = await applicationDeploymentStore.getRecentDeployments(appID.value)
     recentDeployments.value = res ?? []
@@ -86,6 +92,7 @@ const showUpdateDialog = () => {
         </CardDescription>
         <CardAction>
           <Button
+            v-if="canWriteApp"
             type="button"
             size="icon-lg"
             variant="ghost"
@@ -152,7 +159,7 @@ const showUpdateDialog = () => {
       <CardHeader>
         <CardTitle>Recent Deployments</CardTitle>
         <CardDescription>Latest deployment activity for this application.</CardDescription>
-        <CardAction>
+        <CardAction v-if="canReadApp">
           <Button variant="link">
             <RouterLink :to="{ name: 'applications.deploys', params: { id: appID } }">
               View all deployments
