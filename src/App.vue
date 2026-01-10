@@ -5,7 +5,11 @@ import DialogRenderer from '@/components/DialogRenderer.vue'
 import { Toaster } from '@/components/ui/sonner'
 import { getHealth } from '@/composables/fetch'
 
-onMounted(async () => {
+onMounted(() => {
+  init()
+})
+
+const init = async () => {
   try {
     console.log('app starting... initiating websocket handshake.')
     await getHealth()
@@ -13,7 +17,7 @@ onMounted(async () => {
   } catch (e) {
     console.error('websocket handshake failed.', e)
   }
-})
+}
 </script>
 
 <template>

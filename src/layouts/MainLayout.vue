@@ -6,20 +6,19 @@ import { useDocumentVisibility, useIdle } from '@vueuse/core'
 import {
   ChartColumnBigIcon,
   ChevronUpIcon,
+  CircleUserIcon,
   LayoutGridIcon,
   LogOutIcon,
-  OrbitIcon,
   SearchIcon,
   ServerIcon,
-  SettingsIcon,
   User2Icon,
-  UserIcon,
   UsersIcon
 } from 'lucide-vue-next'
 import type { AcceptableValue } from 'reka-ui'
 import { toast } from 'vue-sonner'
 import AuthApi from '@/api/Auth'
 import ServerApi from '@/api/Server'
+import AppLogo from '@/components/AppLogo.vue'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -79,6 +78,8 @@ const authStore = useAuthStore()
 const { connect: connectWs, disconnect: disconnectWs } = useWebSocket()
 const { breadcrumb, serverID } = storeToRefs(appStore)
 const { user } = storeToRefs(authStore)
+
+const currentYear = new Date().getFullYear()
 
 const servers = ref<Server[]>([])
 const commandOpen = ref(false)
@@ -175,15 +176,7 @@ const handleLogout = () => {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg">
-              <div class="flex aspect-square size-8 items-center justify-center">
-                <OrbitIcon class="size-6" />
-              </div>
-              <div class="grid flex-1 text-left text-base leading-tight">
-                <div>
-                  <span class="font-normal tracking-widest text-neutral-300">Horizon</span>
-                  <span class="font-bold">X</span>
-                </div>
-              </div>
+              <AppLogo />
             </SidebarMenuButton>
           </SidebarMenuItem>
 
@@ -247,9 +240,11 @@ const handleLogout = () => {
                 side="top"
                 class="w-(--reka-popper-anchor-width)"
               >
-                <DropdownMenuItem>
-                  <UserIcon />
-                  <span>Profile</span>
+                <DropdownMenuItem as-child>
+                  <RouterLink :to="{ name: 'account' }">
+                    <CircleUserIcon />
+                    <span>Account</span>
+                  </RouterLink>
                 </DropdownMenuItem>
                 <DropdownMenuItem as-child>
                   <RouterLink :to="{ name: 'servers' }">
@@ -341,7 +336,7 @@ const handleLogout = () => {
       <footer>
         <div class="container mx-auto flex h-16 items-center justify-center">
           <div class="text-sm text-neutral-400">
-            Copyright (c) 2025 HorizonX. All Rights Reserved.
+            Copyright (c) {{ currentYear }} HorizonX. All Rights Reserved.
           </div>
         </div>
       </footer>
@@ -408,13 +403,17 @@ const handleLogout = () => {
         </CommandGroup>
         <CommandSeparator />
         <CommandGroup heading="Settings">
-          <CommandItem value="profile">
-            <User2Icon />
-            <span>Profile</span>
-          </CommandItem>
-          <CommandItem value="settings">
-            <SettingsIcon />
-            <span>Settings</span>
+          <CommandItem
+            value="account"
+            as-child
+          >
+            <RouterLink
+              :to="{ name: 'account' }"
+              @click.capture="close"
+            >
+              <CircleUserIcon />
+              <span>Account</span>
+            </RouterLink>
           </CommandItem>
         </CommandGroup>
       </CommandList>
