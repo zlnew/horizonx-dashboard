@@ -171,7 +171,7 @@ const showRestartConfirmation = () => {
             <Item class="group px-0">
               <ItemContent>
                 <ItemTitle
-                  :class="isExactActive ? 'font-bold' : 'text-neutral-400'"
+                  :class="isExactActive ? 'font-bold' : 'text-muted-foreground'"
                   class="group-hover:text-foreground transition-colors"
                 >
                   <component

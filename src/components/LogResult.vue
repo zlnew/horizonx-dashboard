@@ -16,7 +16,7 @@ const colors = {
   [LogLevel.DEBUG]: 'text-muted',
   [LogLevel.ERROR]: 'text-destructive',
   [LogLevel.FATAL]: 'text-destructive font-bold',
-  [LogLevel.INFO]: 'text-foreground',
+  [LogLevel.INFO]: 'text-background dark:text-foreground',
   [LogLevel.WARN]: 'text-yellow-200'
 }
 
@@ -33,7 +33,7 @@ watch(
 <template>
   <div
     ref="logsContainer"
-    class="bg-background h-84 space-y-1 overflow-auto rounded-lg p-4 font-mono text-xs"
+    class="bg-foreground dark:bg-background h-84 space-y-1 overflow-auto rounded-lg p-4 font-mono text-xs"
   >
     <template v-if="data?.length">
       <div
@@ -41,7 +41,7 @@ watch(
         :key="i"
         class="flex gap-3"
       >
-        <span class="text-muted min-w-4">{{ i + 1 }}</span>
+        <span class="text-muted-foreground min-w-4">{{ i + 1 }}</span>
         <span class="text-muted-foreground text-nowrap">
           {{ formatDate(new Date(log.timestamp), 'DD-MM-YYYY HH:mm:ss') }}
         </span>

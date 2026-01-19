@@ -7,12 +7,11 @@ import useWebSocket from '@/composables/web-socket'
 const useAuthStore = defineStore('auth', () => {
   const api = new AuthApi()
 
-  const user = useLocalStorage('horizonx_user', {} as User)
+  const user = useLocalStorage('horizonx_user', { name: '', email: '' } as User)
   const isAuthenticated = useLocalStorage('horizonx_authenticated', false)
   const { disconnect: disconnectWs } = useWebSocket()
 
   const loginError = ref<string | null>(null)
-  const logoutError = ref<string | null>(null)
 
   const permissions = computed(() => user.value.permissions ?? [])
 
@@ -43,16 +42,13 @@ const useAuthStore = defineStore('auth', () => {
   }
 
   const logout = async () => {
-    logoutError.value = null
-
     try {
       await api.logout()
-      user.value = {} as User
+      user.value = { name: '', email: '' } as User
       isAuthenticated.value = false
       disconnectWs()
     } catch (error) {
       const fetchError = error as Error
-      logoutError.value = fetchError.message
       throw fetchError
     }
   }
@@ -61,7 +57,6 @@ const useAuthStore = defineStore('auth', () => {
     user,
     isAuthenticated,
     loginError,
-    logoutError,
     permissions,
     can,
     login,

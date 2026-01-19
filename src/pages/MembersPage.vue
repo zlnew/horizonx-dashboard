@@ -2,19 +2,13 @@
 import { computed, defineAsyncComponent, onMounted, onUnmounted, watch } from 'vue'
 import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
-import {
-  PlusIcon,
-  RefreshCwIcon,
-  SearchIcon,
-  SquarePenIcon,
-  TrashIcon,
-  UsersIcon
-} from 'lucide-vue-next'
+import { PlusIcon, SearchIcon, SquarePenIcon, TrashIcon, UsersIcon } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
 import DataLoading from '@/components/DataLoading.vue'
 import DataNotFound from '@/components/DataNotFound.vue'
 import RoleBadge from '@/components/RoleBadge.vue'
 import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group'
 import {
   Table,
@@ -95,10 +89,6 @@ const handleSearch = () => {
   })
 }
 
-const handleRefresh = () => {
-  refetch.value = true
-}
-
 const showCreateModal = () => {
   dialog.open(defineAsyncComponent(() => import('@/components/dialogs/UserCreateDialog.vue')))
 }
@@ -123,7 +113,7 @@ const showDeleteModal = (user: User) => {
         </div>
         <div class="flex flex-col gap-0">
           <div class="text-xl">Members</div>
-          <div class="text-sm text-neutral-400">
+          <div class="text-muted-foreground text-sm">
             Everything about your team, organized and easy to manage.
           </div>
         </div>
@@ -156,74 +146,64 @@ const showDeleteModal = (user: User) => {
           </InputGroupAddon>
         </InputGroup>
       </div>
-      <div class="flex w-full items-center justify-end gap-2 sm:w-auto">
-        <Button
-          type="button"
-          variant="outline"
-          @click="handleRefresh"
-        >
-          <div class="text-neutral-400">
-            <RefreshCwIcon />
-          </div>
-          Refresh
-        </Button>
-      </div>
     </div>
 
     <template v-if="users.length">
-      <div class="bg-card text-card-foreground rounded-lg p-2">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead class="w-8">#</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead
-                v-if="canWriteMember"
-                class="text-end"
+      <Card>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead class="w-8">#</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>Role</TableHead>
+                <TableHead
+                  v-if="canWriteMember"
+                  class="text-end"
+                >
+                  Action
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <TableRow
+                v-for="(row, index) in users"
+                :key="index"
               >
-                Action
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            <TableRow
-              v-for="(row, index) in users"
-              :key="index"
-            >
-              <TableCell>{{ index + 1 }}.</TableCell>
-              <TableCell class="font-bold">{{ row.name }}</TableCell>
-              <TableCell>{{ row.email }}</TableCell>
-              <TableCell>
-                <RoleBadge :role-name="row.role.name" />
-              </TableCell>
-              <TableCell v-if="canWriteMember">
-                <div class="flex items-center justify-end gap-2">
-                  <Button
-                    type="button"
-                    size="icon-sm"
-                    variant="outline"
-                    aria-label="Edit user"
-                    @click="showUpdateModal(row)"
-                  >
-                    <SquarePenIcon />
-                  </Button>
-                  <Button
-                    type="button"
-                    size="icon-sm"
-                    variant="destructive"
-                    aria-label="Delete user"
-                    @click="showDeleteModal(row)"
-                  >
-                    <TrashIcon />
-                  </Button>
-                </div>
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </div>
+                <TableCell>{{ index + 1 }}.</TableCell>
+                <TableCell class="font-bold">{{ row.name }}</TableCell>
+                <TableCell>{{ row.email }}</TableCell>
+                <TableCell>
+                  <RoleBadge :role-name="row.role.name" />
+                </TableCell>
+                <TableCell v-if="canWriteMember">
+                  <div class="flex items-center justify-end gap-2">
+                    <Button
+                      type="button"
+                      size="icon-sm"
+                      variant="outline"
+                      aria-label="Edit user"
+                      @click="showUpdateModal(row)"
+                    >
+                      <SquarePenIcon />
+                    </Button>
+                    <Button
+                      type="button"
+                      size="icon-sm"
+                      variant="destructive"
+                      aria-label="Delete user"
+                      @click="showDeleteModal(row)"
+                    >
+                      <TrashIcon />
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
     </template>
 
     <DataLoading v-else-if="loading" />

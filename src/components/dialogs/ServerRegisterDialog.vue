@@ -88,7 +88,7 @@ const registerServer = async (values: GenericObject) => {
               <div
                 class="bg-accent flex items-center justify-between gap-4 overflow-x-auto rounded-lg px-4 py-2"
               >
-                <div class="overflow-x-auto tracking-wide text-neutral-100">{{ token }}</div>
+                <div class="text-muted-foreground overflow-x-auto tracking-wide">{{ token }}</div>
                 <Button
                   size="icon-sm"
                   aria-label="Copy token"
@@ -106,7 +106,7 @@ const registerServer = async (values: GenericObject) => {
               <div
                 class="bg-accent flex items-center justify-between gap-4 overflow-x-auto rounded-lg px-4 py-2"
               >
-                <div class="overflow-x-auto tracking-wide text-neutral-100">
+                <div class="text-muted-foreground overflow-x-auto tracking-wide">
                   {{ registeredServer.id }}
                 </div>
                 <Button

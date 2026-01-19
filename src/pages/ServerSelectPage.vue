@@ -60,7 +60,7 @@ const showAddServerDialog = () => {
       >
         <Item
           variant="muted"
-          class="aspect-square"
+          class="border-accent aspect-square"
           asChild
         >
           <a

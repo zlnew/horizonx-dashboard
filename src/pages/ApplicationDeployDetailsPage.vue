@@ -172,7 +172,7 @@ const handleLogsCopy = (copy: (text: string) => Promise<void>) => {
         <CardHeader>
           <CardTitle>Deployment Details</CardTitle>
           <CardDescription>
-            <div class="flex items-center gap-2 text-neutral-400">
+            <div class="text-muted-foreground flex items-center gap-2">
               <span>
                 {{ formatDate(new Date(deployment.triggered_at), 'DD MMM, YYYY HH:mm') }}
               </span>
@@ -187,7 +187,7 @@ const handleLogsCopy = (copy: (text: string) => Promise<void>) => {
               <div class="font-mono text-sm font-bold">
                 {{ deployment.branch }}@{{ deployment.commit_hash ?? '-' }}
               </div>
-              <div class="text-sm text-neutral-400">
+              <div class="text-muted-foreground text-sm">
                 {{ deployment.commit_message ?? 'No deployment message' }}
               </div>
             </div>
@@ -200,7 +200,7 @@ const handleLogsCopy = (copy: (text: string) => Promise<void>) => {
                   deployment.finished_at &&
                   deployment.status === DeploymentStatus.SUCCESS
                 "
-                class="text-sm text-neutral-400"
+                class="text-muted-foreground text-sm"
               >
                 (Deployed in
                 {{

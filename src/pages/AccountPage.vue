@@ -111,7 +111,9 @@ const onPasswordSubmit = async (values: GenericObject) => {
         </div>
         <div class="flex flex-col gap-0">
           <div class="text-xl">Account Settings</div>
-          <div class="text-sm text-neutral-400">Manage your account information and security</div>
+          <div class="text-muted-foreground text-sm">
+            Manage your account information and security
+          </div>
         </div>
       </div>
     </div>
@@ -120,14 +122,14 @@ const onPasswordSubmit = async (values: GenericObject) => {
   <section class="mt-8">
     <div class="max-w-4xl">
       <!-- Tab Navigation -->
-      <div class="mb-6 flex gap-2 border-b border-neutral-800">
+      <div class="mb-6 flex gap-2 border-b">
         <button
           type="button"
           class="flex items-center gap-2 border-b-2 px-4 py-3 text-sm font-medium transition-colors"
           :class="
             activeTab === 'profile'
               ? 'border-primary text-primary'
-              : 'border-transparent text-neutral-400 hover:text-neutral-200'
+              : 'text-muted-foreground hover:text-muted-foreground border-transparent'
           "
           @click="activeTab = 'profile'"
         >
@@ -140,7 +142,7 @@ const onPasswordSubmit = async (values: GenericObject) => {
           :class="
             activeTab === 'password'
               ? 'border-primary text-primary'
-              : 'border-transparent text-neutral-400 hover:text-neutral-200'
+              : 'text-muted-foreground hover:text-muted-foreground border-transparent'
           "
           @click="activeTab = 'password'"
         >
@@ -202,7 +204,7 @@ const onPasswordSubmit = async (values: GenericObject) => {
                       :model-value="user.email"
                       disabled
                     />
-                    <p class="text-xs text-neutral-500">Email address cannot be changed</p>
+                    <p class="text-muted-foreground text-xs">Email address cannot be changed</p>
                   </div>
                 </div>
 

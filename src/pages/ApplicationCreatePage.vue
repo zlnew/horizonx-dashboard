@@ -214,7 +214,7 @@ const onSubmit = handleSubmit(async () => {
             </div>
             <div class="space-y-1">
               <div class="text-base font-bold">{{ currentStep?.title }}</div>
-              <div class="text-xs text-neutral-400">{{ currentStep?.description }}</div>
+              <div class="text-muted-foreground text-xs">{{ currentStep?.description }}</div>
             </div>
           </div>
 

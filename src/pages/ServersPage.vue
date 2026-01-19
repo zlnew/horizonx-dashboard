@@ -2,19 +2,13 @@
 import { computed, defineAsyncComponent, onMounted, onUnmounted, watch } from 'vue'
 import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
-import {
-  PlusIcon,
-  RefreshCwIcon,
-  SearchIcon,
-  ServerIcon,
-  SquarePenIcon,
-  TrashIcon
-} from 'lucide-vue-next'
+import { PlusIcon, SearchIcon, ServerIcon, SquarePenIcon, TrashIcon } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
 import DataLoading from '@/components/DataLoading.vue'
 import DataNotFound from '@/components/DataNotFound.vue'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group'
 import {
   Table,
@@ -107,10 +101,6 @@ const handleSearch = () => {
   })
 }
 
-const handleRefresh = () => {
-  refetch.value = true
-}
-
 const showRegisterModal = () => {
   dialog.open(defineAsyncComponent(() => import('@/components/dialogs/ServerRegisterDialog.vue')))
 }
@@ -135,7 +125,7 @@ const showDeleteModal = (server: Server) => {
         </div>
         <div class="flex flex-col gap-0">
           <div class="text-xl">Servers</div>
-          <div class="text-sm text-neutral-400">
+          <div class="text-muted-foreground text-sm">
             Overview of all registered servers and their real-time agent status.
           </div>
         </div>
@@ -168,79 +158,69 @@ const showDeleteModal = (server: Server) => {
           </InputGroupAddon>
         </InputGroup>
       </div>
-      <div class="flex w-full items-center justify-end gap-2 sm:w-auto">
-        <Button
-          type="button"
-          variant="outline"
-          @click="handleRefresh"
-        >
-          <div class="text-neutral-400">
-            <RefreshCwIcon />
-          </div>
-          Refresh
-        </Button>
-      </div>
     </div>
 
     <template v-if="servers.length">
-      <div class="bg-card text-card-foreground rounded-lg p-2">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead class="w-8">#</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>IP Address</TableHead>
-              <TableHead>Agent Status</TableHead>
-              <TableHead
-                v-if="canWriteServer"
-                class="text-end"
+      <Card>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead class="w-8">#</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>IP Address</TableHead>
+                <TableHead>Agent Status</TableHead>
+                <TableHead
+                  v-if="canWriteServer"
+                  class="text-end"
+                >
+                  Action
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <TableRow
+                v-for="(row, index) in servers"
+                :key="index"
               >
-                Action
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            <TableRow
-              v-for="(row, index) in servers"
-              :key="index"
-            >
-              <TableCell>{{ index + 1 }}.</TableCell>
-              <TableCell class="font-bold">
-                <div>{{ row.name }}</div>
-                <div class="text-xs font-normal text-neutral-400">ID: {{ row.id }}</div>
-              </TableCell>
-              <TableCell>{{ row.ip_address }}</TableCell>
-              <TableCell>
-                <Badge :variant="row.is_online ? 'default' : 'outline'">
-                  {{ row.is_online ? 'Online' : 'Offline' }}
-                </Badge>
-              </TableCell>
-              <TableCell v-if="canWriteServer">
-                <div class="flex items-center justify-end gap-2">
-                  <Button
-                    type="button"
-                    size="icon-sm"
-                    variant="outline"
-                    aria-label="Edit server"
-                    @click="showUpdateModal(row)"
-                  >
-                    <SquarePenIcon />
-                  </Button>
-                  <Button
-                    type="button"
-                    size="icon-sm"
-                    variant="destructive"
-                    aria-label="Delete server"
-                    @click="showDeleteModal(row)"
-                  >
-                    <TrashIcon />
-                  </Button>
-                </div>
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </div>
+                <TableCell>{{ index + 1 }}.</TableCell>
+                <TableCell class="font-bold">
+                  <div>{{ row.name }}</div>
+                  <div class="text-muted-foreground text-xs font-normal">ID: {{ row.id }}</div>
+                </TableCell>
+                <TableCell>{{ row.ip_address }}</TableCell>
+                <TableCell>
+                  <Badge :variant="row.is_online ? 'default' : 'outline'">
+                    {{ row.is_online ? 'Online' : 'Offline' }}
+                  </Badge>
+                </TableCell>
+                <TableCell v-if="canWriteServer">
+                  <div class="flex items-center justify-end gap-2">
+                    <Button
+                      type="button"
+                      size="icon-sm"
+                      variant="outline"
+                      aria-label="Edit server"
+                      @click="showUpdateModal(row)"
+                    >
+                      <SquarePenIcon />
+                    </Button>
+                    <Button
+                      type="button"
+                      size="icon-sm"
+                      variant="destructive"
+                      aria-label="Delete server"
+                      @click="showDeleteModal(row)"
+                    >
+                      <TrashIcon />
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
     </template>
 
     <DataLoading v-else-if="loading" />

@@ -9,7 +9,7 @@ import { OrbitIcon } from 'lucide-vue-next'
     </div>
     <div class="grid flex-1 text-left text-base leading-tight">
       <div>
-        <span class="font-normal tracking-widest text-neutral-300">Horizon</span>
+        <span class="text-accent-foreground font-normal tracking-widest">Horizon</span>
         <span class="font-bold">X</span>
       </div>
     </div>

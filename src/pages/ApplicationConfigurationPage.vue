@@ -94,7 +94,7 @@ const showDeleteDialog = () => {
                 :key="index"
               >
                 <TableCell class="font-bold">{{ env.key }}</TableCell>
-                <TableCell class="font-bold text-neutral-400">{{ env.value }}</TableCell>
+                <TableCell class="text-muted-foreground font-bold">{{ env.value }}</TableCell>
                 <TableCell v-if="canWriteApp">
                   <div class="flex items-center justify-end gap-2">
                     <Button
@@ -102,7 +102,7 @@ const showDeleteDialog = () => {
                       size="icon-sm"
                       variant="ghost"
                       aria-label="Edit env var"
-                      class="text-neutral-400"
+                      class="text-muted-foreground"
                       @click="showUpdateEnvVarDialog(env)"
                     >
                       <EditIcon />
@@ -112,7 +112,7 @@ const showDeleteDialog = () => {
                       size="icon-sm"
                       variant="ghost"
                       aria-label="Delete env var"
-                      class="text-neutral-400"
+                      class="text-muted-foreground"
                       @click="showDeleteEnvVarDialog(env)"
                     >
                       <Trash2Icon />

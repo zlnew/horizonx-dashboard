@@ -166,7 +166,7 @@ const handleLogsCopy = (copy: (text: string) => Promise<void>) => {
         <CardHeader>
           <CardTitle>Activity Details</CardTitle>
           <CardDescription>
-            <div class="flex flex-wrap items-center gap-1 text-neutral-400">
+            <div class="text-muted-foreground flex flex-wrap items-center gap-1">
               <span class="font-bold">{{ jobTypeLabel(job.type) }}</span>
               <span>&middot;</span>
               <span>
@@ -183,7 +183,7 @@ const handleLogsCopy = (copy: (text: string) => Promise<void>) => {
               <AppDeployBadge :status="job.status" />
               <div
                 v-if="job.started_at && job.finished_at && job.status === JobStatus.SUCCESS"
-                class="text-sm text-neutral-400"
+                class="text-muted-foreground text-sm"
               >
                 (Finished in
                 {{ formatDuration(new Date(job.started_at), new Date(job.finished_at)) }})

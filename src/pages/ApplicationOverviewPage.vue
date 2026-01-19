@@ -107,32 +107,32 @@ const showUpdateDialog = () => {
         <template v-if="application">
           <ul class="space-y-4">
             <li class="grid md:grid-cols-4">
-              <div class="text-sm text-neutral-400 md:text-base">Name:</div>
-              <div class="text-sm font-bold md:col-span-3 md:text-base">
+              <div class="text-muted-foreground text-sm md:text-base">Name:</div>
+              <div class="text-sm font-semibold md:col-span-3 md:text-base">
                 {{ application.name }}
               </div>
             </li>
             <li class="grid md:grid-cols-4">
-              <div class="text-sm text-neutral-400 md:text-base">Repository:</div>
-              <div class="text-sm font-bold md:col-span-3 md:text-base">
+              <div class="text-muted-foreground text-sm md:text-base">Repository:</div>
+              <div class="text-sm font-semibold md:col-span-3 md:text-base">
                 {{ application.repo_url }}
               </div>
             </li>
             <li class="grid md:grid-cols-4">
-              <div class="text-sm text-neutral-400 md:text-base">Branch:</div>
-              <div class="text-sm font-bold md:col-span-3 md:text-base">
+              <div class="text-muted-foreground text-sm md:text-base">Branch:</div>
+              <div class="text-sm font-semibold md:col-span-3 md:text-base">
                 {{ application.branch }}
               </div>
             </li>
             <li class="grid md:grid-cols-4">
-              <div class="text-sm text-neutral-400 md:text-base">Status:</div>
-              <div class="text-sm font-bold md:col-span-3 md:text-base">
+              <div class="text-muted-foreground text-sm md:text-base">Status:</div>
+              <div class="text-sm font-semibold md:col-span-3 md:text-base">
                 <AppStatusBadge :status="application.status" />
               </div>
             </li>
             <li class="grid md:grid-cols-4">
-              <div class="text-sm text-neutral-400 md:text-base">Last Deployed:</div>
-              <div class="text-sm font-bold md:col-span-3 md:text-base">
+              <div class="text-muted-foreground text-sm md:text-base">Last Deployed:</div>
+              <div class="text-sm font-semibold md:col-span-3 md:text-base">
                 {{
                   application.last_deployment_at
                     ? formatDate(new Date(application.last_deployment_at), 'DD MMM, YYYY HH:MM')
@@ -141,8 +141,8 @@ const showUpdateDialog = () => {
               </div>
             </li>
             <li class="grid md:grid-cols-4">
-              <div class="text-sm text-neutral-400 md:text-base">Created:</div>
-              <div class="text-sm font-bold md:col-span-3 md:text-base">
+              <div class="text-muted-foreground text-sm md:text-base">Created:</div>
+              <div class="text-sm font-semibold md:col-span-3 md:text-base">
                 {{ formatDate(new Date(application.created_at), 'DD MMM, YYYY HH:MM') }}
               </div>
             </li>

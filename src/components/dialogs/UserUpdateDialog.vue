@@ -153,7 +153,7 @@ const updateUser = async (values: GenericObject, closeDialog: () => void) => {
               <FormControl>
                 <Select v-bind="componentField">
                   <SelectTrigger>
-                    <div class="text-neutral-400">
+                    <div class="text-muted-foreground">
                       <IdCardLanyardIcon />
                     </div>
                     <SelectValue placeholder="Choose" />

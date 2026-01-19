@@ -43,10 +43,10 @@ const diskUsageAvg = computed(() => {
             </div>
 
             <div class="flex flex-col gap-4">
-              <div class="text-sm text-neutral-400">CPU Usage</div>
+              <div class="text-accent-foreground text-sm">CPU Usage</div>
               <div class="flex items-center gap-1">
                 <span class="text-2xl">{{ formatNumber(metrics.cpu.usage.ema, 0, 2) }}</span>
-                <span class="text-lg text-neutral-400">%</span>
+                <span class="text-muted-foreground text-lg">%</span>
               </div>
               <Progress :model-value="metrics.cpu.usage.ema" />
             </div>
@@ -64,12 +64,12 @@ const diskUsageAvg = computed(() => {
             </div>
 
             <div class="flex flex-col gap-4">
-              <div class="text-sm text-neutral-400">GPU Usage</div>
+              <div class="text-accent-foreground text-sm">GPU Usage</div>
               <div class="flex items-center gap-1">
                 <span class="text-2xl">
                   {{ formatNumber(gpuUsageAvg, 0, 2) }}
                 </span>
-                <span class="text-lg text-neutral-400">%</span>
+                <span class="text-muted-foreground text-lg">%</span>
               </div>
               <Progress :model-value="gpuUsageAvg" />
             </div>
@@ -87,12 +87,12 @@ const diskUsageAvg = computed(() => {
             </div>
 
             <div class="flex flex-col gap-4">
-              <div class="text-sm text-neutral-400">Memory Usage</div>
+              <div class="text-accent-foreground text-sm">Memory Usage</div>
               <div class="flex items-center gap-1">
                 <span class="text-2xl">
                   {{ formatNumber(metrics.memory.usage_percent, 0, 2) }}
                 </span>
-                <span class="text-lg text-neutral-400">%</span>
+                <span class="text-muted-foreground text-lg">%</span>
               </div>
               <Progress :model-value="metrics.memory.usage_percent" />
             </div>
@@ -110,10 +110,10 @@ const diskUsageAvg = computed(() => {
             </div>
 
             <div class="flex flex-col gap-4">
-              <div class="text-sm text-neutral-400">Disk Usage</div>
+              <div class="text-accent-foreground text-sm">Disk Usage</div>
               <div class="flex items-center gap-1">
                 <span class="text-2xl">{{ formatNumber(diskUsageAvg, 0, 2) }}</span>
-                <span class="text-lg text-neutral-400">%</span>
+                <span class="text-muted-foreground text-lg">%</span>
               </div>
               <Progress :model-value="diskUsageAvg" />
             </div>

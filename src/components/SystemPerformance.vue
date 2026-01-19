@@ -32,7 +32,7 @@ const { metrics } = storeToRefs(metricsStore)
             <div class="flex flex-wrap items-start justify-between gap-4">
               <div class="space-y-1">
                 <div class="text-lg font-bold">Central Processing Unit</div>
-                <div class="text-sm text-neutral-400">
+                <div class="text-muted-foreground text-sm">
                   Real-time overview of processor workload and thermal performance.
                 </div>
               </div>
@@ -41,19 +41,19 @@ const { metrics } = storeToRefs(metricsStore)
                 <div class="bg-accent flex items-center gap-1 rounded-lg px-2 py-1">
                   <AudioLinesIcon :size="16" />
                   <span>{{ formatNumber(metrics.cpu.frequency.ema, 0, 0) }}</span>
-                  <span class="text-sm text-neutral-400">Mhz</span>
+                  <span class="text-muted-foreground text-sm">Mhz</span>
                 </div>
 
                 <div class="bg-accent flex items-center gap-1 rounded-lg px-2 py-1">
                   <ThermometerIcon :size="16" />
                   <span>{{ formatNumber(metrics.cpu.temperature.ema, 0, 0) }}</span>
-                  <span class="text-sm text-neutral-400">°C</span>
+                  <span class="text-muted-foreground text-sm">°C</span>
                 </div>
 
                 <div class="bg-accent flex items-center gap-1 rounded-lg px-2 py-1">
                   <ZapIcon :size="16" />
                   <span>{{ formatNumber(metrics.cpu.power_watt.ema, 0, 1) }}</span>
-                  <span class="text-sm text-neutral-400">W</span>
+                  <span class="text-muted-foreground text-sm">W</span>
                 </div>
               </div>
             </div>
@@ -64,7 +64,7 @@ const { metrics } = storeToRefs(metricsStore)
                 :key="index"
                 class="flex items-center justify-between gap-2"
               >
-                <div class="w-8 text-sm text-neutral-400">{{ `C${index}` }}</div>
+                <div class="text-muted-foreground w-8 text-sm">{{ `C${index}` }}</div>
                 <Progress :model-value="usage.ema" />
               </div>
             </div>
@@ -73,7 +73,7 @@ const { metrics } = storeToRefs(metricsStore)
 
             <div class="flex items-center justify-between gap-4">
               <div class="font-bold">Usage Over Time</div>
-              <div class="text-sm text-neutral-400">Past 15 minutes</div>
+              <div class="text-muted-foreground text-sm">Past 15 minutes</div>
             </div>
 
             <CpuUsageHistory />
@@ -88,7 +88,7 @@ const { metrics } = storeToRefs(metricsStore)
               <div class="flex items-start justify-between gap-4">
                 <div class="space-y-1">
                   <div class="text-lg font-bold">Graphics Processing Unit</div>
-                  <div class="text-sm text-neutral-400">
+                  <div class="text-muted-foreground text-sm">
                     Live monitoring of graphics load, temperature, and power draw.
                   </div>
                 </div>
@@ -97,60 +97,60 @@ const { metrics } = storeToRefs(metricsStore)
               <div
                 v-for="card in metrics.gpu"
                 :key="card.card"
-                class="border-accent bg-accent space-y-4 rounded-lg border p-4"
+                class="border-accent bg-foreground/5 space-y-4 rounded-lg border p-4"
               >
                 <div class="flex flex-wrap items-center justify-between gap-4">
                   <div class="flex items-center gap-2">
                     <div class="font-bold">{{ card.vendor.toUpperCase() }}</div>
                     <div>&middot;</div>
-                    <div class="text-neutral-400">{{ card.card }}</div>
+                    <div class="text-accent-foreground">{{ card.card }}</div>
                   </div>
 
                   <div class="flex flex-wrap items-center justify-end gap-2">
                     <div class="bg-foreground/10 flex items-center gap-1 rounded-lg px-2 py-1">
                       <AudioLinesIcon :size="16" />
                       <span>{{ formatNumber(card.frequency_mhz.ema, 0, 0) }}</span>
-                      <span class="text-sm text-neutral-400">Mhz</span>
+                      <span class="text-muted-foreground text-sm">Mhz</span>
                     </div>
 
                     <div class="bg-foreground/10 flex items-center gap-1 rounded-lg px-2 py-1">
                       <ThermometerIcon :size="16" />
                       <span>{{ formatNumber(card.temperature.ema, 0, 0) }}</span>
-                      <span class="text-sm text-neutral-400">°C</span>
+                      <span class="text-muted-foreground text-sm">°C</span>
                     </div>
 
                     <div class="bg-foreground/10 flex items-center gap-1 rounded-lg px-2 py-1">
                       <ZapIcon :size="16" />
                       <span>{{ formatNumber(card.power_watt.ema, 0, 1) }}</span>
-                      <span class="text-sm text-neutral-400">W</span>
+                      <span class="text-muted-foreground text-sm">W</span>
                     </div>
                   </div>
                 </div>
 
-                <div class="bg-foreground/10 gap-4 space-y-4 rounded-lg p-4">
-                  <div class="space-y-1">
-                    <div class="text-sm text-neutral-400">VRAM</div>
-                    <div class="flex items-center gap-1">
-                      <span class="text-neutral-300">{{
-                        formatNumber(card.vram_used_gb, 0, 2)
-                      }}</span>
-                      /
-                      <span>{{ formatNumber(card.vram_total_gb, 0, 2) }}</span>
-                      <span class="text-sm text-neutral-400">GB</span>
-                    </div>
-                    <Progress :model-value="card.vram_percent" />
-                  </div>
+                <Separator />
 
-                  <div class="space-y-1">
-                    <div class="text-sm text-neutral-400">Core Load</div>
-                    <div class="flex items-center gap-1">
-                      <span class="text-neutral-300">{{
-                        formatNumber(card.core_usage_percent.ema, 0, 1)
-                      }}</span>
-                      <span class="text-sm text-neutral-400">%</span>
-                    </div>
-                    <Progress :model-value="card.core_usage_percent.ema" />
+                <div class="space-y-1">
+                  <div class="text-accent-foreground text-sm">VRAM</div>
+                  <div class="flex items-center gap-1">
+                    <span class="text-muted-foreground">{{
+                      formatNumber(card.vram_used_gb, 0, 2)
+                    }}</span>
+                    /
+                    <span>{{ formatNumber(card.vram_total_gb, 0, 2) }}</span>
+                    <span class="text-muted-foreground text-sm">GB</span>
                   </div>
+                  <Progress :model-value="card.vram_percent" />
+                </div>
+
+                <div class="space-y-1">
+                  <div class="text-accent-foreground text-sm">Core Load</div>
+                  <div class="flex items-center gap-1">
+                    <span class="text-muted-foreground">{{
+                      formatNumber(card.core_usage_percent.ema, 0, 1)
+                    }}</span>
+                    <span class="text-muted-foreground text-sm">%</span>
+                  </div>
+                  <Progress :model-value="card.core_usage_percent.ema" />
                 </div>
               </div>
             </div>
@@ -163,7 +163,7 @@ const { metrics } = storeToRefs(metricsStore)
               <div class="flex flex-wrap items-start justify-between gap-4">
                 <div class="space-y-1">
                   <div class="text-lg font-bold">Network Activity</div>
-                  <div class="text-sm text-neutral-400">
+                  <div class="text-muted-foreground text-sm">
                     Upload and download speeds over the past 15 minutes.
                   </div>
                 </div>

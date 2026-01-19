@@ -9,7 +9,6 @@ import DataLoading from '@/components/DataLoading.vue'
 import StorageResource from '@/components/StorageResource.vue'
 import SystemHealth from '@/components/SystemHealth.vue'
 import SystemPerformance from '@/components/SystemPerformance.vue'
-import { Item, ItemContent } from '@/components/ui/item'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useNumber } from '@/composables/number'
 import { usePageMeta } from '@/composables/page-meta'
@@ -99,61 +98,55 @@ const fetchLatestMetrics = async () => {
 </script>
 
 <template>
-  <section class="space-y-8">
-    <Item variant="outline">
-      <ItemContent>
-        <div class="space-y-4">
-          <div class="flex flex-wrap items-center justify-between gap-4">
-            <div class="flex items-center gap-4">
-              <div class="bg-accent rounded-lg p-3">
-                <ChartColumnBigIcon :size="24" />
-              </div>
-              <div class="flex flex-col gap-0">
-                <div class="text-xl">System Monitor</div>
-
-                <template v-if="!server?.is_online">
-                  <span class="text-sm text-neutral-400">-</span>
-                </template>
-
-                <template v-else>
-                  <div
-                    v-if="server"
-                    class="flex flex-wrap items-center gap-2 text-sm"
-                  >
-                    <span>@{{ server.os_info?.hostname ?? '-' }}</span>
-                    &middot;
-                    <span class="text-neutral-400">
-                      {{ server.os_info?.kernel_version ?? '-' }}
-                    </span>
-                  </div>
-                  <div
-                    v-else
-                    class="flex flex-wrap items-center gap-2"
-                  >
-                    <Skeleton class="h-5 w-20" />
-                    <Skeleton class="h-5 w-28" />
-                  </div>
-                </template>
-              </div>
-            </div>
-
-            <template v-if="server?.is_online">
-              <div
-                v-if="metrics"
-                class="flex items-center gap-2 text-lg text-neutral-400"
-              >
-                <ActivityIcon :size="24" />
-                <span>{{ formatDuration(metrics.uptime_seconds) }}</span>
-              </div>
-              <Skeleton
-                v-else
-                class="h-8 w-32"
-              />
-            </template>
-          </div>
+  <section>
+    <div class="flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-4">
+        <div class="bg-accent rounded-lg p-3">
+          <ChartColumnBigIcon :size="24" />
         </div>
-      </ItemContent>
-    </Item>
+        <div class="flex flex-col gap-0">
+          <div class="text-xl">System Monitor</div>
+
+          <template v-if="!server?.is_online">
+            <span class="text-muted-foreground text-sm">-</span>
+          </template>
+
+          <template v-else>
+            <div
+              v-if="server"
+              class="flex flex-wrap items-center gap-2 text-sm"
+            >
+              <span>@{{ server.os_info?.hostname ?? '-' }}</span>
+              &middot;
+              <span class="text-muted-foreground">
+                {{ server.os_info?.kernel_version ?? '-' }}
+              </span>
+            </div>
+            <div
+              v-else
+              class="flex flex-wrap items-center gap-2"
+            >
+              <Skeleton class="h-5 w-20" />
+              <Skeleton class="h-5 w-28" />
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <template v-if="server?.is_online">
+        <div
+          v-if="metrics"
+          class="text-accent-foreground flex items-center gap-2 text-lg"
+        >
+          <ActivityIcon :size="16" />
+          <span>{{ formatDuration(metrics.uptime_seconds) }}</span>
+        </div>
+        <Skeleton
+          v-else
+          class="h-8 w-32"
+        />
+      </template>
+    </div>
   </section>
 
   <template v-if="!server?.is_online">

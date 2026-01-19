@@ -66,7 +66,9 @@ const fetchApplications = async () => {
         </div>
         <div class="flex flex-col gap-0">
           <div class="text-xl">Applications</div>
-          <div class="text-sm text-neutral-400">Track and manage server-deployed applications.</div>
+          <div class="text-muted-foreground text-sm">
+            Track and manage server-deployed applications.
+          </div>
         </div>
       </div>
 
@@ -97,7 +99,7 @@ const fetchApplications = async () => {
                 <CardTitle>{{ app.name }}</CardTitle>
                 <CardDescription>
                   <span>Last deployed: </span>
-                  <span class="text-neutral-200">
+                  <span class="text-muted-foreground">
                     {{
                       app.last_deployment_at
                         ? formatDate(new Date(app.last_deployment_at), 'DD MMM, YYYY HH:mm')
