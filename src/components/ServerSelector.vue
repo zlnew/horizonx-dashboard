@@ -41,24 +41,26 @@ const handleServerSelect = (serverID: AcceptableValue) => {
 </script>
 
 <template>
-  <Select
-    v-model="serverID"
-    @update:model-value="handleServerSelect"
-  >
-    <SelectTrigger>
-      <ServerIcon />
-      <SelectValue placeholder="Choose a server" />
-    </SelectTrigger>
-    <SelectContent>
-      <SelectGroup>
-        <SelectItem
-          v-for="(srv, index) in servers"
-          :key="index"
-          :value="srv.id"
-        >
-          {{ srv.name }}
-        </SelectItem>
-      </SelectGroup>
-    </SelectContent>
-  </Select>
+  <div>
+    <Select
+      v-model="serverID"
+      @update:model-value="handleServerSelect"
+    >
+      <SelectTrigger>
+        <ServerIcon />
+        <SelectValue placeholder="Choose a server" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectGroup>
+          <SelectItem
+            v-for="(srv, index) in servers"
+            :key="index"
+            :value="srv.id"
+          >
+            {{ srv.name }}
+          </SelectItem>
+        </SelectGroup>
+      </SelectContent>
+    </Select>
+  </div>
 </template>

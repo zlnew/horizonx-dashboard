@@ -3,10 +3,10 @@ import { onMounted, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useDocumentVisibility, useIdle } from '@vueuse/core'
-import AppFooter from '@/components/AppFooter.vue'
 import AppHeader from '@/components/AppHeader.vue'
 import AppSearch from '@/components/AppSearch.vue'
 import AppSidebar from '@/components/AppSidebar.vue'
+import MobileDrawer from '@/components/MobileDrawer.vue'
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
 import useWebSocket from '@/composables/web-socket'
 import useAppStore from '@/stores/app'
@@ -48,12 +48,11 @@ const redirectToServerSelection = () => {
       <main class="flex flex-1 flex-col p-4 sm:p-8">
         <RouterView />
       </main>
-
-      <AppFooter />
     </SidebarInset>
   </SidebarProvider>
 
   <Teleport to="body">
     <AppSearch />
+    <MobileDrawer />
   </Teleport>
 </template>
