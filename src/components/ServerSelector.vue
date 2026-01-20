@@ -1,10 +1,7 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { ServerIcon } from 'lucide-vue-next'
 import type { AcceptableValue } from 'reka-ui'
-import { toast } from 'vue-sonner'
-import ServerApi from '@/api/Server'
 import {
   Select,
   SelectContent,
@@ -16,23 +13,7 @@ import {
 import useAppStore from '@/stores/app'
 
 const appStore = useAppStore()
-
-const { serverID } = storeToRefs(appStore)
-const servers = ref<Server[]>([])
-
-onMounted(() => {
-  fetchServers()
-})
-
-const fetchServers = async () => {
-  try {
-    const res = await new ServerApi().get<ApiResponse<Server[]>>()
-    servers.value = res.data ?? []
-  } catch (error) {
-    const fetchError = error as Error
-    toast.error(fetchError.message)
-  }
-}
+const { serverID, servers } = storeToRefs(appStore)
 
 const handleServerSelect = (serverID: AcceptableValue) => {
   appStore.serverID = serverID?.toString() ?? ''
