@@ -85,7 +85,7 @@ const handleSearch = (e: KeyboardEvent) => {
             </RouterLink>
           </CommandItem>
         </template>
-        <CommandSeparator />
+        <CommandSeparator v-if="pi + 1 < menu.length" />
       </template>
     </CommandList>
   </CommandDialog>
