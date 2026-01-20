@@ -24,6 +24,10 @@ export default defineConfig(({ mode }) => {
           description: 'Horizon X Dashboard',
           theme_color: '#252525',
           background_color: '#252525',
+          display: 'standalone',
+          orientation: 'portrait',
+          start_url: '/',
+          scope: '/',
           icons: [
             {
               src: 'android-chrome-192x192.png',
@@ -33,14 +37,21 @@ export default defineConfig(({ mode }) => {
             {
               src: 'android-chrome-512x512.png',
               sizes: '512x512',
-              type: 'image/png'
+              type: 'image/png',
+              purpose: 'any'
+            },
+            {
+              src: 'android-chrome-512x512.png',
+              sizes: '512x512',
+              type: 'image/png',
+              purpose: 'maskable'
             }
           ]
         },
         workbox: {
           cleanupOutdatedCaches: true,
           clientsClaim: true,
-          skipWaiting: false
+          skipWaiting: true
         }
       })
     ],
