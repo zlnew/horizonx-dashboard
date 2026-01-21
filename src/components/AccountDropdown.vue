@@ -42,8 +42,10 @@ const handleLogout = async () => {
         size="lg"
         class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
       >
-        <Avatar class="h-8 w-8 rounded">
-          <AvatarFallback class="rounded">{{ user.name.slice(0, 2) }}</AvatarFallback>
+        <Avatar class="h-8 w-8 rounded-lg">
+          <AvatarFallback class="bg-foreground/10 rounded-lg">
+            {{ user.name.slice(0, 2) }}
+          </AvatarFallback>
         </Avatar>
         <div class="hidden flex-1 text-left text-sm leading-tight lg:grid">
           <span class="truncate font-medium">{{ user.name }}</span>
@@ -60,8 +62,10 @@ const handleLogout = async () => {
     >
       <DropdownMenuLabel class="p-0 font-normal">
         <div class="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-          <Avatar class="h-8 w-8 rounded">
-            <AvatarFallback class="rounded">{{ user.name.slice(0, 2) }}</AvatarFallback>
+          <Avatar class="h-8 w-8 rounded-lg">
+            <AvatarFallback class="bg-foreground/10 rounded-lg">
+              {{ user.name.slice(0, 2) }}
+            </AvatarFallback>
           </Avatar>
           <div class="grid flex-1 text-left text-sm leading-tight">
             <span class="truncate font-medium">{{ user.name }}</span>

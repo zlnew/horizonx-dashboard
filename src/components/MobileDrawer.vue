@@ -36,6 +36,7 @@ const openSearch = () => {
         <Button
           variant="ghost"
           as-child
+          class="h-auto"
         >
           <RouterLink :to="m.to">
             <div class="flex flex-col items-center gap-1">
@@ -50,6 +51,7 @@ const openSearch = () => {
       </template>
       <Button
         variant="ghost"
+        class="h-auto"
         @click="openSearch"
       >
         <div class="flex flex-col items-center gap-1">
@@ -59,7 +61,10 @@ const openSearch = () => {
       </Button>
       <Popover #="{ close }">
         <PopoverTrigger as-child>
-          <Button variant="ghost">
+          <Button
+            variant="ghost"
+            class="h-auto"
+          >
             <div class="flex flex-col items-center gap-1">
               <SettingsIcon />
               <div class="text-muted-foreground text-[10px]">Settings</div>
@@ -78,7 +83,7 @@ const openSearch = () => {
               <Button
                 variant="ghost"
                 as-child
-                class="px-0!"
+                class="w-full justify-start px-0!"
                 @click.capture="close"
               >
                 <RouterLink :to="m.to">
