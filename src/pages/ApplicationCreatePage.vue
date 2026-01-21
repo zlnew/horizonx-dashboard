@@ -144,18 +144,18 @@ const onSubmit = handleSubmit(async () => {
 
 <template>
   <Stepper
+    v-slot="{ isPrevDisabled, nextStep, prevStep, modelValue }"
     v-model="stepIndex"
     orientation="vertical"
     class="block w-full"
-    v-slot="{ isPrevDisabled, nextStep, prevStep, modelValue }"
   >
     <div class="border-accent flex w-full items-start justify-start gap-4 rounded-lg border p-8">
       <div class="hidden w-lg flex-col gap-8 xl:flex">
         <StepperItem
           v-for="(item, index) in steps"
           :key="item.step"
-          :step="item.step"
           v-slot="{ state }"
+          :step="item.step"
         >
           <div class="relative flex flex-col items-center">
             <StepperSeparator
@@ -288,8 +288,8 @@ const onSubmit = handleSubmit(async () => {
                 >
                   <TableCell>
                     <FormField
-                      :name="`env_vars.${index}.key`"
                       v-slot="{ componentField }"
+                      :name="`env_vars.${index}.key`"
                     >
                       <FormItem>
                         <FormControl>
@@ -305,8 +305,8 @@ const onSubmit = handleSubmit(async () => {
 
                   <TableCell>
                     <FormField
-                      :name="`env_vars.${index}.value`"
                       v-slot="{ componentField }"
+                      :name="`env_vars.${index}.value`"
                     >
                       <FormItem>
                         <FormControl>

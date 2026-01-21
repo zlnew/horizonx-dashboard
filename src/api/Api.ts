@@ -1,10 +1,15 @@
 import { useFetch } from '@/composables/fetch'
 
-const { fetch } = useFetch()
-
 export default abstract class Api {
-  protected fetch = fetch
   protected resource = ''
+  private _fetch?: ReturnType<typeof useFetch>['fetch']
+
+  protected get fetch() {
+    if (!this._fetch) {
+      this._fetch = useFetch().fetch
+    }
+    return this._fetch
+  }
 
   public async get<T>(options = {}) {
     let url = this.resource

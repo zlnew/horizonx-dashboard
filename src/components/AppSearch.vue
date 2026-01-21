@@ -59,8 +59,8 @@ const handleSearch = (e: KeyboardEvent) => {
                 @click.capture="close"
               >
                 <component
-                  v-if="item.icon"
                   :is="item.icon"
+                  v-if="item.icon"
                 />
                 <span>{{ item.label }}</span>
               </RouterLink>
@@ -78,8 +78,8 @@ const handleSearch = (e: KeyboardEvent) => {
               @click.capture="close"
             >
               <component
-                v-if="parent.icon"
                 :is="parent.icon"
+                v-if="parent.icon"
               />
               <span>{{ parent.label }}</span>
             </RouterLink>

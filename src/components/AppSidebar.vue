@@ -79,14 +79,14 @@ const onMobileMenuClickCapture = () => {
                 :key="ii"
               >
                 <SidebarMenuButton
-                  asChild
-                  :isActive="route.name === item.to.name"
+                  as-child
+                  :is-active="route.name === item.to.name"
                   @click.capture="onMobileMenuClickCapture"
                 >
                   <RouterLink :to="item.to">
                     <component
-                      v-if="item.icon"
                       :is="item.icon"
+                      v-if="item.icon"
                     />
                     <span>{{ item.label }}</span>
                   </RouterLink>
@@ -99,14 +99,14 @@ const onMobileMenuClickCapture = () => {
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton
-                asChild
-                :isActive="route.name === parent.to.name"
+                as-child
+                :is-active="route.name === parent.to.name"
                 @click.capture="onMobileMenuClickCapture"
               >
                 <RouterLink :to="parent.to">
                   <component
-                    v-if="parent.icon"
                     :is="parent.icon"
+                    v-if="parent.icon"
                   />
                   <span>{{ parent.label }}</span>
                 </RouterLink>

@@ -175,8 +175,8 @@ const showRestartConfirmation = () => {
                   class="group-hover:text-foreground transition-colors"
                 >
                   <component
-                    v-if="m.icon"
                     :is="m.icon"
+                    v-if="m.icon"
                     :size="16"
                   />
                   {{ m.label }}

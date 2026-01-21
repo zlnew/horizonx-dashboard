@@ -11,10 +11,10 @@ import { SidebarTrigger } from '@/components/ui/sidebar'
     <div class="flex w-full items-center justify-between gap-8 px-4 sm:px-8">
       <div class="flex items-center gap-2">
         <AppLogo
-          hideText
+          hide-text
           class="sm:hidden"
         />
-        <SidebarTrigger class="-ml-1 hidden sm:block" />
+        <SidebarTrigger class="-ml-1 hidden sm:inline-flex" />
         <AppBreadcrumb />
       </div>
 

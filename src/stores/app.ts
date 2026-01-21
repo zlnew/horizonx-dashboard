@@ -8,7 +8,6 @@ const useAppStore = defineStore('app', () => {
   const serverID = useLocalStorage('horizonx_server_id', '')
   const isDark = useDark({ storageKey: 'horizonx_color_scheme' })
 
-  // Update theme-color meta tag when theme changes
   watchEffect(() => {
     const color = isDark.value ? '#252525' : '#ffffff'
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', color)

@@ -37,7 +37,7 @@ const handleLogout = async () => {
 
 <template>
   <DropdownMenu>
-    <DropdownMenuTrigger asChild>
+    <DropdownMenuTrigger as-child>
       <SidebarMenuButton
         size="lg"
         class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
@@ -56,7 +56,7 @@ const handleLogout = async () => {
       class="w-[--reka-dropdown-menu-trigger-width] min-w-56 rounded"
       side="bottom"
       align="end"
-      :sideOffset="4"
+      :side-offset="4"
     >
       <DropdownMenuLabel class="p-0 font-normal">
         <div class="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
@@ -71,7 +71,7 @@ const handleLogout = async () => {
       </DropdownMenuLabel>
       <DropdownMenuSeparator />
       <DropdownMenuGroup>
-        <DropdownMenuItem asChild>
+        <DropdownMenuItem as-child>
           <RouterLink :to="{ name: 'account' }">
             <UserCircleIcon />
             Account

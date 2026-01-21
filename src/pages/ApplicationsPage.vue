@@ -76,7 +76,7 @@ const fetchApplications = async () => {
         v-if="canWriteApp"
         class="flex items-center gap-2"
       >
-        <Button asChild>
+        <Button as-child>
           <RouterLink :to="{ name: 'applications.create' }">
             <PlusIcon />
             Create Application

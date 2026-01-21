@@ -6,9 +6,9 @@ const { dialogs, closeDialogByID } = useDialog()
 
 <template>
   <component
+    :is="dialog.component"
     v-for="dialog in dialogs"
     :key="dialog.id"
-    :is="dialog.component"
     @close="closeDialogByID(dialog.id)"
   />
 </template>

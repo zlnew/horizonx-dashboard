@@ -35,13 +35,13 @@ const openSearch = () => {
       >
         <Button
           variant="ghost"
-          asChild
+          as-child
         >
           <RouterLink :to="m.to">
             <div class="flex flex-col items-center gap-1">
               <component
-                v-if="m.icon"
                 :is="m.icon"
+                v-if="m.icon"
               />
               <div class="text-muted-foreground text-[10px]">{{ m.label }}</div>
             </div>
@@ -58,7 +58,7 @@ const openSearch = () => {
         </div>
       </Button>
       <Popover #="{ close }">
-        <PopoverTrigger asChild>
+        <PopoverTrigger as-child>
           <Button variant="ghost">
             <div class="flex flex-col items-center gap-1">
               <SettingsIcon />
@@ -77,14 +77,14 @@ const openSearch = () => {
             >
               <Button
                 variant="ghost"
-                asChild
+                as-child
                 class="px-0!"
                 @click.capture="close"
               >
                 <RouterLink :to="m.to">
                   <component
-                    v-if="m.icon"
                     :is="m.icon"
+                    v-if="m.icon"
                   />
                   <span>{{ m.label }}</span>
                 </RouterLink>

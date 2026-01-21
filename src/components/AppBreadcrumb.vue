@@ -29,7 +29,7 @@ const { breadcrumb } = storeToRefs(appStore)
 
         <template v-else>
           <BreadcrumbItem class="hidden md:block">
-            <BreadcrumbLink asChild>
+            <BreadcrumbLink as-child>
               <template v-if="br.to">
                 <RouterLink :to="br.to">
                   {{ br.label }}

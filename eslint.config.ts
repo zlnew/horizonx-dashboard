@@ -1,13 +1,8 @@
-import { globalIgnores } from 'eslint/config'
-import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescript'
-import pluginVue from 'eslint-plugin-vue'
 import pluginVitest from '@vitest/eslint-plugin'
 import skipFormatting from '@vue/eslint-config-prettier/skip-formatting'
-
-// To allow more languages other than `ts` in `.vue` files, uncomment the following lines:
-// import { configureVueProject } from '@vue/eslint-config-typescript'
-// configureVueProject({ scriptLangs: ['ts', 'tsx'] })
-// More info at https://github.com/vuejs/eslint-config-typescript/#advanced-setup
+import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescript'
+import pluginVue from 'eslint-plugin-vue'
+import { globalIgnores } from 'eslint/config'
 
 export default defineConfigWithVueTs(
   {
@@ -15,9 +10,19 @@ export default defineConfigWithVueTs(
     files: ['**/*.{ts,mts,tsx,vue}']
   },
 
-  globalIgnores(['**/dist/**', '**/dist-ssr/**', '**/coverage/**']),
+  globalIgnores([
+    '**/dist/**',
+    '**/dist-ssr/**',
+    '**/coverage/**',
+    '**/node_modules/**',
+    '**/components/ui/**',
+    'vite.config.{js,ts}',
+    'vitest.config.{js,ts}'
+  ]),
 
-  pluginVue.configs['flat/essential'],
+  ...pluginVue.configs['flat/essential'],
+  ...pluginVue.configs['flat/strongly-recommended'],
+  ...pluginVue.configs['flat/recommended'],
   vueTsConfigs.recommended,
 
   {
@@ -26,6 +31,35 @@ export default defineConfigWithVueTs(
   },
 
   {
+    name: 'app/vue-rules',
+    files: ['**/*.vue'],
+    rules: {
+      'vue/custom-event-name-casing': ['error', 'kebab-case'],
+      'vue/no-v-html': 'warn',
+      'vue/html-self-closing': [
+        'error',
+        {
+          html: {
+            component: 'always',
+            normal: 'always',
+            void: 'always'
+          },
+          math: 'always',
+          svg: 'always'
+        }
+      ],
+      'vue/max-attributes-per-line': [
+        'error',
+        {
+          multiline: 1,
+          singleline: 3
+        }
+      ]
+    }
+  },
+
+  {
+    name: 'app/shadcn-ui-rules',
     files: ['src/components/ui/**/*.{ts,vue}'],
     rules: {
       'vue/multi-word-component-names': 'off',

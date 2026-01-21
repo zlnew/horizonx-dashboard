@@ -61,7 +61,7 @@ const showAddServerDialog = () => {
         <Item
           variant="muted"
           class="border-accent aspect-square"
-          asChild
+          as-child
         >
           <a
             href="#"
@@ -79,7 +79,7 @@ const showAddServerDialog = () => {
         v-if="canWriteServer"
         variant="outline"
         class="aspect-square"
-        asChild
+        as-child
       >
         <a
           href="#"
