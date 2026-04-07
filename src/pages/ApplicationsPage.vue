@@ -118,8 +118,22 @@ const fetchApplications = async () => {
                 </CardAction>
               </CardHeader>
               <CardContent>
-                <div class="mt-4">
-                  <AppStatusBadge :status="app.status" />
+                <div class="flex flex-col gap-2">
+                  <div class="flex items-center gap-2">
+                    <AppStatusBadge :status="app.status" />
+                    <span class="text-muted-foreground text-sm">{{ app.repo_name }}</span>
+                  </div>
+                  <div v-if="app.site_url">
+                    <a
+                      class="text-primary text-sm underline-offset-4 hover:underline"
+                      :href="app.site_url"
+                      target="_blank"
+                      rel="noreferrer"
+                      @click.stop
+                    >
+                      {{ app.site_url }}
+                    </a>
+                  </div>
                 </div>
               </CardContent>
             </Card>

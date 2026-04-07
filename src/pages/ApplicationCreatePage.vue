@@ -56,11 +56,20 @@ const steps = [
   }
 ]
 
+const repoNamePattern = /^[a-z0-9]+(?:[-.][a-z0-9]+)*$/
+
 const formSchema = [
   z.object({
     server_id: z.string(),
     name: z.string(),
+    repo_name: z
+      .string()
+      .regex(
+        repoNamePattern,
+        'Repository name must be lowercase and can include hyphens or dots (kebab-case or domain-style)'
+      ),
     repo_url: z.string(),
+    site_url: z.union([z.string().url(), z.literal('')]).optional(),
     branch: z.string()
   }),
   z.object({
@@ -85,6 +94,10 @@ const { handleSubmit, meta, validate } = useForm({
   validationSchema: currentSchema,
   initialValues: {
     server_id: appStore.serverID,
+    name: '',
+    repo_name: '',
+    repo_url: '',
+    site_url: '',
     branch: 'main',
     env_vars: []
   },
@@ -124,9 +137,13 @@ const goNext = async (nextStep: () => void) => {
 
 const onSubmit = handleSubmit(async () => {
   const form = value as ApplicationCreateRequest
+  const payload: ApplicationCreateRequest = {
+    ...form,
+    site_url: form.site_url?.trim() ? form.site_url.trim() : null
+  }
 
   try {
-    const res = await applicationStore.createApplication(form)
+    const res = await applicationStore.createApplication(payload)
 
     if (res.message && res.data?.id) {
       toast.success(res.message)
@@ -228,7 +245,24 @@ const onSubmit = handleSubmit(async () => {
                 <FormControl>
                   <Input
                     type="text"
-                    placeholder="e.g. horizonx-dashboard"
+                    placeholder="e.g. HorizonX Dashboard"
+                    v-bind="componentField"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            </FormField>
+
+            <FormField
+              v-slot="{ componentField }"
+              name="repo_name"
+            >
+              <FormItem>
+                <FormLabel>Repository Name</FormLabel>
+                <FormControl>
+                  <Input
+                    type="text"
+                    placeholder="e.g. horizonx-dashboard or horizonx.dashboard.com"
                     v-bind="componentField"
                   />
                 </FormControl>
@@ -246,6 +280,23 @@ const onSubmit = handleSubmit(async () => {
                   <Input
                     type="text"
                     placeholder="git@github.com:username/repository.git"
+                    v-bind="componentField"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            </FormField>
+
+            <FormField
+              v-slot="{ componentField }"
+              name="site_url"
+            >
+              <FormItem>
+                <FormLabel>Site URL</FormLabel>
+                <FormControl>
+                  <Input
+                    type="text"
+                    placeholder="https://app.example.com"
                     v-bind="componentField"
                   />
                 </FormControl>
@@ -360,8 +411,32 @@ const onSubmit = handleSubmit(async () => {
               <div class="rounded-lg border p-4">
                 <h3 class="mb-2 font-semibold">Repository</h3>
                 <div class="text-muted-foreground space-y-1 text-sm">
-                  <div><strong>URL:</strong> {{ value?.repo_url }}</div>
-                  <div><strong>Branch:</strong> {{ value?.branch }}</div>
+                  <div>
+                    <strong>Name:</strong>
+                    {{ value?.repo_name || '—' }}
+                  </div>
+                  <div>
+                    <strong>URL:</strong>
+                    {{ value?.repo_url || '—' }}
+                  </div>
+                  <div>
+                    <strong>Branch:</strong>
+                    {{ value?.branch }}
+                  </div>
+                  <div>
+                    <strong>Site URL:</strong>
+                    <span v-if="value?.site_url">
+                      <a
+                        class="text-primary underline-offset-4 hover:underline"
+                        :href="value.site_url"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        {{ value.site_url }}
+                      </a>
+                    </span>
+                    <span v-else>—</span>
+                  </div>
                 </div>
               </div>
 

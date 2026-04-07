@@ -66,12 +66,21 @@ const fetchRecentDeployments = async () => {
     return
   }
 
+  dLoading.value = true
+  dNotFound.value = false
+
   try {
     const res = await applicationDeploymentStore.getRecentDeployments(appID.value)
     recentDeployments.value = res ?? []
+
+    if (!recentDeployments.value.length) {
+      dNotFound.value = true
+    }
   } catch (error) {
     const fetchError = error as Error
     toast.error(fetchError.message)
+  } finally {
+    dLoading.value = false
   }
 }
 
@@ -108,31 +117,54 @@ const showUpdateDialog = () => {
           <ul class="space-y-4">
             <li class="grid md:grid-cols-4">
               <div class="text-muted-foreground text-sm md:text-base">Name:</div>
-              <div class="text-sm font-semibold md:col-span-3 md:text-base">
+              <div class="text-sm md:col-span-3 md:text-base">
                 {{ application.name }}
               </div>
             </li>
             <li class="grid md:grid-cols-4">
+              <div class="text-muted-foreground text-sm md:text-base">Repository Name:</div>
+              <div class="text-sm md:col-span-3 md:text-base">
+                {{ application.repo_name }}
+              </div>
+            </li>
+            <li class="grid md:grid-cols-4">
               <div class="text-muted-foreground text-sm md:text-base">Repository:</div>
-              <div class="text-sm font-semibold md:col-span-3 md:text-base">
+              <div class="text-sm md:col-span-3 md:text-base">
                 {{ application.repo_url }}
               </div>
             </li>
             <li class="grid md:grid-cols-4">
               <div class="text-muted-foreground text-sm md:text-base">Branch:</div>
-              <div class="text-sm font-semibold md:col-span-3 md:text-base">
+              <div class="text-sm md:col-span-3 md:text-base">
                 {{ application.branch }}
+              </div>
+            </li>
+            <li
+              v-if="application.site_url"
+              class="grid md:grid-cols-4"
+            >
+              <div class="text-muted-foreground text-sm md:text-base">Site URL:</div>
+              <div class="text-sm md:col-span-3 md:text-base">
+                <a
+                  :href="application.site_url"
+                  target="_blank"
+                  rel="noreferrer"
+                  class="hover:underline"
+                >
+                  <ExternalLinkIcon />
+                  <span>{{ application.site_url }}</span>
+                </a>
               </div>
             </li>
             <li class="grid md:grid-cols-4">
               <div class="text-muted-foreground text-sm md:text-base">Status:</div>
-              <div class="text-sm font-semibold md:col-span-3 md:text-base">
+              <div class="text-sm md:col-span-3 md:text-base">
                 <AppStatusBadge :status="application.status" />
               </div>
             </li>
             <li class="grid md:grid-cols-4">
               <div class="text-muted-foreground text-sm md:text-base">Last Deployed:</div>
-              <div class="text-sm font-semibold md:col-span-3 md:text-base">
+              <div class="text-sm md:col-span-3 md:text-base">
                 {{
                   application.last_deployment_at
                     ? formatDate(new Date(application.last_deployment_at), 'DD MMM, YYYY HH:MM')
@@ -141,8 +173,8 @@ const showUpdateDialog = () => {
               </div>
             </li>
             <li class="grid md:grid-cols-4">
-              <div class="text-muted-foreground text-sm md:text-base">Created:</div>
-              <div class="text-sm font-semibold md:col-span-3 md:text-base">
+              <div class="text-muted-foreground text-sm md:text-base">Created At:</div>
+              <div class="text-sm md:col-span-3 md:text-base">
                 {{ formatDate(new Date(application.created_at), 'DD MMM, YYYY HH:MM') }}
               </div>
             </li>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { toTypedSchema } from '@vee-validate/zod'
 import { Form, type FormContext, type GenericObject } from 'vee-validate'
 import { toast } from 'vue-sonner'
@@ -21,21 +21,36 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/
 const applicationStore = useApplicationStore()
 
 const veeForm = ref<FormContext>()
+
 const formSchema = toTypedSchema(
   z.object({
     name: z.string(),
-    branch: z.string()
+    branch: z.string(),
+    site_url: z.union([z.string().url(), z.literal('')]).optional()
   })
 )
 
-onMounted(() => {
-  if (applicationStore.selectedApplication) {
-    veeForm.value?.setValues({
-      name: applicationStore.selectedApplication.name,
-      branch: applicationStore.selectedApplication.branch
-    })
+const hydrateForm = () => {
+  if (!applicationStore.selectedApplication) {
+    return
   }
-})
+
+  veeForm.value?.setValues({
+    name: applicationStore.selectedApplication.name,
+    branch: applicationStore.selectedApplication.branch,
+    site_url: applicationStore.selectedApplication.site_url ?? ''
+  })
+}
+
+onMounted(hydrateForm)
+
+watch(
+  () => applicationStore.selectedApplication,
+  () => {
+    hydrateForm()
+  },
+  { immediate: true }
+)
 
 const updateApplication = async (values: GenericObject, closeDialog: () => void) => {
   if (!applicationStore.selectedApplication?.id) {
@@ -45,7 +60,7 @@ const updateApplication = async (values: GenericObject, closeDialog: () => void)
   try {
     const res = await applicationStore.updateApplication(applicationStore.selectedApplication.id, {
       name: values.name,
-      repo_url: applicationStore.selectedApplication.repo_url,
+      site_url: values.site_url?.trim() ? values.site_url.trim() : null,
       branch: values.branch,
       env_vars: null
     })
@@ -75,7 +90,8 @@ const updateApplication = async (values: GenericObject, closeDialog: () => void)
         <DialogHeader>
           <DialogTitle>Update Application</DialogTitle>
           <DialogDescription>
-            Update the application name and deployment branch used during build and runtime.
+            Update the application metadata (name, branch, and site URL) used during build and
+            runtime.
           </DialogDescription>
         </DialogHeader>
 
@@ -111,6 +127,23 @@ const updateApplication = async (values: GenericObject, closeDialog: () => void)
                 <Input
                   type="text"
                   placeholder="main"
+                  v-bind="componentField"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          </FormField>
+
+          <FormField
+            v-slot="{ componentField }"
+            name="site_url"
+          >
+            <FormItem>
+              <FormLabel>Site URL</FormLabel>
+              <FormControl>
+                <Input
+                  type="text"
+                  placeholder="https://app.example.com"
                   v-bind="componentField"
                 />
               </FormControl>

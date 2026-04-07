@@ -5,6 +5,7 @@ import {
   BanIcon,
   BoltIcon,
   ChevronDownIcon,
+  ExternalLinkIcon,
   FileClockIcon,
   GaugeIcon,
   LogsIcon,
@@ -195,52 +196,71 @@ const showRestartConfirmation = () => {
           <Card>
             <CardHeader>
               <CardTitle>{{ application.name }}</CardTitle>
-              <CardAction v-if="canWriteApp">
-                <DropdownMenu>
-                  <DropdownMenuTrigger as-child>
-                    <Button variant="outline">
-                      <span>Action</span>
-                      <ChevronDownIcon />
+              <CardAction>
+                <div
+                  v-if="canReadApp || canWriteApp"
+                  class="flex items-center gap-3"
+                >
+                  <div v-if="canReadApp && application.site_url">
+                    <Button as-child>
+                      <a
+                        :href="application.site_url"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        <ExternalLinkIcon />
+                        <span>Visit Site</span>
+                      </a>
                     </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem
-                      :disabled="!canDeployApp"
-                      @click="showDeployConfirmation"
-                    >
-                      <PackagePlusIcon />
-                      <span>New Deploy</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      :disabled="!canRestartApp"
-                      @click="showRestartConfirmation"
-                    >
-                      <RefreshCcwIcon />
-                      <span>Restart</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      :disabled="!canStartApp"
-                      @click="showStartConfirmation"
-                    >
-                      <PlayIcon />
-                      <span>Start</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      :disabled="!canStopApp"
-                      @click="showStopConfirmation"
-                    >
-                      <BanIcon />
-                      <span>Stop</span>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                  </div>
+                  <DropdownMenu v-if="canWriteApp">
+                    <DropdownMenuTrigger as-child>
+                      <Button variant="outline">
+                        <span>Action</span>
+                        <ChevronDownIcon />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuItem
+                        :disabled="!canDeployApp"
+                        @click="showDeployConfirmation"
+                      >
+                        <PackagePlusIcon />
+                        <span>New Deploy</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        :disabled="!canRestartApp"
+                        @click="showRestartConfirmation"
+                      >
+                        <RefreshCcwIcon />
+                        <span>Restart</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        :disabled="!canStartApp"
+                        @click="showStartConfirmation"
+                      >
+                        <PlayIcon />
+                        <span>Start</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        :disabled="!canStopApp"
+                        @click="showStopConfirmation"
+                      >
+                        <BanIcon />
+                        <span>Stop</span>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
               </CardAction>
             </CardHeader>
             <CardContent>
-              <div class="text-muted-foreground flex items-center gap-2 text-sm">
-                <AppStatusBadge :status="application.status" />
-                <span>&middot;</span>
-                <span>{{ application.repo_url }}</span>
+              <div class="text-muted-foreground space-y-2 text-sm">
+                <div class="flex items-center gap-2">
+                  <AppStatusBadge :status="application.status" />
+                  <span>&middot;</span>
+                  <span>{{ application.repo_name }}</span>
+                </div>
               </div>
             </CardContent>
           </Card>

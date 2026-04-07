@@ -6,7 +6,9 @@ type Application = {
   id: number
   server_id: string
   name: string
+  repo_name: string
   repo_url: string
+  site_url: string | null
   branch: string
   status: string
   last_deployment_at: string | null
@@ -21,7 +23,9 @@ type Application = {
 type ApplicationCreateRequest = {
   server_id: string
   name: string
+  repo_name: string
   repo_url: string
+  site_url: string | null
   branch: string
 
   env_vars: EnvironmentVariableRequest[] | null
@@ -29,7 +33,7 @@ type ApplicationCreateRequest = {
 
 type ApplicationUpdateRequest = {
   name: string
-  repo_url: string
+  site_url: string | null
   branch: string
 
   env_vars: EnvironmentVariableRequest[] | null
