@@ -167,7 +167,7 @@ const showUpdateDialog = () => {
               <div class="text-sm md:col-span-3 md:text-base">
                 {{
                   application.last_deployment_at
-                    ? formatDate(new Date(application.last_deployment_at), 'DD MMM, YYYY HH:MM')
+                    ? formatDate(new Date(application.last_deployment_at), 'DD MMM, YYYY HH:mm')
                     : '-'
                 }}
               </div>
@@ -175,7 +175,7 @@ const showUpdateDialog = () => {
             <li class="grid md:grid-cols-4">
               <div class="text-muted-foreground text-sm md:text-base">Created At:</div>
               <div class="text-sm md:col-span-3 md:text-base">
-                {{ formatDate(new Date(application.created_at), 'DD MMM, YYYY HH:MM') }}
+                {{ formatDate(new Date(application.created_at), 'DD MMM, YYYY HH:mm') }}
               </div>
             </li>
           </ul>
