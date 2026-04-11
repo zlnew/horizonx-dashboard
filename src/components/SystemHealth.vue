@@ -30,92 +30,128 @@ const diskUsageAvg = computed(() => {
 <template>
   <section
     v-if="metrics"
-    class="mt-8 space-y-8"
+    class="space-y-6"
   >
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      <Card>
-        <CardContent>
-          <div class="space-y-4">
-            <div class="flex items-start justify-between gap-4">
-              <div class="bg-accent rounded-lg p-2">
-                <CpuIcon />
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <!-- CPU Usage Card -->
+      <Card class="border-border/50 bg-card/30 group overflow-hidden backdrop-blur-md">
+        <CardContent class="p-6">
+          <div class="flex flex-col gap-6">
+            <div class="flex items-center justify-between">
+              <div
+                class="bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground rounded-xl p-2.5 transition-colors"
+              >
+                <CpuIcon :size="20" />
               </div>
+              <span class="text-xs font-black tracking-widest uppercase opacity-40"
+                >CPU_CORE_LOAD</span
+              >
             </div>
 
-            <div class="flex flex-col gap-4">
-              <div class="text-accent-foreground text-sm">CPU Usage</div>
-              <div class="flex items-center gap-1">
-                <span class="text-2xl">{{ formatNumber(metrics.cpu.usage.ema, 0, 2) }}</span>
-                <span class="text-muted-foreground text-lg">%</span>
+            <div class="space-y-1">
+              <div class="flex items-baseline gap-1">
+                <span class="text-3xl font-black tracking-tighter">{{
+                  formatNumber(metrics.cpu.usage.ema, 0, 2)
+                }}</span>
+                <span class="text-muted-foreground/60 text-[11px] font-bold">%</span>
               </div>
-              <Progress :model-value="metrics.cpu.usage.ema" />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent>
-          <div class="space-y-4">
-            <div class="flex items-start justify-between gap-4">
-              <div class="bg-accent rounded-lg p-2">
-                <GpuIcon />
-              </div>
-            </div>
-
-            <div class="flex flex-col gap-4">
-              <div class="text-accent-foreground text-sm">GPU Usage</div>
-              <div class="flex items-center gap-1">
-                <span class="text-2xl">
-                  {{ formatNumber(gpuUsageAvg, 0, 2) }}
-                </span>
-                <span class="text-muted-foreground text-lg">%</span>
-              </div>
-              <Progress :model-value="gpuUsageAvg" />
+              <Progress
+                :model-value="metrics.cpu.usage.ema"
+                class="h-1.5"
+              />
             </div>
           </div>
         </CardContent>
       </Card>
 
-      <Card>
-        <CardContent>
-          <div class="space-y-4">
-            <div class="flex items-start justify-between gap-4">
-              <div class="bg-accent rounded-lg p-2">
-                <MemoryStickIcon />
+      <!-- GPU Usage Card -->
+      <Card class="border-border/50 bg-card/30 group overflow-hidden backdrop-blur-md">
+        <CardContent class="p-6">
+          <div class="flex flex-col gap-6">
+            <div class="flex items-center justify-between">
+              <div
+                class="bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground rounded-xl p-2.5 transition-colors"
+              >
+                <GpuIcon :size="20" />
               </div>
+              <span class="text-xs font-black tracking-widest uppercase opacity-40"
+                >GPU_MODULE_LOAD</span
+              >
             </div>
 
-            <div class="flex flex-col gap-4">
-              <div class="text-accent-foreground text-sm">Memory Usage</div>
-              <div class="flex items-center gap-1">
-                <span class="text-2xl">
-                  {{ formatNumber(metrics.memory.usage_percent, 0, 2) }}
-                </span>
-                <span class="text-muted-foreground text-lg">%</span>
+            <div class="space-y-1">
+              <div class="flex items-baseline gap-1">
+                <span class="text-3xl font-black tracking-tighter">{{
+                  formatNumber(gpuUsageAvg, 0, 2)
+                }}</span>
+                <span class="text-muted-foreground/60 text-[11px] font-bold">%</span>
               </div>
-              <Progress :model-value="metrics.memory.usage_percent" />
+              <Progress
+                :model-value="gpuUsageAvg"
+                class="h-1.5"
+              />
             </div>
           </div>
         </CardContent>
       </Card>
 
-      <Card>
-        <CardContent>
-          <div class="space-y-4">
-            <div class="flex items-start justify-between gap-4">
-              <div class="bg-accent rounded-lg p-2">
-                <HardDriveIcon />
+      <!-- Memory Usage Card -->
+      <Card class="border-border/50 bg-card/30 group overflow-hidden backdrop-blur-md">
+        <CardContent class="p-6">
+          <div class="flex flex-col gap-6">
+            <div class="flex items-center justify-between">
+              <div
+                class="bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground rounded-xl p-2.5 transition-colors"
+              >
+                <MemoryStickIcon :size="20" />
               </div>
+              <span class="text-xs font-black tracking-widest uppercase opacity-40"
+                >MEMORY_STACK_UTL</span
+              >
             </div>
 
-            <div class="flex flex-col gap-4">
-              <div class="text-accent-foreground text-sm">Disk Usage</div>
-              <div class="flex items-center gap-1">
-                <span class="text-2xl">{{ formatNumber(diskUsageAvg, 0, 2) }}</span>
-                <span class="text-muted-foreground text-lg">%</span>
+            <div class="space-y-1">
+              <div class="flex items-baseline gap-1">
+                <span class="text-3xl font-black tracking-tighter">{{
+                  formatNumber(metrics.memory.usage_percent, 0, 2)
+                }}</span>
+                <span class="text-muted-foreground/60 text-[11px] font-bold">%</span>
               </div>
-              <Progress :model-value="diskUsageAvg" />
+              <Progress
+                :model-value="metrics.memory.usage_percent"
+                class="h-1.5"
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <!-- Disk Usage Card -->
+      <Card class="border-border/50 bg-card/30 group overflow-hidden backdrop-blur-md">
+        <CardContent class="p-6">
+          <div class="flex flex-col gap-6">
+            <div class="flex items-center justify-between">
+              <div
+                class="bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground rounded-xl p-2.5 transition-colors"
+              >
+                <HardDriveIcon :size="20" />
+              </div>
+              <span class="text-xs font-black tracking-widest uppercase opacity-40"
+                >STORAGE_POOL_UTL</span
+              >
+            </div>
+
+            <div class="space-y-1">
+              <div class="flex items-baseline gap-1">
+                <span class="text-3xl font-black tracking-tighter">{{
+                  formatNumber(diskUsageAvg, 0, 2)
+                }}</span>
+                <span class="text-muted-foreground/60 text-[11px] font-bold">%</span>
+              </div>
+              <Progress
+                :model-value="diskUsageAvg"
+                class="h-1.5"
+              />
             </div>
           </div>
         </CardContent>

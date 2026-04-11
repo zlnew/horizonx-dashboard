@@ -7,7 +7,9 @@ import { SidebarTrigger } from '@/components/ui/sidebar'
 </script>
 
 <template>
-  <header class="bg-background sticky top-0 z-10 flex h-16 shrink-0 items-center gap-2 border-b">
+  <header
+    class="bg-background/80 sticky top-0 z-10 flex h-16 shrink-0 items-center gap-2 border-b backdrop-blur-md"
+  >
     <div class="flex w-full items-center justify-between gap-8 px-4 sm:px-8">
       <div class="flex items-center gap-2">
         <AppLogo

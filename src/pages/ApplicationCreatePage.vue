@@ -166,31 +166,48 @@ const onSubmit = handleSubmit(async () => {
     orientation="vertical"
     class="block w-full"
   >
-    <div class="border-accent flex w-full items-start justify-start gap-4 rounded-lg border p-8">
-      <div class="hidden w-lg flex-col gap-8 xl:flex">
+    <div
+      class="bg-card/30 border-border/50 flex w-full flex-col overflow-hidden rounded-2xl border backdrop-blur-md xl:flex-row"
+    >
+      <!-- Stepper Sidebar -->
+      <div class="bg-card hidden w-full shrink-0 flex-col gap-8 p-10 xl:flex xl:w-96">
+        <div class="mb-4">
+          <h2 class="text-2xl font-black tracking-tight uppercase">Setup Engine</h2>
+          <p class="text-muted-foreground text-xs font-black tracking-widest uppercase">
+            Initialization Pipeline
+          </p>
+        </div>
+
         <StepperItem
           v-for="(item, index) in steps"
           :key="item.step"
           v-slot="{ state }"
           :step="item.step"
+          class="group"
         >
           <div class="relative flex flex-col items-center">
             <StepperSeparator
               v-if="item.step !== steps[steps.length - 1]?.step"
-              class="bg-muted group-data-[state=completed]:bg-primary absolute top-[38px] left-[18px] block h-[105%] w-0.5 shrink-0 rounded-full"
+              class="bg-border/20 group-data-[state=completed]:bg-primary absolute top-[44px] left-[18px] block h-[120%] w-0.5 shrink-0 rounded-full transition-colors duration-500"
             />
 
             <StepperTrigger
               :disabled="state !== 'completed' && index >= (modelValue || 0) && !meta.valid"
+              class="relative"
             >
               <StepperIndicator
                 v-slot="{ step }"
-                class="bg-muted"
+                class="border-border/50 bg-accent/50 group-data-[state=active]:border-primary group-data-[state=active]:bg-primary group-data-[state=active]:shadow-primary/20 group-data-[state=completed]:border-primary group-data-[state=completed]:bg-primary size-10 border-2 transition-all duration-300 group-data-[state=active]:shadow-lg"
               >
                 <template v-if="item.icon">
                   <component
                     :is="item.icon"
-                    class="h-4 w-4"
+                    :size="18"
+                    :class="
+                      state === 'active' || state === 'completed'
+                        ? 'text-primary-foreground'
+                        : 'text-muted-foreground'
+                    "
                   />
                 </template>
                 <span v-else>{{ step }}</span>
@@ -198,307 +215,357 @@ const onSubmit = handleSubmit(async () => {
             </StepperTrigger>
           </div>
 
-          <div class="flex flex-col gap-1 pt-0.5">
-            <StepperTitle>
+          <div class="flex flex-col gap-1 pt-1.5 pl-2">
+            <StepperTitle
+              class="text-sm font-black tracking-tight uppercase transition-colors"
+              :class="state === 'active' ? 'text-primary' : 'text-muted-foreground/60'"
+            >
               {{ item.title }}
             </StepperTitle>
-            <StepperDescription>
+            <StepperDescription class="text-xs font-medium tracking-widest uppercase opacity-40">
               {{ item.description }}
             </StepperDescription>
           </div>
         </StepperItem>
       </div>
 
-      <form
-        class="w-full"
-        @submit="
-          async (e) => {
-            e.preventDefault()
-            const isValid = await validate()
-            if (stepIndex === steps.length && isValid.valid) {
-              onSubmit()
+      <!-- Form Content -->
+      <div class="flex-1 p-10">
+        <form
+          class="mx-auto max-w-2xl"
+          @submit="
+            async (e) => {
+              e.preventDefault()
+              const isValid = await validate()
+              if (stepIndex === steps.length && isValid.valid) {
+                onSubmit()
+              }
             }
-          }
-        "
-      >
-        <div class="mt-4 flex flex-col gap-8">
-          <div class="flex items-center gap-4 xl:hidden">
-            <div class="bg-foreground text-background rounded-full p-2">
-              <component
-                :is="currentStep?.icon"
-                class="size-4"
-              />
-            </div>
-            <div class="space-y-1">
-              <div class="text-base font-bold">{{ currentStep?.title }}</div>
-              <div class="text-muted-foreground text-xs">{{ currentStep?.description }}</div>
-            </div>
-          </div>
-
-          <template v-if="stepIndex === 1">
-            <FormField
-              v-slot="{ componentField }"
-              name="name"
-            >
-              <FormItem>
-                <FormLabel>Application Name</FormLabel>
-                <FormControl>
-                  <Input
-                    type="text"
-                    placeholder="e.g. HorizonX Dashboard"
-                    v-bind="componentField"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            </FormField>
-
-            <FormField
-              v-slot="{ componentField }"
-              name="repo_name"
-            >
-              <FormItem>
-                <FormLabel>Repository Name</FormLabel>
-                <FormControl>
-                  <Input
-                    type="text"
-                    placeholder="e.g. horizonx-dashboard or horizonx.dashboard.com"
-                    v-bind="componentField"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            </FormField>
-
-            <FormField
-              v-slot="{ componentField }"
-              name="repo_url"
-            >
-              <FormItem>
-                <FormLabel>Git Repository</FormLabel>
-                <FormControl>
-                  <Input
-                    type="text"
-                    placeholder="git@github.com:username/repository.git"
-                    v-bind="componentField"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            </FormField>
-
-            <FormField
-              v-slot="{ componentField }"
-              name="site_url"
-            >
-              <FormItem>
-                <FormLabel>Site URL</FormLabel>
-                <FormControl>
-                  <Input
-                    type="text"
-                    placeholder="https://app.example.com"
-                    v-bind="componentField"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            </FormField>
-
-            <FormField
-              v-slot="{ componentField }"
-              name="branch"
-            >
-              <FormItem>
-                <FormLabel>Deployment Branch</FormLabel>
-                <FormControl>
-                  <Input
-                    type="text"
-                    placeholder="main"
-                    v-bind="componentField"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            </FormField>
-          </template>
-
-          <template v-if="stepIndex === 2">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead class="w-4/12">Key</TableHead>
-                  <TableHead>Value</TableHead>
-                  <TableHead />
-                </TableRow>
-              </TableHeader>
-
-              <TableBody>
-                <TableRow
-                  v-for="(field, index) in envVars"
-                  :key="field.key"
-                >
-                  <TableCell>
-                    <FormField
-                      v-slot="{ componentField }"
-                      :name="`env_vars.${index}.key`"
-                    >
-                      <FormItem>
-                        <FormControl>
-                          <Input
-                            placeholder="KEY"
-                            v-bind="componentField"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    </FormField>
-                  </TableCell>
-
-                  <TableCell>
-                    <FormField
-                      v-slot="{ componentField }"
-                      :name="`env_vars.${index}.value`"
-                    >
-                      <FormItem>
-                        <FormControl>
-                          <Input
-                            placeholder="VALUE"
-                            v-bind="componentField"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    </FormField>
-                  </TableCell>
-
-                  <TableCell>
-                    <Button
-                      size="icon-sm"
-                      variant="ghost"
-                      @click="removeEnvVar(index)"
-                    >
-                      <XIcon />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-
-                <TableRow>
-                  <TableCell colspan="3">
-                    <Button
-                      variant="outline"
-                      @click="pushEnvVar({ key: '', value: '' })"
-                    >
-                      <PlusIcon />
-                      Add Variable
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </template>
-
-          <template v-if="stepIndex === 3">
-            <div class="space-y-6">
-              <!-- Project -->
-              <div class="rounded-lg border p-4">
-                <h3 class="mb-2 font-semibold">Project</h3>
-                <div class="text-muted-foreground space-y-1 text-sm">
-                  <div><strong>Name:</strong> {{ value?.name }}</div>
-                </div>
+          "
+        >
+          <div class="flex flex-col gap-10">
+            <!-- Mobile Header -->
+            <div class="flex items-center gap-4 xl:hidden">
+              <div
+                class="bg-primary text-primary-foreground shadow-primary/20 rounded-xl p-3 shadow-lg"
+              >
+                <component
+                  :is="currentStep?.icon"
+                  class="size-6"
+                />
               </div>
-
-              <!-- Repository -->
-              <div class="rounded-lg border p-4">
-                <h3 class="mb-2 font-semibold">Repository</h3>
-                <div class="text-muted-foreground space-y-1 text-sm">
-                  <div>
-                    <strong>Name:</strong>
-                    {{ value?.repo_name || '—' }}
-                  </div>
-                  <div>
-                    <strong>URL:</strong>
-                    {{ value?.repo_url || '—' }}
-                  </div>
-                  <div>
-                    <strong>Branch:</strong>
-                    {{ value?.branch }}
-                  </div>
-                  <div>
-                    <strong>Site URL:</strong>
-                    <span v-if="value?.site_url">
-                      <a
-                        class="text-primary underline-offset-4 hover:underline"
-                        :href="value.site_url"
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        {{ value.site_url }}
-                      </a>
-                    </span>
-                    <span v-else>—</span>
-                  </div>
+              <div class="space-y-1">
+                <div class="text-xl font-black tracking-tight uppercase">
+                  {{ currentStep?.title }}
                 </div>
-              </div>
-
-              <!-- Env Vars -->
-              <div class="rounded-lg border p-4">
-                <h3 class="mb-2 font-semibold">Environment Variables</h3>
-
                 <div
-                  v-if="value?.env_vars?.length"
-                  class="space-y-1 text-sm"
+                  class="text-muted-foreground text-xs font-black tracking-widest uppercase opacity-60"
                 >
-                  <div
-                    v-for="(env, i) in value.env_vars"
-                    :key="i"
-                    class="flex items-center justify-between font-mono"
+                  {{ currentStep?.description }}
+                </div>
+              </div>
+            </div>
+
+            <template v-if="stepIndex === 1">
+              <div class="grid gap-6">
+                <FormField
+                  v-slot="{ componentField }"
+                  name="name"
+                >
+                  <FormItem>
+                    <FormLabel class="text-sm font-black tracking-widest uppercase"
+                      >Application Identity</FormLabel
+                    >
+                    <FormControl>
+                      <Input
+                        class="border-border/50 rounded-xl px-4 py-6"
+                        placeholder="e.g. HorizonX Dashboard"
+                        v-bind="componentField"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                </FormField>
+
+                <div class="grid gap-6 md:grid-cols-2">
+                  <FormField
+                    v-slot="{ componentField }"
+                    name="repo_name"
                   >
-                    <span>{{ env.key }}</span>
-                    <span class="text-muted-foreground">
-                      {{ env.value || '—' }}
-                    </span>
+                    <FormItem>
+                      <FormLabel class="text-sm font-black tracking-widest uppercase"
+                        >Instance Identifier</FormLabel
+                      >
+                      <FormControl>
+                        <Input
+                          class="border-border/50 rounded-xl px-4 py-6 font-mono"
+                          placeholder="kebab-case-id"
+                          v-bind="componentField"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  </FormField>
+
+                  <FormField
+                    v-slot="{ componentField }"
+                    name="branch"
+                  >
+                    <FormItem>
+                      <FormLabel class="text-sm font-black tracking-widest uppercase"
+                        >Target Branch</FormLabel
+                      >
+                      <FormControl>
+                        <Input
+                          class="border-border/50 rounded-xl px-4 py-6 font-mono"
+                          placeholder="main"
+                          v-bind="componentField"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  </FormField>
+                </div>
+
+                <FormField
+                  v-slot="{ componentField }"
+                  name="repo_url"
+                >
+                  <FormItem>
+                    <FormLabel class="text-sm font-black tracking-widest uppercase"
+                      >Source Repository</FormLabel
+                    >
+                    <FormControl>
+                      <Input
+                        class="border-border/50 rounded-xl px-4 py-6 font-mono"
+                        placeholder="git@github.com:..."
+                        v-bind="componentField"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                </FormField>
+
+                <FormField
+                  v-slot="{ componentField }"
+                  name="site_url"
+                >
+                  <FormItem>
+                    <FormLabel class="text-sm font-black tracking-widest uppercase"
+                      >Production URL (Optional)</FormLabel
+                    >
+                    <FormControl>
+                      <Input
+                        class="border-border/50 rounded-xl px-4 py-6"
+                        placeholder="https://..."
+                        v-bind="componentField"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                </FormField>
+              </div>
+            </template>
+
+            <template v-if="stepIndex === 2">
+              <div class="border-border/50 rounded-2xl border">
+                <Table>
+                  <TableHeader>
+                    <TableRow class="border-border/50 hover:bg-transparent">
+                      <TableHead class="pl-6 text-xs font-black tracking-widest uppercase"
+                        >Variable Key</TableHead
+                      >
+                      <TableHead class="text-xs font-black tracking-widest uppercase"
+                        >Assigned Value</TableHead
+                      >
+                      <TableHead />
+                    </TableRow>
+                  </TableHeader>
+
+                  <TableBody>
+                    <TableRow
+                      v-for="(field, index) in envVars"
+                      :key="field.key"
+                      class="border-border/20 hover:bg-transparent"
+                    >
+                      <TableCell class="pl-6">
+                        <FormField
+                          v-slot="{ componentField }"
+                          :name="`env_vars.${index}.key`"
+                        >
+                          <FormItem>
+                            <FormControl>
+                              <Input
+                                class="border-border/50 h-10 font-mono text-sm"
+                                placeholder="KEY"
+                                v-bind="componentField"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        </FormField>
+                      </TableCell>
+
+                      <TableCell>
+                        <FormField
+                          v-slot="{ componentField }"
+                          :name="`env_vars.${index}.value`"
+                        >
+                          <FormItem>
+                            <FormControl>
+                              <Input
+                                class="border-border/50 h-10 font-mono text-sm"
+                                placeholder="VALUE"
+                                v-bind="componentField"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        </FormField>
+                      </TableCell>
+
+                      <TableCell class="pr-6">
+                        <Button
+                          type="button"
+                          size="icon-sm"
+                          variant="ghost"
+                          class="text-muted-foreground hover:bg-destructive/10 hover:text-destructive rounded-lg"
+                          @click="removeEnvVar(index)"
+                        >
+                          <XIcon class="size-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+
+                    <TableRow class="hover:bg-transparent">
+                      <TableCell
+                        colspan="3"
+                        class="p-6"
+                      >
+                        <Button
+                          type="button"
+                          variant="outline"
+                          class="bg-accent/20 border-border/50 w-full rounded-xl border-dashed py-6 text-sm font-black tracking-tight uppercase"
+                          @click="pushEnvVar({ key: '', value: '' })"
+                        >
+                          <PlusIcon class="mr-2 size-4" />
+                          Inject New Variable
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </div>
+            </template>
+
+            <template v-if="stepIndex === 3">
+              <div class="space-y-6">
+                <!-- Summary Header -->
+                <div class="border-primary flex items-center gap-4 border-l-4 pl-6">
+                  <div>
+                    <h3 class="text-xl font-black tracking-tight uppercase">
+                      Configuration Review
+                    </h3>
+                    <p class="text-xs font-black tracking-widest uppercase opacity-40">
+                      Verify pipeline parameters before deployment
+                    </p>
                   </div>
                 </div>
 
-                <div
-                  v-else
-                  class="text-muted-foreground text-sm italic"
-                >
-                  No environment variables
+                <div class="grid gap-4 md:grid-cols-2">
+                  <!-- Project -->
+                  <div class="border-border/50 rounded-xl border p-6">
+                    <span
+                      class="text-muted-foreground/60 mb-2 block text-xs font-black tracking-widest uppercase"
+                      >Identity</span
+                    >
+                    <div class="text-sm font-bold tracking-tight uppercase">{{ value?.name }}</div>
+                  </div>
+
+                  <!-- Repository -->
+                  <div class="border-border/50 rounded-xl border p-6">
+                    <span
+                      class="text-muted-foreground/60 mb-2 block text-xs font-black tracking-widest uppercase"
+                      >Strategy</span
+                    >
+                    <div class="text-sm font-bold tracking-tight uppercase">
+                      {{ value?.branch }} node
+                    </div>
+                  </div>
+
+                  <div class="border-border/50 rounded-xl border p-6 md:col-span-2">
+                    <span
+                      class="text-muted-foreground/60 mb-2 block text-xs font-black tracking-widest uppercase"
+                      >Source Control</span
+                    >
+                    <code class="font-mono text-xs font-medium opacity-60">{{
+                      value?.repo_url || '—'
+                    }}</code>
+                  </div>
+
+                  <!-- Env Vars -->
+                  <div class="border-border/50 rounded-xl border p-6 md:col-span-2">
+                    <span
+                      class="text-muted-foreground/60 mb-4 block text-xs font-black tracking-widest uppercase"
+                      >Environment Injection</span
+                    >
+
+                    <div
+                      v-if="value?.env_vars?.length"
+                      class="space-y-2"
+                    >
+                      <div
+                        v-for="(env, i) in value.env_vars"
+                        :key="i"
+                        class="flex items-center justify-between rounded-lg border border-white/5 px-3 py-2 font-mono text-xs"
+                      >
+                        <span class="text-primary font-bold">{{ env.key }}</span>
+                        <span class="text-muted-foreground">{{ env.value || '—' }}</span>
+                      </div>
+                    </div>
+
+                    <div
+                      v-else
+                      class="text-muted-foreground/40 text-xs font-medium tracking-widest uppercase italic"
+                    >
+                      Empty environment stack
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </template>
+            </template>
 
-          <div class="flex items-center justify-between">
-            <Button
-              :disabled="isPrevDisabled"
-              variant="outline"
-              size="sm"
-              @click="prevStep()"
-            >
-              Back
-            </Button>
-            <div class="flex items-center gap-3">
+            <!-- Navigation Controls -->
+            <div class="border-border/50 flex items-center justify-between border-t pt-10">
               <Button
-                v-if="stepIndex !== 3"
-                type="button"
-                size="sm"
-                @click="goNext(nextStep)"
+                :disabled="isPrevDisabled"
+                variant="ghost"
+                class="rounded-full px-8 text-xs font-black tracking-tight uppercase"
+                @click="prevStep()"
               >
-                Next
+                Previous Step
               </Button>
-              <Button
-                v-if="stepIndex === 3"
-                size="sm"
-                type="submit"
-              >
-                Create
-              </Button>
+              <div class="flex items-center gap-4">
+                <Button
+                  v-if="stepIndex !== 3"
+                  type="button"
+                  class="bg-primary shadow-primary/20 rounded-full px-10 text-xs font-black tracking-tight uppercase shadow-lg transition-all active:scale-95"
+                  @click="goNext(nextStep)"
+                >
+                  Proceed
+                </Button>
+                <Button
+                  v-if="stepIndex === 3"
+                  type="submit"
+                  class="bg-primary shadow-primary/20 rounded-full px-12 text-xs font-black tracking-tight uppercase shadow-lg transition-all active:scale-95"
+                >
+                  Commit & Launch
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   </Stepper>
 </template>

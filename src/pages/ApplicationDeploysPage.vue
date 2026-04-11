@@ -18,7 +18,6 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
-import { ItemGroup, ItemSeparator } from '@/components/ui/item'
 import { dialog } from '@/composables/dialog'
 import { usePageMeta } from '@/composables/page-meta'
 import useWebSocket from '@/composables/web-socket'
@@ -122,40 +121,57 @@ const showDeployConfirmation = () => {
 </script>
 
 <template>
-  <section class="mt-8">
-    <Card>
-      <CardHeader>
-        <CardTitle>Deploys</CardTitle>
-        <CardDescription>
-          Manage deployments and view deployment history for this application.
-        </CardDescription>
+  <section>
+    <Card class="border-border/50 bg-card/20 overflow-hidden backdrop-blur-md">
+      <CardHeader class="border-border/50 flex-row items-center justify-between border-b pb-6">
+        <div class="flex items-center gap-4">
+          <div class="bg-primary/10 text-primary rounded-xl p-2.5">
+            <PackagePlusIcon :size="20" />
+          </div>
+          <div>
+            <CardTitle class="text-xl font-black tracking-tight uppercase"
+              >Deployment Center</CardTitle
+            >
+            <CardDescription class="text-xs font-medium tracking-widest uppercase opacity-60"
+              >Full history of deployment cycles and build status</CardDescription
+            >
+          </div>
+        </div>
         <CardAction v-if="canWriteApp">
           <Button
             type="button"
+            class="shadow-primary/20 rounded-full text-xs font-black tracking-tight uppercase shadow-lg transition-all active:scale-95"
             :disabled="!canDeployApp"
             @click="showDeployConfirmation"
           >
-            <PackagePlusIcon />
-            New Deploy
+            <PackagePlusIcon class="mr-2 size-3.5" />
+            Force Deploy
           </Button>
         </CardAction>
       </CardHeader>
-      <CardContent>
-        <div v-if="deployments.length">
-          <ItemGroup>
-            <template
-              v-for="(deploy, index) in deployments"
-              :key="index"
-            >
-              <DeploymentItem :data="deploy" />
-              <ItemSeparator v-if="index !== deployments.length - 1" />
-            </template>
-          </ItemGroup>
+
+      <CardContent class="p-0">
+        <div
+          v-if="deployments.length"
+          class="divide-border/20 divide-y"
+        >
+          <template
+            v-for="(deploy, index) in deployments"
+            :key="index"
+          >
+            <div class="group transition-colors hover:bg-white/5">
+              <DeploymentItem
+                :data="deploy"
+                class="px-8 py-5"
+              />
+            </div>
+          </template>
         </div>
         <DataLoading v-else-if="loading" />
         <DataNotFound v-else-if="notFound" />
       </CardContent>
-      <CardFooter>
+
+      <CardFooter class="border-border/50 border-t px-6 py-4">
         <RoutePagination
           v-if="meta"
           :meta="meta"

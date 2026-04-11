@@ -71,82 +71,140 @@ const showDeleteDialog = () => {
 </script>
 
 <template>
-  <section class="mt-8">
-    <Card>
-      <CardHeader>
-        <CardTitle>Environment Variables</CardTitle>
-        <CardDescription>
-          Key–value pairs injected into the application at runtime.
-        </CardDescription>
-        <CardAction v-if="canWriteApp">
-          <Button @click="showCreateEnvVarDialog">
-            <PlusIcon />
-            Add variable
-          </Button>
-        </CardAction>
-      </CardHeader>
-      <CardContent>
-        <template v-if="selectedApplication?.env_vars?.length">
-          <Table>
-            <TableBody>
-              <TableRow
-                v-for="(env, index) in selectedApplication.env_vars"
-                :key="index"
+  <div class="space-y-12">
+    <!-- Environment Variables Section -->
+    <section>
+      <Card class="border-border/50 bg-card/30 overflow-hidden backdrop-blur-md">
+        <CardHeader class="border-border/50 flex-row items-center justify-between border-b pb-6">
+          <div class="flex items-center gap-4">
+            <div class="bg-primary/10 text-primary rounded-xl p-2.5">
+              <PlusIcon :size="20" />
+            </div>
+            <div>
+              <CardTitle class="text-xl font-black tracking-tight uppercase"
+                >Environment Config</CardTitle
               >
-                <TableCell class="font-bold">{{ env.key }}</TableCell>
-                <TableCell class="text-muted-foreground font-bold">{{ env.value }}</TableCell>
-                <TableCell v-if="canWriteApp">
-                  <div class="flex items-center justify-end gap-2">
-                    <Button
-                      type="button"
-                      size="icon-sm"
-                      variant="ghost"
-                      aria-label="Edit env var"
-                      class="text-muted-foreground"
-                      @click="showUpdateEnvVarDialog(env)"
+              <CardDescription class="text-xs font-medium tracking-widest uppercase opacity-60"
+                >Runtime variables injected into the process</CardDescription
+              >
+            </div>
+          </div>
+          <CardAction v-if="canWriteApp">
+            <Button
+              size="sm"
+              class="shadow-primary/20 rounded-full text-[10px] font-black tracking-tight uppercase shadow-lg transition-all active:scale-95"
+              @click="showCreateEnvVarDialog"
+            >
+              <PlusIcon class="mr-2 size-3.5" />
+              Add Variable
+            </Button>
+          </CardAction>
+        </CardHeader>
+        <CardContent class="p-0">
+          <template v-if="selectedApplication?.env_vars?.length">
+            <Table>
+              <TableBody>
+                <TableRow
+                  v-for="(env, index) in selectedApplication.env_vars"
+                  :key="index"
+                  class="group border-border/40 transition-colors hover:bg-white/5"
+                >
+                  <TableCell class="py-4 pl-8">
+                    <span
+                      class="text-muted-foreground/40 mb-1 block text-xs font-black tracking-widest uppercase"
+                      >Key</span
                     >
-                      <EditIcon />
-                    </Button>
-                    <Button
-                      type="button"
-                      size="icon-sm"
-                      variant="ghost"
-                      aria-label="Delete env var"
-                      class="text-muted-foreground"
-                      @click="showDeleteEnvVarDialog(env)"
+                    <code class="text-foreground font-mono text-sm font-bold">{{ env.key }}</code>
+                  </TableCell>
+                  <TableCell class="py-4">
+                    <span
+                      class="text-muted-foreground/40 mb-1 block text-xs font-black tracking-widest uppercase"
+                      >Value</span
                     >
-                      <Trash2Icon />
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </template>
-        <DataNotFound v-else />
-      </CardContent>
-    </Card>
-  </section>
+                    <code
+                      class="text-muted-foreground bg-accent rounded border border-white/5 px-2 py-0.5 font-mono text-sm"
+                      >{{ env.value }}</code
+                    >
+                  </TableCell>
+                  <TableCell
+                    v-if="canWriteApp"
+                    class="py-4 pr-8"
+                  >
+                    <div
+                      class="flex items-center justify-end gap-1 opacity-0 transition-opacity group-hover:opacity-100"
+                    >
+                      <Button
+                        type="button"
+                        size="icon-sm"
+                        variant="ghost"
+                        class="text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                        @click="showUpdateEnvVarDialog(env)"
+                      >
+                        <EditIcon class="size-4" />
+                      </Button>
+                      <Button
+                        type="button"
+                        size="icon-sm"
+                        variant="ghost"
+                        class="text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
+                        @click="showDeleteEnvVarDialog(env)"
+                      >
+                        <Trash2Icon class="size-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </template>
+          <div
+            v-else
+            class="p-12"
+          >
+            <DataNotFound />
+          </div>
+        </CardContent>
+      </Card>
+    </section>
 
-  <section
-    v-if="canWriteApp"
-    class="mt-8"
-  >
-    <Card>
-      <CardHeader>
-        <CardTitle>Danger Zone</CardTitle>
-        <CardDescription>This action is permanent and cannot be undone.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Button
-          type="button"
-          variant="destructive"
-          :disabled="!canDeleteApp"
-          @click="showDeleteDialog"
-        >
-          Permanently delete application
-        </Button>
-      </CardContent>
-    </Card>
-  </section>
+    <!-- Danger Zone Section -->
+    <section v-if="canWriteApp">
+      <Card class="border-destructive/30 bg-destructive/5 backdrop-blur-sm">
+        <CardHeader class="flex-row items-center justify-between pb-6">
+          <div class="flex items-center gap-4">
+            <div class="bg-destructive/10 text-destructive rounded-xl p-2.5">
+              <Trash2Icon :size="20" />
+            </div>
+            <div>
+              <CardTitle class="text-destructive/80 text-xl font-black tracking-tight uppercase"
+                >Danger Zone</CardTitle
+              >
+              <CardDescription class="text-xs font-medium tracking-widest uppercase opacity-60"
+                >Destructive actions for this instance</CardDescription
+              >
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent class="border-destructive/10 border-t pt-6">
+          <div class="flex flex-wrap items-center justify-between gap-6">
+            <div class="max-w-md">
+              <p class="text-muted-foreground text-sm font-medium">
+                Permanently delete this application and all associated deployment history. This
+                action is irreversible.
+              </p>
+            </div>
+            <Button
+              type="button"
+              variant="destructive"
+              class="shadow-destructive/20 rounded-full px-8 text-[10px] font-black tracking-tight uppercase shadow-lg transition-all active:scale-95"
+              :disabled="!canDeleteApp"
+              @click="showDeleteDialog"
+            >
+              Destroy Instance
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </section>
+  </div>
 </template>

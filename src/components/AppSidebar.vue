@@ -46,20 +46,26 @@ const onMobileMenuClickCapture = () => {
       <SidebarMenuButton size="lg">
         <AppLogo />
       </SidebarMenuButton>
-      <SidebarMenuButton as-child>
+      <SidebarMenuButton
+        size="lg"
+        as-child
+      >
         <div
-          class="flex h-8 items-center justify-between border"
+          class="border-border/50 bg-accent/30 hover:bg-accent/50 flex h-10 items-center justify-between rounded-lg border px-3 transition-colors"
           role="button"
           @click="searchOpen = true"
         >
           <div class="flex items-center gap-2">
-            <SearchIcon :size="16" />
-            <span class="text-accent-foreground">Search&hellip;</span>
+            <SearchIcon
+              :size="16"
+              class="text-muted-foreground"
+            />
+            <span class="text-muted-foreground text-sm font-medium">Search&hellip;</span>
           </div>
 
           <div class="flex items-center justify-end gap-1">
-            <Kbd>Ctrl</Kbd>
-            <Kbd>K</Kbd>
+            <Kbd class="px-1 py-0 text-[10px]">Ctrl</Kbd>
+            <Kbd class="px-1 py-0 text-[10px]">K</Kbd>
           </div>
         </div>
       </SidebarMenuButton>

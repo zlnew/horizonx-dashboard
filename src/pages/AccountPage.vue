@@ -105,30 +105,33 @@ const onPasswordSubmit = async (values: GenericObject) => {
   <section>
     <div class="flex flex-wrap items-center justify-between gap-8">
       <div class="flex items-center gap-4">
-        <div class="bg-accent rounded-lg p-3">
-          <CircleUserIcon :size="24" />
+        <div class="bg-accent/50 border-border/50 rounded-xl border p-3">
+          <CircleUserIcon
+            :size="24"
+            class="text-primary"
+          />
         </div>
-        <div class="flex flex-col gap-0">
-          <div class="text-xl">Account Settings</div>
-          <div class="text-muted-foreground text-sm">
+        <div class="border-border/50 flex flex-col gap-0 border-l pl-4">
+          <h1 class="text-2xl font-black tracking-tight uppercase">Dashboard Settings</h1>
+          <p class="text-muted-foreground text-sm font-medium italic">
             Manage your account information and security
-          </div>
+          </p>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="mt-8">
+  <section class="mt-12">
     <div class="max-w-4xl">
       <!-- Tab Navigation -->
-      <div class="mb-6 flex gap-2 border-b">
+      <div class="border-border/50 mb-8 flex gap-4 border-b">
         <button
           type="button"
-          class="flex items-center gap-2 border-b-2 px-4 py-3 text-sm font-medium transition-colors"
+          class="flex items-center gap-2 border-b-2 px-6 py-4 text-sm font-bold tracking-widest uppercase transition-all"
           :class="
             activeTab === 'profile'
-              ? 'border-primary text-primary'
-              : 'text-muted-foreground hover:text-muted-foreground border-transparent'
+              ? 'border-primary text-primary opacity-100 shadow-[0_4px_0_-2px_var(--primary)]'
+              : 'text-muted-foreground hover:text-foreground border-transparent opacity-60'
           "
           @click="activeTab = 'profile'"
         >
@@ -137,16 +140,16 @@ const onPasswordSubmit = async (values: GenericObject) => {
         </button>
         <button
           type="button"
-          class="flex items-center gap-2 border-b-2 px-4 py-3 text-sm font-medium transition-colors"
+          class="flex items-center gap-2 border-b-2 px-6 py-4 text-sm font-bold tracking-widest uppercase transition-all"
           :class="
             activeTab === 'password'
-              ? 'border-primary text-primary'
-              : 'text-muted-foreground hover:text-muted-foreground border-transparent'
+              ? 'border-primary text-primary opacity-100 shadow-[0_4px_0_-2px_var(--primary)]'
+              : 'text-muted-foreground hover:text-foreground border-transparent opacity-60'
           "
           @click="activeTab = 'password'"
         >
           <KeyRoundIcon :size="16" />
-          <span>Password</span>
+          <span>Security</span>
         </button>
       </div>
 
@@ -322,3 +325,9 @@ const onPasswordSubmit = async (values: GenericObject) => {
     </div>
   </section>
 </template>
+
+<style scoped>
+.font-black {
+  font-weight: 900;
+}
+</style>

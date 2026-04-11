@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ChevronRightIcon } from 'lucide-vue-next'
 import AppDeployBadge from '@/components/AppDeployBadge.vue'
-import { Item, ItemActions, ItemContent, ItemDescription, ItemTitle } from '@/components/ui/item'
 import { useDate } from '@/composables/date'
 
 defineProps<{
@@ -12,32 +11,39 @@ const { formatDate } = useDate()
 </script>
 
 <template>
-  <Item
-    as-child
-    class="rounded-none px-0 md:px-4"
+  <RouterLink
+    :to="{
+      name: 'applications.deploys.show',
+      params: { id: data.application_id, deploymentID: data.id }
+    }"
+    class="group flex items-center justify-between transition-all active:scale-[0.99]"
   >
-    <RouterLink
-      :to="{
-        name: 'applications.deploys.show',
-        params: { id: data.application_id, deploymentID: data.id }
-      }"
+    <div class="flex flex-col gap-1">
+      <span
+        class="group-hover:text-primary text-sm font-black tracking-tight uppercase transition-colors"
+      >
+        {{ data.branch }}@{{ data.commit_hash?.substring(0, 7) ?? '~~~~~~~' }}
+      </span>
+      <div class="flex items-center gap-3">
+        <AppDeployBadge
+          :status="data.status"
+          class="px-2 py-0.5 text-xs font-black tracking-wider uppercase"
+        />
+        <span class="text-muted-foreground/60 font-mono text-xs font-medium">
+          {{ formatDate(new Date(data.triggered_at), 'DD MMM, YYYY HH:mm') }}
+        </span>
+        <span class="text-muted-foreground/30 font-light">•</span>
+        <span
+          class="text-muted-foreground/50 max-w-[200px] truncate text-xs italic sm:max-w-[400px]"
+        >
+          {{ data.commit_message || 'No deployment notes' }}
+        </span>
+      </div>
+    </div>
+    <div
+      class="bg-accent/30 group-hover:bg-primary/20 group-hover:text-primary rounded-full p-2 transition-all"
     >
-      <ItemContent>
-        <ItemTitle>{{ data.branch }}@{{ data.commit_hash ?? '~' }}</ItemTitle>
-        <ItemDescription>
-          <div class="space-y-2">
-            <div>{{ data.commit_message ?? 'No deploy message' }}</div>
-            <div class="flex items-center gap-2">
-              <AppDeployBadge :status="data.status" />
-              <span>&middot;</span>
-              <span>{{ formatDate(new Date(data.triggered_at), 'DD MMM, YYYY HH:mm') }}</span>
-            </div>
-          </div>
-        </ItemDescription>
-      </ItemContent>
-      <ItemActions>
-        <ChevronRightIcon class="size-4" />
-      </ItemActions>
-    </RouterLink>
-  </Item>
+      <ChevronRightIcon class="size-4" />
+    </div>
+  </RouterLink>
 </template>

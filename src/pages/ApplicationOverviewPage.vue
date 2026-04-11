@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { computed, defineAsyncComponent, onMounted, ref } from 'vue'
 import { storeToRefs } from 'pinia'
-import { EditIcon } from 'lucide-vue-next'
+import { EditIcon, ExternalLinkIcon, FolderIcon, PackageIcon } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
-import AppStatusBadge from '@/components/AppStatusBadge.vue'
 import DataLoading from '@/components/DataLoading.vue'
 import DataNotFound from '@/components/DataNotFound.vue'
 import DeploymentItem from '@/components/DeploymentItem.vue'
@@ -16,7 +15,6 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
-import { ItemGroup, ItemSeparator } from '@/components/ui/item'
 import { useDate } from '@/composables/date'
 import { dialog } from '@/composables/dialog'
 import { usePageMeta } from '@/composables/page-meta'
@@ -92,128 +90,198 @@ const showUpdateDialog = () => {
 </script>
 
 <template>
-  <section class="mt-8">
-    <Card>
-      <CardHeader>
-        <CardTitle>Application Details</CardTitle>
-        <CardDescription>
-          Key information about the application, its source, and current state.
-        </CardDescription>
-        <CardAction>
-          <Button
-            v-if="canWriteApp"
-            type="button"
-            size="icon-lg"
-            variant="ghost"
-            :disabled="!canUpdateApp"
-            @click="showUpdateDialog"
-          >
-            <EditIcon />
-          </Button>
-        </CardAction>
-      </CardHeader>
-      <CardContent>
-        <template v-if="application">
-          <ul class="space-y-4">
-            <li class="grid md:grid-cols-4">
-              <div class="text-muted-foreground text-sm md:text-base">Name:</div>
-              <div class="text-sm md:col-span-3 md:text-base">
-                {{ application.name }}
-              </div>
-            </li>
-            <li class="grid md:grid-cols-4">
-              <div class="text-muted-foreground text-sm md:text-base">Repository Name:</div>
-              <div class="text-sm md:col-span-3 md:text-base">
-                {{ application.repo_name }}
-              </div>
-            </li>
-            <li class="grid md:grid-cols-4">
-              <div class="text-muted-foreground text-sm md:text-base">Repository:</div>
-              <div class="text-sm md:col-span-3 md:text-base">
-                {{ application.repo_url }}
-              </div>
-            </li>
-            <li class="grid md:grid-cols-4">
-              <div class="text-muted-foreground text-sm md:text-base">Branch:</div>
-              <div class="text-sm md:col-span-3 md:text-base">
-                {{ application.branch }}
-              </div>
-            </li>
-            <li
-              v-if="application.site_url"
-              class="grid md:grid-cols-4"
+  <div class="space-y-12">
+    <!-- Basic Information Grid -->
+    <section>
+      <Card class="border-border/50 bg-card/30 backdrop-blur-md">
+        <CardHeader class="border-border/50 flex-row items-center justify-between border-b pb-6">
+          <div class="flex items-center gap-4">
+            <div class="bg-accent/50 rounded-xl p-2.5">
+              <FolderIcon
+                :size="20"
+                class="text-primary"
+              />
+            </div>
+            <div>
+              <CardTitle class="text-xl font-black tracking-tight uppercase"
+                >Project Metadata</CardTitle
+              >
+              <CardDescription class="text-xs font-medium tracking-widest uppercase opacity-60"
+                >Technical source and instance details</CardDescription
+              >
+            </div>
+          </div>
+          <CardAction>
+            <Button
+              v-if="canWriteApp"
+              type="button"
+              variant="outline"
+              size="sm"
+              class="rounded-full text-xs font-bold tracking-tight uppercase"
+              :disabled="!canUpdateApp"
+              @click="showUpdateDialog"
             >
-              <div class="text-muted-foreground text-sm md:text-base">Site URL:</div>
-              <div class="text-sm md:col-span-3 md:text-base">
+              <EditIcon class="mr-2 size-3.5" />
+              Edit Details
+            </Button>
+          </CardAction>
+        </CardHeader>
+        <CardContent class="pt-8">
+          <template v-if="application">
+            <div class="grid grid-cols-1 gap-x-12 gap-y-8 md:grid-cols-2 lg:grid-cols-3">
+              <div class="border-accent flex flex-col gap-1.5 border-l-2 pl-4">
+                <span
+                  class="text-muted-foreground/60 text-xs leading-none font-black tracking-widest uppercase"
+                  >Application Name</span
+                >
+                <span class="text-sm leading-none font-bold tracking-tight uppercase">{{
+                  application.name
+                }}</span>
+              </div>
+
+              <div class="border-accent flex flex-col gap-1.5 border-l-2 pl-4">
+                <span
+                  class="text-muted-foreground/60 text-xs leading-none font-black tracking-widest uppercase"
+                  >Repository Node</span
+                >
+                <span
+                  class="font-mono text-sm leading-none font-medium tracking-tighter uppercase opacity-80"
+                  >{{ application.repo_name }}</span
+                >
+              </div>
+
+              <div class="border-accent flex flex-col gap-1.5 border-l-2 pl-4">
+                <span
+                  class="text-muted-foreground/60 text-xs leading-none font-black tracking-widest uppercase"
+                  >Branch Strategy</span
+                >
+                <div class="flex items-center gap-2 leading-none">
+                  <div class="bg-primary/40 size-1.5 rounded-full"></div>
+                  <span class="text-sm font-bold tracking-tight uppercase">{{
+                    application.branch
+                  }}</span>
+                </div>
+              </div>
+
+              <div
+                class="border-accent flex flex-col gap-1.5 border-l-2 pl-4 md:col-span-2 lg:col-span-1"
+              >
+                <span
+                  class="text-muted-foreground/60 text-xs leading-none font-black tracking-widest uppercase"
+                  >Upstream Source</span
+                >
+                <div class="group flex cursor-pointer items-center gap-2 leading-none">
+                  <span
+                    class="truncate font-mono text-xs font-medium opacity-60 transition-opacity group-hover:opacity-100"
+                    >{{ application.repo_url }}</span
+                  >
+                </div>
+              </div>
+
+              <div
+                v-if="application.site_url"
+                class="border-accent flex flex-col gap-1.5 border-l-2 pl-4 md:col-span-2"
+              >
+                <span
+                  class="text-muted-foreground/60 text-xs leading-none font-black tracking-widest uppercase"
+                  >Live Endpoint</span
+                >
                 <a
                   :href="application.site_url"
                   target="_blank"
                   rel="noreferrer"
-                  class="hover:underline"
+                  class="text-primary hover:text-primary/80 flex items-center gap-2 leading-none transition-colors"
                 >
-                  <ExternalLinkIcon />
-                  <span>{{ application.site_url }}</span>
+                  <ExternalLinkIcon class="size-3.5" />
+                  <span class="text-sm font-bold tracking-tight underline underline-offset-4">{{
+                    application.site_url
+                  }}</span>
                 </a>
               </div>
-            </li>
-            <li class="grid md:grid-cols-4">
-              <div class="text-muted-foreground text-sm md:text-base">Status:</div>
-              <div class="text-sm md:col-span-3 md:text-base">
-                <AppStatusBadge :status="application.status" />
-              </div>
-            </li>
-            <li class="grid md:grid-cols-4">
-              <div class="text-muted-foreground text-sm md:text-base">Last Deployed:</div>
-              <div class="text-sm md:col-span-3 md:text-base">
-                {{
-                  application.last_deployment_at
-                    ? formatDate(new Date(application.last_deployment_at), 'DD MMM, YYYY HH:mm')
-                    : '-'
-                }}
-              </div>
-            </li>
-            <li class="grid md:grid-cols-4">
-              <div class="text-muted-foreground text-sm md:text-base">Created At:</div>
-              <div class="text-sm md:col-span-3 md:text-base">
-                {{ formatDate(new Date(application.created_at), 'DD MMM, YYYY HH:mm') }}
-              </div>
-            </li>
-          </ul>
-        </template>
-        <DataLoading v-else-if="loading" />
-        <DataNotFound v-else />
-      </CardContent>
-    </Card>
-  </section>
 
-  <section class="mt-8">
-    <Card>
-      <CardHeader>
-        <CardTitle>Recent Deployments</CardTitle>
-        <CardDescription>Latest deployment activity for this application.</CardDescription>
-        <CardAction v-if="canReadApp">
-          <Button variant="link">
-            <RouterLink :to="{ name: 'applications.deploys', params: { id: appID } }">
-              View all deployments
-            </RouterLink>
-          </Button>
-        </CardAction>
-      </CardHeader>
-      <CardContent>
-        <div v-if="recentDeployments.length">
-          <ItemGroup>
+              <div class="border-accent flex flex-col gap-1.5 border-l-2 pl-4">
+                <span
+                  class="text-muted-foreground/60 text-xs leading-none font-black tracking-widest uppercase"
+                  >Creation Date</span
+                >
+                <span class="text-sm leading-none font-medium tracking-tight opacity-60">
+                  {{ formatDate(new Date(application.created_at), 'DD MMM, YYYY HH:mm') }}
+                </span>
+              </div>
+
+              <div class="border-accent flex flex-col gap-1.5 border-l-2 pl-4">
+                <span
+                  class="text-muted-foreground/60 text-xs leading-none font-black tracking-widest uppercase"
+                  >Last Synchronization</span
+                >
+                <span class="text-sm leading-none font-medium tracking-tight opacity-60">
+                  {{
+                    application.last_deployment_at
+                      ? formatDate(new Date(application.last_deployment_at), 'DD MMM, YYYY HH:mm')
+                      : 'NEVER_DEPLOYED'
+                  }}
+                </span>
+              </div>
+            </div>
+          </template>
+          <DataLoading v-else-if="loading" />
+          <DataNotFound v-else />
+        </CardContent>
+      </Card>
+    </section>
+
+    <!-- Recent Deploys Section -->
+    <section>
+      <Card class="border-border/50 bg-card/20 backdrop-blur-sm">
+        <CardHeader class="flex-row items-center justify-between pb-4">
+          <div class="flex items-center gap-4">
+            <div class="bg-primary/10 rounded-xl p-2.5">
+              <PackageIcon
+                :size="20"
+                class="text-primary"
+              />
+            </div>
+            <div>
+              <CardTitle class="text-xl font-black tracking-tight uppercase"
+                >Recent Activity</CardTitle
+              >
+              <CardDescription class="text-xs font-medium tracking-widest uppercase opacity-60"
+                >Latest deployment lifecycle events</CardDescription
+              >
+            </div>
+          </div>
+          <CardAction v-if="canReadApp">
+            <Button
+              variant="link"
+              class="decoration-primary/40 h-auto p-0 text-sm font-black tracking-widest uppercase underline-offset-8 opacity-60 hover:opacity-100"
+            >
+              <RouterLink :to="{ name: 'applications.deploys', params: { id: appID } }">
+                Full Log Center
+              </RouterLink>
+            </Button>
+          </CardAction>
+        </CardHeader>
+        <CardContent class="px-0 pt-4">
+          <div
+            v-if="recentDeployments.length"
+            class="divide-border/20 divide-y"
+          >
             <template
               v-for="(deploy, index) in recentDeployments"
               :key="index"
             >
-              <DeploymentItem :data="deploy" />
-              <ItemSeparator v-if="index !== recentDeployments.length - 1" />
+              <div class="group transition-colors hover:bg-white/5">
+                <DeploymentItem
+                  :data="deploy"
+                  class="px-8 py-5"
+                />
+              </div>
             </template>
-          </ItemGroup>
-        </div>
-        <DataLoading v-else-if="dLoading" />
-        <DataNotFound v-else-if="dNotFound" />
-      </CardContent>
-    </Card>
-  </section>
+          </div>
+          <DataLoading v-else-if="dLoading" />
+          <DataNotFound v-else-if="dNotFound" />
+        </CardContent>
+      </Card>
+    </section>
+  </div>
 </template>

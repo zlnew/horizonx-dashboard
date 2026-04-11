@@ -18,9 +18,7 @@ usePageMeta({
     </div>
 
     <!-- Navigation -->
-    <header
-      class="animate-in fade-in flex w-full max-w-4xl items-center justify-between px-6 py-8 duration-700"
-    >
+    <header class="flex w-full max-w-4xl items-center justify-between px-6 py-8">
       <AppLogo />
       <Button
         variant="ghost"
@@ -35,9 +33,7 @@ usePageMeta({
     </header>
 
     <!-- Content -->
-    <main
-      class="animate-in fade-in slide-in-from-bottom-4 w-full max-w-4xl flex-1 px-6 py-16 duration-1000"
-    >
+    <main class="w-full max-w-4xl flex-1 px-6 py-16">
       <div class="mb-12 flex items-center gap-4">
         <div class="bg-primary/10 flex size-12 items-center justify-center rounded-xl">
           <Shield class="text-primary size-6" />

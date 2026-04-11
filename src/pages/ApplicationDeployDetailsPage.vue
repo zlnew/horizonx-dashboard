@@ -166,46 +166,94 @@ const handleLogsCopy = (copy: (text: string) => Promise<void>) => {
 </script>
 
 <template>
-  <template v-if="deployment">
-    <section class="mt-8">
-      <Card>
-        <CardHeader>
-          <CardTitle>Deployment Details</CardTitle>
-          <CardDescription>
-            <div class="text-muted-foreground flex items-center gap-2">
-              <span>
-                {{ formatDate(new Date(deployment.triggered_at), 'DD MMM, YYYY HH:mm') }}
-              </span>
-              &middot;
-              <span>by {{ deployment.deployer?.name ?? '-' }}</span>
+  <div
+    v-if="deployment"
+    class="space-y-12"
+  >
+    <!-- Deployment Metadata Overview -->
+    <section>
+      <Card class="border-border/50 bg-card/30 overflow-hidden backdrop-blur-md">
+        <CardHeader class="border-border/50 flex-row items-center justify-between border-b pb-6">
+          <div class="flex items-center gap-4">
+            <div class="bg-primary/10 text-primary rounded-xl p-2.5">
+              <ClipboardIcon :size="20" />
             </div>
-          </CardDescription>
+            <div>
+              <CardTitle class="text-xl font-black tracking-tight uppercase"
+                >Deployment Summary</CardTitle
+              >
+              <CardDescription class="text-xs font-medium tracking-widest uppercase opacity-60">
+                Triggered on
+                {{ formatDate(new Date(deployment.triggered_at), 'DD MMM, YYYY HH:mm') }} by
+                {{ deployment.deployer?.name ?? '-' }}
+              </CardDescription>
+            </div>
+          </div>
+          <CardAction>
+            <AppDeployBadge
+              :status="deployment.status"
+              class="px-3 py-1 text-[10px] font-black tracking-widest uppercase"
+            />
+          </CardAction>
         </CardHeader>
-        <CardContent>
-          <div class="space-y-6">
-            <div class="flex flex-col gap-1">
-              <div class="font-mono text-sm font-bold">
-                {{ deployment.branch }}@{{ deployment.commit_hash ?? '-' }}
-              </div>
-              <div class="text-muted-foreground text-sm">
-                {{ deployment.commit_message ?? 'No deployment message' }}
+        <CardContent class="px-8 pt-8">
+          <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+            <!-- Commit Info -->
+            <div class="border-accent flex flex-col gap-2 border-l-2 pl-4 md:col-span-2">
+              <span
+                class="text-muted-foreground/60 text-[10px] leading-none font-black tracking-widest uppercase"
+                >Version Source</span
+              >
+              <div class="flex flex-col gap-1">
+                <div class="flex items-center gap-2">
+                  <span
+                    class="bg-primary/10 text-primary rounded px-1.5 py-0.5 text-[10px] font-black tracking-tighter uppercase"
+                    >{{ deployment.branch }}</span
+                  >
+                  <code class="font-mono text-sm font-bold opacity-80">{{
+                    deployment.commit_hash ?? 'FETCHING_HASH'
+                  }}</code>
+                </div>
+                <div class="text-foreground/80 text-sm leading-relaxed font-medium italic">
+                  "{{ deployment.commit_message ?? 'Awaiting commit metadata...' }}"
+                </div>
               </div>
             </div>
 
-            <div class="flex items-center gap-2">
-              <AppDeployBadge :status="deployment.status" />
-              <div
-                v-if="
-                  deployment.started_at &&
-                  deployment.finished_at &&
-                  deployment.status === DeploymentStatus.SUCCESS
-                "
-                class="text-muted-foreground text-sm"
+            <!-- Timing Info -->
+            <div class="border-accent flex flex-col gap-2 border-l-2 pl-4">
+              <span
+                class="text-muted-foreground/60 text-[10px] leading-none font-black tracking-widest uppercase"
+                >Execution Metrics</span
               >
-                (Deployed in
-                {{
-                  formatDuration(new Date(deployment.started_at), new Date(deployment.finished_at))
-                }})
+              <div class="flex flex-col gap-1">
+                <div
+                  v-if="
+                    deployment.started_at &&
+                    deployment.finished_at &&
+                    deployment.status === DeploymentStatus.SUCCESS
+                  "
+                  class="text-sm font-bold tracking-tight uppercase"
+                >
+                  Deployed in
+                  {{
+                    formatDuration(
+                      new Date(deployment.started_at),
+                      new Date(deployment.finished_at)
+                    )
+                  }}
+                </div>
+                <div
+                  v-else
+                  class="text-sm font-bold tracking-tight uppercase opacity-40"
+                >
+                  {{ deployment.status }}
+                </div>
+                <div
+                  class="text-muted-foreground font-mono text-[10px] tracking-tighter uppercase opacity-60"
+                >
+                  ID: #{{ deployment.id.toString().padStart(6, '0') }}
+                </div>
               </div>
             </div>
           </div>
@@ -213,30 +261,47 @@ const handleLogsCopy = (copy: (text: string) => Promise<void>) => {
       </Card>
     </section>
 
-    <section class="mt-8">
-      <Card>
-        <CardHeader>
-          <CardTitle>Build Logs</CardTitle>
-          <CardDescription>
-            Detailed logs generated during the build and deployment process.
-          </CardDescription>
+    <!-- Build Logs Section -->
+    <section>
+      <Card class="border-border/50 backdrop-blur-xl">
+        <CardHeader class="border-border/50 flex-row items-center justify-between border-b pb-6">
+          <div class="flex items-center gap-4">
+            <div class="bg-accent/50 text-muted-foreground rounded-xl p-2.5">
+              <CheckIcon
+                v-if="copiedLogs"
+                class="text-green-500"
+              />
+              <ClipboardIcon v-else />
+            </div>
+            <div>
+              <CardTitle class="text-xl font-black tracking-tight uppercase">Active Logs</CardTitle>
+              <CardDescription class="text-xs font-medium tracking-widest uppercase opacity-60"
+                >Real-time stream from the build container</CardDescription
+              >
+            </div>
+          </div>
           <CardAction>
             <Button
-              variant="secondary"
-              size="icon-lg"
+              variant="outline"
+              size="sm"
+              class="rounded-full text-[10px] font-black tracking-tight uppercase active:scale-95"
               @click="handleLogsCopy(copyLogs)"
             >
-              <CheckIcon v-if="copiedLogs" />
-              <ClipboardIcon v-else />
+              <ClipboardIcon class="mr-2 size-3.5" />
+              Copy All Logs
             </Button>
           </CardAction>
         </CardHeader>
-        <CardContent>
-          <LogResult :data="deployment.logs" />
+        <CardContent class="p-0">
+          <div
+            class="custom-scrollbar max-h-[600px] overflow-y-auto p-6 font-mono text-xs leading-relaxed"
+          >
+            <LogResult :data="deployment.logs" />
+          </div>
         </CardContent>
       </Card>
     </section>
-  </template>
+  </div>
 
   <DataLoading v-else-if="loading" />
   <DataNotFound v-else />

@@ -2,7 +2,7 @@
 import { computed, onMounted, onUnmounted, watch } from 'vue'
 import { onBeforeRouteUpdate, useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
-import { ChevronRightIcon } from 'lucide-vue-next'
+import { ActivityIcon, ChevronRightIcon } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
 import DataLoading from '@/components/DataLoading.vue'
 import DataNotFound from '@/components/DataNotFound.vue'
@@ -16,15 +16,6 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
-import {
-  Item,
-  ItemActions,
-  ItemContent,
-  ItemDescription,
-  ItemGroup,
-  ItemSeparator,
-  ItemTitle
-} from '@/components/ui/item'
 import { useDate } from '@/composables/date'
 import { defineBreadcrumbs, usePageMeta } from '@/composables/page-meta'
 import useWebSocket from '@/composables/web-socket'
@@ -130,61 +121,71 @@ const listenJobEvents = () => {
 </script>
 
 <template>
-  <section class="mt-8">
-    <Card>
-      <CardHeader>
-        <CardTitle>Activities</CardTitle>
-        <CardDescription>
-          Track recent activities for this application, including execution status and when each job
-          entered the queue.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div v-if="jobs.length">
-          <ItemGroup>
-            <template
-              v-for="(job, index) in jobs"
-              :key="index"
+  <section>
+    <Card class="border-border/50 bg-card/20 overflow-hidden backdrop-blur-md">
+      <CardHeader class="border-border/50 flex-row items-center justify-between border-b pb-6">
+        <div class="flex items-center gap-4">
+          <div class="bg-accent/50 text-muted-foreground rounded-xl p-2.5">
+            <ActivityIcon :size="20" />
+          </div>
+          <div>
+            <CardTitle class="text-xl font-black tracking-tight uppercase">Activity Feed</CardTitle>
+            <CardDescription class="text-xs font-medium tracking-widest uppercase opacity-60"
+              >Audit trail of system jobs and automation events</CardDescription
             >
-              <Item
-                as-child
-                class="rounded-none px-0 md:px-4"
-              >
-                <RouterLink
-                  :to="{
-                    name: 'applications.activities.show',
-                    params: { id: job.application_id, jobID: job.id }
-                  }"
+          </div>
+        </div>
+      </CardHeader>
+
+      <CardContent class="p-0">
+        <div
+          v-if="jobs.length"
+          class="divide-border/20 divide-y"
+        >
+          <template
+            v-for="(job, index) in jobs"
+            :key="index"
+          >
+            <RouterLink
+              :to="{
+                name: 'applications.activities.show',
+                params: { id: job.application_id, jobID: job.id }
+              }"
+              class="group flex items-center justify-between px-8 py-5 transition-all hover:bg-white/5 active:scale-[0.99]"
+            >
+              <div class="flex flex-col gap-1">
+                <span
+                  class="group-hover:text-primary text-sm font-black tracking-tight uppercase transition-colors"
                 >
-                  <ItemContent>
-                    <ItemTitle>{{ jobTypeLabel(job.type) }}</ItemTitle>
-                    <ItemDescription class="mt-2">
-                      <div class="flex items-center gap-2">
-                        <JobStatusBadge :status="job.status" />
-                        <span>&middot;</span>
-                        <span>
-                          {{
-                            job.queued_at
-                              ? formatDate(new Date(job.queued_at), 'DD MMM, YYYY HH:mm')
-                              : '-'
-                          }}
-                        </span>
-                      </div>
-                    </ItemDescription>
-                  </ItemContent>
-                  <ItemActions>
-                    <ChevronRightIcon class="size-4" />
-                  </ItemActions>
-                </RouterLink>
-              </Item>
-              <ItemSeparator v-if="index !== jobs.length - 1" />
-            </template>
-          </ItemGroup>
+                  {{ jobTypeLabel(job.type) }}
+                </span>
+                <div class="flex items-center gap-3">
+                  <JobStatusBadge
+                    :status="job.status"
+                    class="px-2 py-0.5 text-xs font-black tracking-wider uppercase"
+                  />
+                  <span class="text-muted-foreground/60 font-mono text-xs font-medium">
+                    {{
+                      job.queued_at
+                        ? formatDate(new Date(job.queued_at), 'DD MMM, YYYY HH:mm')
+                        : '-'
+                    }}
+                  </span>
+                </div>
+              </div>
+              <div
+                class="bg-accent/30 group-hover:bg-primary/20 group-hover:text-primary rounded-full p-2 transition-all"
+              >
+                <ChevronRightIcon class="size-4" />
+              </div>
+            </RouterLink>
+          </template>
         </div>
         <DataLoading v-else-if="loading" />
         <DataNotFound v-else-if="notFound" />
       </CardContent>
-      <CardFooter>
+
+      <CardFooter class="border-border/50 border-t px-6 py-4">
         <RoutePagination
           v-if="meta"
           :meta="meta"

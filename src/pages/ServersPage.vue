@@ -120,14 +120,17 @@ const showDeleteModal = (server: Server) => {
   <section>
     <div class="flex flex-wrap items-center justify-between gap-8">
       <div class="flex items-center gap-4">
-        <div class="bg-accent rounded-lg p-3">
-          <ServerIcon :size="24" />
+        <div class="bg-accent/50 border-border/50 rounded-xl border p-3">
+          <ServerIcon
+            :size="24"
+            class="text-primary"
+          />
         </div>
-        <div class="flex flex-col gap-0">
-          <div class="text-xl">Servers</div>
-          <div class="text-muted-foreground text-sm">
+        <div class="border-border/50 flex flex-col gap-0 border-l pl-4">
+          <h1 class="text-2xl font-black tracking-tight uppercase">Servers</h1>
+          <p class="text-muted-foreground text-sm font-medium italic">
             Overview of all registered servers and their real-time agent status.
-          </div>
+          </p>
         </div>
       </div>
 
@@ -135,6 +138,7 @@ const showDeleteModal = (server: Server) => {
         <Button
           v-if="canWriteServer"
           type="button"
+          class="shadow-primary/10 rounded-full shadow-lg transition-transform active:scale-95"
           @click="showRegisterModal"
         >
           <PlusIcon />
@@ -144,7 +148,7 @@ const showDeleteModal = (server: Server) => {
     </div>
   </section>
 
-  <section class="mt-8 space-y-4">
+  <section class="mt-12 space-y-4">
     <div class="flex flex-wrap-reverse items-center justify-between gap-4 sm:flex-wrap">
       <div class="flex-auto sm:flex-1">
         <InputGroup>
@@ -227,3 +231,9 @@ const showDeleteModal = (server: Server) => {
     <DataNotFound v-else-if="notFound" />
   </section>
 </template>
+
+<style scoped>
+.font-black {
+  font-weight: 900;
+}
+</style>

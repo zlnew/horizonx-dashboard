@@ -160,33 +160,68 @@ const handleLogsCopy = (copy: (text: string) => Promise<void>) => {
 </script>
 
 <template>
-  <template v-if="job">
-    <section class="mt-8">
-      <Card>
-        <CardHeader>
-          <CardTitle>Activity Details</CardTitle>
-          <CardDescription>
-            <div class="text-muted-foreground flex flex-wrap items-center gap-1">
-              <span class="font-bold">{{ jobTypeLabel(job.type) }}</span>
-              <span>&middot;</span>
-              <span>
+  <div
+    v-if="job"
+    class="space-y-12"
+  >
+    <!-- Activity Metadata Overview -->
+    <section>
+      <Card class="border-border/50 bg-card/30 overflow-hidden backdrop-blur-md">
+        <CardHeader class="border-border/50 flex-row items-center justify-between border-b pb-6">
+          <div class="flex items-center gap-4">
+            <div class="bg-primary/10 text-primary rounded-xl p-2.5">
+              <ClipboardIcon :size="20" />
+            </div>
+            <div>
+              <CardTitle class="text-xl font-black tracking-tight uppercase"
+                >Execution Report</CardTitle
+              >
+              <CardDescription class="text-xs font-medium tracking-widest uppercase opacity-60">
+                Queued
                 {{
                   job.queued_at ? formatDate(new Date(job.queued_at), 'DD MMM, YYYY HH:mm') : '-'
                 }}
-              </span>
+              </CardDescription>
             </div>
-          </CardDescription>
+          </div>
+          <CardAction>
+            <AppDeployBadge
+              :status="job.status"
+              class="px-3 py-1 text-xs font-black tracking-widest uppercase"
+            />
+          </CardAction>
         </CardHeader>
-        <CardContent>
-          <div class="space-y-6">
-            <div class="flex items-center gap-2">
-              <AppDeployBadge :status="job.status" />
+        <CardContent class="px-8 pt-8">
+          <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+            <div class="border-accent flex flex-col gap-2 border-l-2 pl-4">
+              <span
+                class="text-muted-foreground/60 text-xs leading-none font-black tracking-widest uppercase"
+                >Job Classification</span
+              >
+              <span class="text-sm leading-none font-bold tracking-tight uppercase">{{
+                jobTypeLabel(job.type)
+              }}</span>
+            </div>
+
+            <div
+              class="border-accent flex flex-col gap-2 border-l-2 pl-4 md:col-span-2 lg:col-span-1"
+            >
+              <span
+                class="text-muted-foreground/60 text-xs leading-none font-black tracking-widest uppercase"
+                >Processing Pipeline</span
+              >
               <div
                 v-if="job.started_at && job.finished_at && job.status === JobStatus.SUCCESS"
-                class="text-muted-foreground text-sm"
+                class="text-sm leading-none font-bold tracking-tight uppercase"
               >
-                (Finished in
-                {{ formatDuration(new Date(job.started_at), new Date(job.finished_at)) }})
+                Finished in
+                {{ formatDuration(new Date(job.started_at), new Date(job.finished_at)) }}
+              </div>
+              <div
+                v-else
+                class="text-sm leading-none font-bold tracking-tight uppercase italic opacity-40"
+              >
+                {{ job.status }}
               </div>
             </div>
           </div>
@@ -194,28 +229,49 @@ const handleLogsCopy = (copy: (text: string) => Promise<void>) => {
       </Card>
     </section>
 
-    <section class="mt-8">
-      <Card>
-        <CardHeader>
-          <CardTitle>Logs</CardTitle>
-          <CardDescription>Detailed logs generated during the process.</CardDescription>
+    <!-- Activity Logs Section -->
+    <section>
+      <Card class="border-border/50 backdrop-blur-xl">
+        <CardHeader class="border-border/50 flex-row items-center justify-between border-b pb-6">
+          <div class="flex items-center gap-4">
+            <div class="bg-accent/50 text-muted-foreground rounded-xl p-2.5">
+              <CheckIcon
+                v-if="copiedLogs"
+                class="text-green-500"
+              />
+              <ClipboardIcon v-else />
+            </div>
+            <div>
+              <CardTitle class="text-xl font-black tracking-tight uppercase"
+                >Terminal Output</CardTitle
+              >
+              <CardDescription class="text-xs font-medium tracking-widest uppercase opacity-60"
+                >Raw process execution output and system signals</CardDescription
+              >
+            </div>
+          </div>
           <CardAction>
             <Button
-              variant="secondary"
-              size="icon-lg"
+              variant="outline"
+              size="sm"
+              class="rounded-full text-xs font-black tracking-tight uppercase active:scale-95"
               @click="handleLogsCopy(copyLogs)"
             >
-              <CheckIcon v-if="copiedLogs" />
-              <ClipboardIcon v-else />
+              <ClipboardIcon class="mr-2 size-3.5" />
+              Export Logs
             </Button>
           </CardAction>
         </CardHeader>
-        <CardContent>
-          <LogResult :data="job.logs" />
+        <CardContent class="p-0">
+          <div
+            class="custom-scrollbar max-h-[600px] overflow-y-auto p-6 font-mono text-xs leading-relaxed"
+          >
+            <LogResult :data="job.logs" />
+          </div>
         </CardContent>
       </Card>
     </section>
-  </template>
+  </div>
 
   <DataLoading v-else-if="loading" />
   <DataNotFound v-else />
