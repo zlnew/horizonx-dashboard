@@ -23,7 +23,18 @@ const router = createRouter({
       component: () => import('@/pages/ServerSelectPage.vue')
     },
     {
+      name: 'home',
       path: '/',
+      component: () => import('@/pages/HomePage.vue')
+    },
+    {
+      name: 'privacy',
+      path: '/privacy',
+      component: () => import('@/pages/PrivacyPage.vue')
+    },
+    {
+      path: '/dashboard',
+      name: 'dashboard',
       redirect: { name: 'system-monitor' },
       component: MainLayout,
       children: [

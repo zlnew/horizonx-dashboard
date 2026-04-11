@@ -63,7 +63,7 @@ const onSubmit = form.handleSubmit((values) => {
       return
     }
 
-    router.push({ path: '/' })
+    router.push({ name: 'dashboard' })
   })
 })
 </script>
