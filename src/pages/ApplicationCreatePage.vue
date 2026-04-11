@@ -188,7 +188,7 @@ const onSubmit = handleSubmit(async () => {
           <div class="relative flex flex-col items-center">
             <StepperSeparator
               v-if="item.step !== steps[steps.length - 1]?.step"
-              class="bg-border/20 group-data-[state=completed]:bg-primary absolute top-[44px] left-[18px] block h-[120%] w-0.5 shrink-0 rounded-full transition-colors duration-500"
+              class="bg-border/20 group-data-[state=completed]:bg-primary absolute top-11 left-[18px] block h-[120%] w-0.5 shrink-0 rounded-full transition-colors duration-500"
             />
 
             <StepperTrigger

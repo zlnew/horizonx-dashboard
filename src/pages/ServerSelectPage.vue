@@ -42,7 +42,7 @@ const fetchServers = async () => {
 const selectServer = (id: string) => {
   serverID.value = id
   setTimeout(() => {
-    router.replace('/')
+    router.replace('/dashboard')
   }, 150)
 }
 

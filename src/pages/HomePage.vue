@@ -1,12 +1,17 @@
 <script setup lang="ts">
+import { storeToRefs } from 'pinia'
 import { MonitorIcon, RocketIcon, ShieldCheckIcon, UsersIcon } from 'lucide-vue-next'
 import AppLogo from '@/components/AppLogo.vue'
 import { Button } from '@/components/ui/button'
 import { usePageMeta } from '@/composables/page-meta'
+import useAuthStore from '@/stores/auth'
 
 usePageMeta({
   title: 'Infrastructure Monitoring & Deployment'
 })
+
+const authStore = useAuthStore()
+const { isAuthenticated } = storeToRefs(authStore)
 
 const year = new Date().getFullYear()
 </script>
@@ -54,7 +59,18 @@ const year = new Date().getFullYear()
           size="sm"
           as-child
         >
-          <router-link :to="{ name: 'auth.login' }">Login</router-link>
+          <RouterLink
+            v-if="isAuthenticated"
+            :to="{ name: 'dashboard' }"
+          >
+            Dashboard
+          </RouterLink>
+          <RouterLink
+            v-else
+            :to="{ name: 'auth.login' }"
+          >
+            Login
+          </RouterLink>
         </Button>
       </div>
     </header>
@@ -100,7 +116,9 @@ const year = new Date().getFullYear()
           class="shadow-primary/20 h-14 rounded-full px-10 text-lg font-bold shadow-lg"
           as-child
         >
-          <router-link :to="{ name: 'auth.login' }">Start Operating</router-link>
+          <RouterLink :to="{ name: isAuthenticated ? 'dashboard' : 'auth.login' }">
+            Start Operating
+          </RouterLink>
         </Button>
         <Button
           size="lg"
@@ -254,11 +272,12 @@ const year = new Date().getFullYear()
           <div
             class="text-muted-foreground/40 mb-2 flex items-center gap-4 text-[10px] font-bold tracking-widest uppercase"
           >
-            <router-link
+            <RouterLink
               :to="{ name: 'privacy' }"
               class="hover:text-primary transition-colors"
-              >Privacy Policy</router-link
             >
+              Privacy Policy
+            </RouterLink>
             <span class="bg-border size-1 rounded-full"></span>
             <a
               href="https://github.com/zlnew/horizonx"

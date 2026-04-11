@@ -266,7 +266,7 @@ const showRestartConfirmation = () => {
                     <Button
                       as-child
                       variant="outline"
-                      class="hover:bg-primary hover:text-primary-foreground hover:border-primary rounded-full px-6 transition-all active:scale-95"
+                      class="hover:bg-primary hover:text-primary-foreground dark:hover:text-primary hover:border-primary rounded-full px-6 transition-all active:scale-95"
                     >
                       <a
                         :href="application.site_url"

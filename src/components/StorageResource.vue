@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
-import { ThermometerIcon } from 'lucide-vue-next'
+import { HardDriveIcon, MemoryStickIcon, ThermometerIcon } from 'lucide-vue-next'
 import { Card, CardContent } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { useNumber } from '@/composables/number'
