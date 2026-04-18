@@ -61,27 +61,33 @@ const handleSearch = (e: KeyboardEvent) => {
                 <component
                   :is="item.icon"
                   v-if="item.icon"
+                  :size="16"
+                  class="opacity-60"
                 />
-                <span>{{ item.label }}</span>
+                <span class="text-xs font-bold tracking-tight uppercase">{{ item.label }}</span>
               </RouterLink>
             </CommandItem>
           </CommandGroup>
-          <CommandSeparator />
+          <CommandSeparator class="bg-border/50" />
         </template>
         <template v-else-if="parent.to">
           <CommandItem
             :value="parent.value"
             as-child
+            class="rounded-lg"
           >
             <RouterLink
               :to="parent.to"
+              class="flex items-center gap-2"
               @click.capture="close"
             >
               <component
                 :is="parent.icon"
                 v-if="parent.icon"
+                :size="16"
+                class="opacity-60"
               />
-              <span>{{ parent.label }}</span>
+              <span class="text-xs font-bold tracking-tight uppercase">{{ parent.label }}</span>
             </RouterLink>
           </CommandItem>
         </template>

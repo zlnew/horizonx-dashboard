@@ -40,62 +40,99 @@ const handleLogout = async () => {
     <DropdownMenuTrigger as-child>
       <SidebarMenuButton
         size="lg"
-        class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+        class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground group"
       >
-        <Avatar class="h-8 w-8 rounded-lg">
-          <AvatarFallback class="bg-foreground/10 rounded-lg">
+        <Avatar
+          class="border-border/50 group-hover:border-primary/50 h-8 w-8 rounded-full border transition-colors"
+        >
+          <AvatarFallback class="bg-primary/10 text-[10px] font-black uppercase">
             {{ user.name.slice(0, 2) }}
           </AvatarFallback>
         </Avatar>
         <div class="hidden flex-1 text-left text-sm leading-tight lg:grid">
-          <span class="truncate font-medium">{{ user.name }}</span>
-          <span class="truncate text-xs">{{ user.email }}</span>
+          <span class="truncate font-black tracking-tight uppercase">{{ user.name }}</span>
+          <span
+            class="text-muted-foreground/60 truncate text-[10px] font-bold tracking-widest uppercase"
+          >
+            {{ user.role.name }}
+          </span>
         </div>
-        <ChevronDownIcon class="ml-auto size-4" />
+        <ChevronDownIcon class="ml-auto size-4 opacity-40" />
       </SidebarMenuButton>
     </DropdownMenuTrigger>
     <DropdownMenuContent
-      class="w-[--reka-dropdown-menu-trigger-width] min-w-56 rounded"
+      class="border-border/50 bg-card/80 w-[--reka-dropdown-menu-trigger-width] min-w-64 rounded-xl backdrop-blur-xl"
       side="bottom"
       align="end"
-      :side-offset="4"
+      :side-offset="8"
     >
       <DropdownMenuLabel class="p-0 font-normal">
-        <div class="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-          <Avatar class="h-8 w-8 rounded-lg">
-            <AvatarFallback class="bg-foreground/10 rounded-lg">
+        <div class="flex items-center gap-3 px-3 py-3 text-left">
+          <Avatar class="border-primary/10 h-10 w-10 rounded-full border-2">
+            <AvatarFallback class="bg-primary/5 text-xs font-black uppercase">
               {{ user.name.slice(0, 2) }}
             </AvatarFallback>
           </Avatar>
           <div class="grid flex-1 text-left text-sm leading-tight">
-            <span class="truncate font-medium">{{ user.name }}</span>
-            <span class="truncate text-xs">{{ user.email }}</span>
+            <div class="flex items-center gap-2">
+              <span class="truncate font-black tracking-tight uppercase">{{ user.name }}</span>
+              <span
+                class="bg-primary/10 border-primary/20 text-primary rounded-full border px-1.5 py-0.5 text-[8px] font-black tracking-widest uppercase"
+              >
+                {{ user.role.name }}
+              </span>
+            </div>
+            <span
+              class="text-muted-foreground/60 flex items-center gap-1.5 text-[10px] font-bold tracking-widest uppercase"
+            >
+              <span class="size-1.5 animate-pulse rounded-full bg-green-500"></span>
+              Session Active
+            </span>
           </div>
         </div>
       </DropdownMenuLabel>
-      <DropdownMenuSeparator />
-      <DropdownMenuGroup>
-        <DropdownMenuItem as-child>
+      <DropdownMenuSeparator class="bg-border/50" />
+      <DropdownMenuGroup class="p-1">
+        <DropdownMenuItem
+          as-child
+          class="rounded-lg px-3 py-2"
+        >
           <RouterLink :to="{ name: 'account' }">
-            <UserCircleIcon />
-            Account
+            <UserCircleIcon class="size-4 opacity-60" />
+            <span class="text-xs font-bold tracking-wider uppercase">Account Settings</span>
           </RouterLink>
         </DropdownMenuItem>
       </DropdownMenuGroup>
-      <DropdownMenuSeparator />
-      <DropdownMenuItem @click="isDark = !isDark">
-        <SunIcon v-if="isDark" />
-        <MoonIcon v-else />
-        <span>{{ isDark ? 'Light Mode' : 'Dark Mode' }}</span>
-      </DropdownMenuItem>
-      <DropdownMenuSeparator />
-      <DropdownMenuItem
-        variant="destructive"
-        @click="handleLogout"
-      >
-        <LogOutIcon />
-        Log out
-      </DropdownMenuItem>
+      <DropdownMenuSeparator class="bg-border/50" />
+      <div class="p-1">
+        <DropdownMenuItem
+          class="rounded-lg px-3 py-2"
+          @click="isDark = !isDark"
+        >
+          <SunIcon
+            v-if="isDark"
+            class="size-4 opacity-60"
+          />
+          <MoonIcon
+            v-else
+            class="size-4 opacity-60"
+          />
+          <span class="text-xs font-bold tracking-wider uppercase">{{
+            isDark ? 'Switch to Light' : 'Switch to Dark'
+          }}</span>
+        </DropdownMenuItem>
+      </div>
+      <DropdownMenuSeparator class="bg-border/50" />
+      <div class="p-1">
+        <DropdownMenuItem
+          variant="destructive"
+          class="focus:bg-destructive/10 rounded-lg px-3 py-2"
+          @click="handleLogout"
+        >
+          <LogOutIcon class="size-4" />
+          <span class="text-xs font-black tracking-widest uppercase">Terminate Session</span>
+        </DropdownMenuItem>
+      </div>
     </DropdownMenuContent>
   </DropdownMenu>
 </template>

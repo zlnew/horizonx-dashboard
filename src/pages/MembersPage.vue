@@ -186,20 +186,22 @@ const showDeleteModal = (user: User) => {
                     <Button
                       type="button"
                       size="icon-sm"
-                      variant="outline"
+                      variant="ghost"
+                      class="border-border/50 bg-accent/30 hover:bg-primary/10 hover:text-primary hover:border-primary/30 rounded-lg border transition-all"
                       aria-label="Edit user"
                       @click="showUpdateModal(row)"
                     >
-                      <SquarePenIcon />
+                      <SquarePenIcon :size="16" />
                     </Button>
                     <Button
                       type="button"
                       size="icon-sm"
-                      variant="destructive"
+                      variant="ghost"
+                      class="border-border/50 bg-accent/30 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30 rounded-lg border transition-all"
                       aria-label="Delete user"
                       @click="showDeleteModal(row)"
                     >
-                      <TrashIcon />
+                      <TrashIcon :size="16" />
                     </Button>
                   </div>
                 </TableCell>

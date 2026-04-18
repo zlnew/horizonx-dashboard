@@ -23,13 +23,18 @@ const { breadcrumb } = storeToRefs(appStore)
       >
         <template v-if="i === breadcrumb.length - 1">
           <BreadcrumbItem>
-            <BreadcrumbPage class="line-clamp-1">{{ br.label }}</BreadcrumbPage>
+            <BreadcrumbPage class="line-clamp-1 font-black tracking-tight uppercase">{{
+              br.label
+            }}</BreadcrumbPage>
           </BreadcrumbItem>
         </template>
 
         <template v-else>
           <BreadcrumbItem class="hidden md:block">
-            <BreadcrumbLink as-child>
+            <BreadcrumbLink
+              as-child
+              class="text-[11px] font-bold tracking-widest uppercase opacity-60 hover:opacity-100"
+            >
               <template v-if="br.to">
                 <RouterLink :to="br.to">
                   {{ br.label }}

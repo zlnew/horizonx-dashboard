@@ -9,10 +9,10 @@ import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/
       <EmptyMedia variant="icon">
         <PlugIcon />
       </EmptyMedia>
-      <EmptyTitle>Agent is offline</EmptyTitle>
-      <EmptyDescription>
-        The monitoring agent isn’t responding right now. Check if the server is running and the
-        agent service is active.
+      <EmptyTitle class="font-black tracking-tight uppercase">Terminal Disconnected</EmptyTitle>
+      <EmptyDescription class="text-xs font-medium tracking-wide">
+        The remote monitoring agent is currently unreachable. Please verify server connectivity and
+        ensure the agent process is active on the host machine.
       </EmptyDescription>
     </EmptyHeader>
   </Empty>

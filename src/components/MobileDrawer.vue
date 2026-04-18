@@ -27,7 +27,9 @@ const openSearch = () => {
 </script>
 
 <template>
-  <div class="bg-background sticky bottom-0 h-16 w-full border-t sm:hidden">
+  <div
+    class="border-border/50 bg-background/60 sticky bottom-0 z-50 h-16 w-full border-t backdrop-blur-md sm:hidden"
+  >
     <div class="grid h-full w-full grid-cols-4 items-center justify-evenly gap-2 px-4">
       <template
         v-for="m in overviewMenu?.items"
@@ -43,8 +45,11 @@ const openSearch = () => {
               <component
                 :is="m.icon"
                 v-if="m.icon"
+                :size="18"
               />
-              <div class="text-muted-foreground text-[10px]">{{ m.label }}</div>
+              <div class="text-[9px] font-black tracking-widest uppercase opacity-60">
+                {{ m.label }}
+              </div>
             </div>
           </RouterLink>
         </Button>
@@ -55,8 +60,8 @@ const openSearch = () => {
         @click="openSearch"
       >
         <div class="flex flex-col items-center gap-1">
-          <SearchIcon />
-          <div class="text-muted-foreground text-[10px]">Search</div>
+          <SearchIcon :size="18" />
+          <div class="text-[9px] font-black tracking-widest uppercase opacity-60">Search</div>
         </div>
       </Button>
       <Popover #="{ close }">
@@ -66,14 +71,15 @@ const openSearch = () => {
             class="h-auto"
           >
             <div class="flex flex-col items-center gap-1">
-              <SettingsIcon />
-              <div class="text-muted-foreground text-[10px]">Settings</div>
+              <SettingsIcon :size="18" />
+              <div class="text-[9px] font-black tracking-widest uppercase opacity-60">Settings</div>
             </div>
           </Button>
         </PopoverTrigger>
         <PopoverContent
-          class="w-full"
+          class="border-border/50 bg-card/80 w-full backdrop-blur-xl"
           align="end"
+          :side-offset="12"
         >
           <div class="flex flex-col items-start gap-1">
             <template
@@ -90,15 +96,20 @@ const openSearch = () => {
                   <component
                     :is="m.icon"
                     v-if="m.icon"
+                    :size="16"
                   />
-                  <span>{{ m.label }}</span>
+                  <span class="text-xs font-bold tracking-tight uppercase">{{ m.label }}</span>
                 </RouterLink>
               </Button>
-              <Separator />
+              <Separator class="bg-border/50" />
             </template>
-            <div class="mt-4 flex flex-col gap-1">
-              <div class="text-muted-foreground text-xs">Current Server:</div>
-              <ServerSelector />
+            <div class="mt-4 flex w-full flex-col gap-2">
+              <div
+                class="text-muted-foreground/60 text-[10px] font-black tracking-widest uppercase"
+              >
+                Current Server
+              </div>
+              <ServerSelector class="w-full" />
             </div>
           </div>
         </PopoverContent>
