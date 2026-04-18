@@ -50,7 +50,8 @@ export default defineConfig(({ mode }) => {
         workbox: {
           cleanupOutdatedCaches: true,
           clientsClaim: true,
-          skipWaiting: true
+          skipWaiting: true,
+          navigateFallbackDenylist: [/^\/api\//]
         }
       })
     ],
