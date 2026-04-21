@@ -111,7 +111,7 @@ export const useFetch = () => {
         const unsafeMethods = ['POST', 'PUT', 'DELETE', 'PATCH']
 
         if (unsafeMethods.includes(method)) {
-          const csrfToken = getCookie('csrf_token')
+          const csrfToken = getCookie('horizonx_csrf_token')
           if (csrfToken) {
             options.headers = {
               ...options.headers,
