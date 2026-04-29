@@ -1,5 +1,9 @@
 import { useFetch as useVueFetch } from '@vueuse/core'
 
+let isRefreshing = false
+let refreshPromise: Promise<boolean> | null = null
+let isRedirecting = false
+
 const getCookie = (name: string) => {
   const value = `; ${document.cookie}`
   const parts = value.split(`; ${name}=`)
@@ -24,8 +28,13 @@ export const getHealth = async () => {
   return true
 }
 
-let isRefreshing = false
-let refreshPromise: Promise<boolean> | null = null
+const redirectToLogin = async () => {
+  if (isRedirecting) return
+  isRedirecting = true
+
+  console.warn('Redirecting to login...')
+  window.location.href = '/auth/login'
+}
 
 const refreshCSRFToken = async (): Promise<boolean> => {
   if (isRefreshing && refreshPromise) {
@@ -33,16 +42,13 @@ const refreshCSRFToken = async (): Promise<boolean> => {
   }
 
   isRefreshing = true
+
   refreshPromise = getHealth()
-    .then(() => {
+    .then(() => true)
+    .catch(() => false)
+    .finally(() => {
       isRefreshing = false
       refreshPromise = null
-      return true
-    })
-    .catch(() => {
-      isRefreshing = false
-      refreshPromise = null
-      return false
     })
 
   return refreshPromise
@@ -50,22 +56,52 @@ const refreshCSRFToken = async (): Promise<boolean> => {
 
 const isNetworkOrParseError = (error: unknown): boolean => {
   if (!error) return false
-  const message = error instanceof Error ? error.message : String(error)
-  return (
-    message.includes('Failed to fetch') ||
-    message.includes('NetworkError') ||
-    message.includes('Load failed') ||
-    message.includes('Unexpected token') ||
-    message.includes('not valid JSON') ||
-    message.includes('JSON.parse') ||
-    message.includes('fetch failed')
-  )
+  const msg = error instanceof Error ? error.message : String(error)
+
+  return [
+    'Failed to fetch',
+    'NetworkError',
+    'Load failed',
+    'Unexpected token',
+    'not valid JSON',
+    'JSON.parse',
+    'fetch failed'
+  ].some((e) => msg.includes(e))
 }
 
 export const useFetch = () => {
   const fetch = <T>(url: string) => {
     return useVueFetch<T>(`/api/${url}`, {
       async onFetchError(context) {
+        const status = context.response?.status
+        const requestUrl = context.context.url
+
+        // --- 401
+        if (status === 401 && !requestUrl.includes('/auth/login')) {
+          await redirectToLogin()
+          return {
+            ...context,
+            error: new Error('Session expired. Please login again.')
+          }
+        }
+
+        // --- 403 (CSRF Expired)
+        if (status === 403) {
+          const refreshed = await refreshCSRFToken()
+
+          if (!refreshed) {
+            await redirectToLogin()
+            return {
+              ...context,
+              error: new Error('Session expired. Please login again.')
+            }
+          }
+
+          context.error = new Error('Session refreshed. Please click again to continue.')
+          return context
+        }
+
+        // --- Network or Parse errors
         if (!context.response || isNetworkOrParseError(context.error)) {
           context.error = new Error(
             'Unable to reach the server. Please check your connection and try again.'
@@ -73,32 +109,9 @@ export const useFetch = () => {
           return context
         }
 
-        if (context.response.status === 401 && context.context.url !== '/api/auth/login') {
-          console.warn('Session expired. Redirecting to login.')
-          window.location.href = '/auth/login'
-          return context
-        }
-
-        if (context.response.status === 403) {
-          console.warn('CSRF token expired. Attempting refresh...')
-          const refreshed = await refreshCSRFToken()
-
-          if (!refreshed) {
-            console.warn('CSRF refresh failed. Redirecting to login.')
-            window.location.href = '/auth/login'
-            return context
-          }
-
-          context.error = new Error(
-            'Your session token was refreshed. Please try your action again.'
-          )
-          return context
-        }
-
         if (context.error) {
-          if (context.data && context.data.message) {
-            context.error = new Error(context.data.message)
-          }
+          const message = context.data?.message || context.data?.error || context.error.message
+          context.error = new Error(message)
         }
 
         return context
