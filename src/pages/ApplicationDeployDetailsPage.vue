@@ -3,7 +3,7 @@ import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { onBeforeRouteUpdate } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useClipboard } from '@vueuse/core'
-import { CheckIcon, ClipboardIcon } from 'lucide-vue-next'
+import { CheckIcon, ClipboardIcon, GitCompareIcon } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
 import AppDeployBadge from '@/components/AppDeployBadge.vue'
 import DataLoading from '@/components/DataLoading.vue'
@@ -34,6 +34,9 @@ const applicationDeploymentStore = useApplicationDeploymentStore()
 const { selectedApplication: application, appID, canReadApp } = storeToRefs(applicationStore)
 const { selectedDeployment: deployment, deploymentID } = storeToRefs(applicationDeploymentStore)
 const loading = ref(false)
+
+const deploymentDiff = ref<DeploymentDiff | null>(null)
+const diffLoading = ref(false)
 
 let deploymentSub: WSSubscribtion | null = null
 let logSub: WSSubscribtion | null = null
@@ -103,6 +106,25 @@ const fetchDeployment = async (deploymentID: number) => {
     toast.error(fetchError.message)
   } finally {
     loading.value = false
+  }
+
+  fetchDeploymentDiff(deploymentID)
+}
+
+const fetchDeploymentDiff = async (deploymentID: number) => {
+  if (!canReadApp.value) {
+    return
+  }
+
+  diffLoading.value = true
+
+  try {
+    const diff = await applicationDeploymentStore.getDeploymentDiff(appID.value, deploymentID)
+    deploymentDiff.value = diff ?? null
+  } catch {
+    deploymentDiff.value = null
+  } finally {
+    diffLoading.value = false
   }
 }
 
@@ -256,6 +278,89 @@ const handleLogsCopy = (copy: (text: string) => Promise<void>) => {
                 </div>
               </div>
             </div>
+          </div>
+        </CardContent>
+      </Card>
+    </section>
+
+    <!-- Deployment Diff Section (P3-19) -->
+    <section v-if="deploymentDiff">
+      <Card class="border-border/50 backdrop-blur-xl">
+        <CardHeader class="border-border/50 flex-row items-center justify-between border-b pb-6">
+          <div class="flex items-center gap-4">
+            <div class="bg-primary/10 text-primary rounded-xl p-2.5">
+              <GitCompareIcon :size="20" />
+            </div>
+            <div>
+              <CardTitle class="text-xl font-black tracking-tight uppercase">Deployment Diff</CardTitle>
+              <CardDescription class="text-xs font-medium tracking-widest uppercase opacity-60">
+                <template v-if="deploymentDiff.has_previous">
+                  {{ deploymentDiff.commit_from?.slice(0, 7) ?? 'n/a' }} →
+                  {{ deploymentDiff.commit_to?.slice(0, 7) ?? 'n/a' }}
+                </template>
+                <template v-else>First deployment — no previous state</template>
+              </CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent class="px-8 pt-6">
+          <div v-if="diffLoading" class="py-6 text-sm text-muted-foreground">Loading diff…</div>
+          <div v-else class="space-y-6">
+            <div v-if="deploymentDiff.env_additions.length" class="space-y-2">
+              <p class="text-xs font-black tracking-widest text-green-500 uppercase">Added env vars</p>
+              <div class="border-border/40 divide-border/40 divide-y rounded-lg border">
+                <div
+                  v-for="entry in deploymentDiff.env_additions"
+                  :key="entry.key"
+                  class="flex items-center justify-between gap-4 px-4 py-2.5"
+                >
+                  <code class="text-sm font-semibold">{{ entry.key }}</code>
+                  <code class="text-muted-foreground text-xs break-all text-right">{{ entry.new }}</code>
+                </div>
+              </div>
+            </div>
+
+            <div v-if="deploymentDiff.env_updates.length" class="space-y-2">
+              <p class="text-xs font-black tracking-widest text-amber-500 uppercase">Changed env vars</p>
+              <div class="border-border/40 divide-border/40 divide-y rounded-lg border">
+                <div
+                  v-for="entry in deploymentDiff.env_updates"
+                  :key="entry.key"
+                  class="flex items-center justify-between gap-4 px-4 py-2.5"
+                >
+                  <code class="text-sm font-semibold">{{ entry.key }}</code>
+                  <div class="text-right">
+                    <code class="text-muted-foreground text-xs line-through">{{ entry.old }}</code>
+                    <code class="text-xs text-green-500"> → {{ entry.new }}</code>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div v-if="deploymentDiff.env_removals.length" class="space-y-2">
+              <p class="text-xs font-black tracking-widest text-red-500 uppercase">Removed env vars</p>
+              <div class="border-border/40 divide-border/40 divide-y rounded-lg border">
+                <div
+                  v-for="entry in deploymentDiff.env_removals"
+                  :key="entry.key"
+                  class="flex items-center justify-between gap-4 px-4 py-2.5"
+                >
+                  <code class="text-sm font-semibold">{{ entry.key }}</code>
+                  <code class="text-muted-foreground text-xs line-through">{{ entry.old }}</code>
+                </div>
+              </div>
+            </div>
+
+            <p
+              v-if="
+                !deploymentDiff.env_additions.length &&
+                !deploymentDiff.env_updates.length &&
+                !deploymentDiff.env_removals.length
+              "
+              class="text-sm text-muted-foreground"
+            >
+              No environment variable changes in this deployment.
+            </p>
           </div>
         </CardContent>
       </Card>

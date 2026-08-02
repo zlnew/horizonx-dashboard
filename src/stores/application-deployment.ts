@@ -58,6 +58,15 @@ const useApplicationDeploymentStore = defineStore('application-deployment', () =
     }
   }
 
+  const getDeploymentDiff = async (appID: number, deploymentID: number) => {
+    try {
+      const res = await api(appID).getDiff<ApiResponse<DeploymentDiff>>(deploymentID)
+      return res.data
+    } catch (error) {
+      throw error
+    }
+  }
+
   const cleanupState = () => {
     deployments.value = []
     meta.value = null
@@ -81,6 +90,7 @@ const useApplicationDeploymentStore = defineStore('application-deployment', () =
     getDeployments,
     getRecentDeployments,
     showDeployment,
+    getDeploymentDiff,
     cleanupState
   }
 })
