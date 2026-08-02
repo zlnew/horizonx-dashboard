@@ -2,7 +2,14 @@
 import { computed, defineAsyncComponent, onMounted, onUnmounted, watch } from 'vue'
 import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
-import { PlusIcon, SearchIcon, ServerIcon, SquarePenIcon, TrashIcon } from 'lucide-vue-next'
+import {
+  BoxesIcon,
+  PlusIcon,
+  SearchIcon,
+  ServerIcon,
+  SquarePenIcon,
+  TrashIcon
+} from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
 import DataLoading from '@/components/DataLoading.vue'
 import DataNotFound from '@/components/DataNotFound.vue'
@@ -114,6 +121,14 @@ const showDeleteModal = (server: Server) => {
   serverStore.selectedServer = server
   dialog.open(defineAsyncComponent(() => import('@/components/dialogs/ServerDeleteDialog.vue')))
 }
+
+// P3-20: fleet overview summary.
+const fleetSummary = computed(() => {
+  const online = servers.value.filter((s) => s.is_online).length
+  const offline = servers.value.length - online
+  const apps = servers.value.reduce((sum, s) => sum + (s.application_count ?? 0), 0)
+  return { total: servers.value.length, online, offline, apps }
+})
 </script>
 
 <template>
@@ -148,6 +163,54 @@ const showDeleteModal = (server: Server) => {
     </div>
   </section>
 
+  <!-- P3-20: fleet summary cards -->
+  <section class="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
+    <Card class="border-border/50 bg-card/30 backdrop-blur-md">
+      <CardContent class="flex items-center gap-3 py-5">
+        <div class="bg-primary/10 text-primary rounded-xl p-2.5">
+          <ServerIcon :size="18" />
+        </div>
+        <div>
+          <p class="text-2xl leading-none font-black">{{ fleetSummary.total }}</p>
+          <p class="text-muted-foreground text-xs font-medium tracking-widest uppercase">Servers</p>
+        </div>
+      </CardContent>
+    </Card>
+    <Card class="border-border/50 bg-card/30 backdrop-blur-md">
+      <CardContent class="flex items-center gap-3 py-5">
+        <div class="bg-emerald-500/10 text-emerald-500 rounded-xl p-2.5">
+          <ServerIcon :size="18" />
+        </div>
+        <div>
+          <p class="text-2xl leading-none font-black">{{ fleetSummary.online }}</p>
+          <p class="text-muted-foreground text-xs font-medium tracking-widest uppercase">Online</p>
+        </div>
+      </CardContent>
+    </Card>
+    <Card class="border-border/50 bg-card/30 backdrop-blur-md">
+      <CardContent class="flex items-center gap-3 py-5">
+        <div class="bg-red-500/10 text-red-500 rounded-xl p-2.5">
+          <ServerIcon :size="18" />
+        </div>
+        <div>
+          <p class="text-2xl leading-none font-black">{{ fleetSummary.offline }}</p>
+          <p class="text-muted-foreground text-xs font-medium tracking-widest uppercase">Offline</p>
+        </div>
+      </CardContent>
+    </Card>
+    <Card class="border-border/50 bg-card/30 backdrop-blur-md">
+      <CardContent class="flex items-center gap-3 py-5">
+        <div class="bg-sky-500/10 text-sky-500 rounded-xl p-2.5">
+          <BoxesIcon :size="18" />
+        </div>
+        <div>
+          <p class="text-2xl leading-none font-black">{{ fleetSummary.apps }}</p>
+          <p class="text-muted-foreground text-xs font-medium tracking-widest uppercase">Apps</p>
+        </div>
+      </CardContent>
+    </Card>
+  </section>
+
   <section class="mt-12 space-y-4">
     <div class="flex flex-wrap-reverse items-center justify-between gap-4 sm:flex-wrap">
       <div class="flex-auto sm:flex-1">
@@ -174,6 +237,7 @@ const showDeleteModal = (server: Server) => {
                 <TableHead>Name</TableHead>
                 <TableHead>IP Address</TableHead>
                 <TableHead>Agent Status</TableHead>
+                <TableHead class="text-end">Apps</TableHead>
                 <TableHead
                   v-if="canWriteServer"
                   class="text-end"
@@ -197,6 +261,9 @@ const showDeleteModal = (server: Server) => {
                   <Badge :variant="row.is_online ? 'default' : 'outline'">
                     {{ row.is_online ? 'Online' : 'Offline' }}
                   </Badge>
+                </TableCell>
+                <TableCell class="text-end font-semibold">
+                  {{ row.application_count ?? 0 }}
                 </TableCell>
                 <TableCell v-if="canWriteServer">
                   <div class="flex items-center justify-end gap-2">

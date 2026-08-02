@@ -2,6 +2,7 @@ import type { Component } from 'vue'
 import {
   ChartColumnBigIcon,
   CircleUserIcon,
+  HistoryIcon,
   LayoutGridIcon,
   ServerIcon,
   UsersIcon
@@ -55,6 +56,12 @@ const useApp = () => {
           value: 'servers',
           to: { name: 'servers' },
           icon: ServerIcon
+        },
+        {
+          label: 'Audit Log',
+          value: 'audit log',
+          to: { name: 'audit-logs' },
+          icon: HistoryIcon
         },
         {
           label: 'Members',
