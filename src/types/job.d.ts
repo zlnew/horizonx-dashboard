@@ -56,3 +56,12 @@ type EventJobStatusChanged = {
   trace_id: string
   status: string
 }
+
+type JobStatusCounts = {
+  queued: number
+  running: number
+  success: number
+  failed: number
+  expired: number
+  total: number
+}
