@@ -55,6 +55,13 @@ const useApplicationStore = defineStore('application', () => {
     return validStates.includes(selectedApplication.value?.status ?? '')
   })
 
+  const canRollbackApp = computed(() => {
+    // Rollback replays the last successful deployment's image, so the app
+    // must have a deploy history — only meaningful while running.
+    const validStates = [ApplicationStatus.RUNNING]
+    return validStates.includes(selectedApplication.value?.status ?? '')
+  })
+
   const canStartApp = computed(() => {
     const validStates = [ApplicationStatus.STOPPED]
     return validStates.includes(selectedApplication.value?.status ?? '')
@@ -131,6 +138,14 @@ const useApplicationStore = defineStore('application', () => {
     }
   }
 
+  const rollbackApplication = async (applicationID: number) => {
+    try {
+      return await api.rollback<ApiResponse<Deployment>>(applicationID)
+    } catch (error) {
+      throw error
+    }
+  }
+
   const startApplication = async (applicationID: number) => {
     try {
       return await api.start<ApiResponse>(applicationID)
@@ -178,6 +193,7 @@ const useApplicationStore = defineStore('application', () => {
     canStartApp,
     canStopApp,
     canRestartApp,
+    canRollbackApp,
     getApplications,
     showApplication,
     createApplication,
@@ -187,6 +203,7 @@ const useApplicationStore = defineStore('application', () => {
     startApplication,
     stopApplication,
     restartApplication,
+    rollbackApplication,
     cleanupState
   }
 })

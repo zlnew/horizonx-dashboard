@@ -32,7 +32,7 @@ const { subscribe } = useWebSocket()
 const applicationStore = useApplicationStore()
 const applicationDeploymentStore = useApplicationDeploymentStore()
 
-const { selectedApplication, appID, canReadApp, canWriteApp, canDeployApp } =
+const { selectedApplication, appID, canReadApp, canWriteApp, canDeployApp, canRollbackApp } =
   storeToRefs(applicationStore)
 const { deployments, meta, loading, notFound } = storeToRefs(applicationDeploymentStore)
 
@@ -118,6 +118,14 @@ const showDeployConfirmation = () => {
     )
   )
 }
+
+const showRollbackConfirmation = () => {
+  dialog.open(
+    defineAsyncComponent(
+      () => import('@/components/dialogs/ApplicationRollbackConfirmationDialog.vue')
+    )
+  )
+}
 </script>
 
 <template>
@@ -138,15 +146,27 @@ const showDeployConfirmation = () => {
           </div>
         </div>
         <CardAction v-if="canWriteApp">
-          <Button
-            type="button"
-            class="shadow-primary/20 rounded-full text-xs font-black tracking-tight uppercase shadow-lg transition-all active:scale-95"
-            :disabled="!canDeployApp"
-            @click="showDeployConfirmation"
-          >
-            <PackagePlusIcon class="mr-2 size-3.5" />
-            Force Deploy
-          </Button>
+          <div class="flex items-center gap-2">
+            <Button
+              v-if="canRollbackApp"
+              type="button"
+              variant="destructive"
+              class="shadow-destructive/20 rounded-full text-xs font-black tracking-tight uppercase shadow-lg transition-all active:scale-95"
+              :disabled="!canRollbackApp"
+              @click="showRollbackConfirmation"
+            >
+              Rollback
+            </Button>
+            <Button
+              type="button"
+              class="shadow-primary/20 rounded-full text-xs font-black tracking-tight uppercase shadow-lg transition-all active:scale-95"
+              :disabled="!canDeployApp"
+              @click="showDeployConfirmation"
+            >
+              <PackagePlusIcon class="mr-2 size-3.5" />
+              Force Deploy
+            </Button>
+          </div>
         </CardAction>
       </CardHeader>
 
