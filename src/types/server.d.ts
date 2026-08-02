@@ -6,6 +6,8 @@ type Server = {
   created_at: string
   updated_at: string
 
+  application_count?: number
+
   os_info?: OsInfo | null
 }
 

@@ -10,8 +10,30 @@ type Deployment = {
   finished_at: string | null
   deployed_by: number | null
 
+  env_snapshot?: Record<string, string> | null
+  previous_deployment_id?: number | null
+  previous_commit_hash?: string | null
+
   deployer: User | null
   logs?: Log[]
+}
+
+// P3-19: diff between a deployment and its previous successful one.
+type DeploymentDiff = {
+  deployment_id: number
+  commit_from: string | null
+  commit_to: string | null
+  commit_message: string | null
+  has_previous: boolean
+  env_additions: EnvDiffEntry[]
+  env_removals: EnvDiffEntry[]
+  env_updates: EnvDiffEntry[]
+}
+
+type EnvDiffEntry = {
+  key: string
+  old?: string
+  new?: string
 }
 
 type DeploymentCriteria = Criteria & {

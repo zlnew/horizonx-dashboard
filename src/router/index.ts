@@ -100,6 +100,11 @@ const router = createRouter({
           component: () => import('@/pages/SystemMonitorPage.vue')
         },
         {
+          name: 'audit-logs',
+          path: 'audit-logs',
+          component: () => import('@/pages/AuditLogsPage.vue')
+        },
+        {
           name: 'members',
           path: 'members',
           component: () => import('@/pages/MembersPage.vue')
