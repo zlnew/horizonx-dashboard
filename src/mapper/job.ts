@@ -11,6 +11,10 @@ export const jobTypeLabel = (type: string) => {
       return 'Stopping Application'
     case JobType.APP_RESTART:
       return 'Restarting Application'
+    case JobType.APP_ROLLBACK:
+      return 'Rolling Back Application'
+    default:
+      return type
   }
 }
 

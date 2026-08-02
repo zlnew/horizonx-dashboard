@@ -11,6 +11,14 @@ class ApplicationApi extends Api {
     return this.handleResponse<T>(data.value, error.value)
   }
 
+  public async rollback<T>(resourceId: number) {
+    const { data, error } = await this.fetch(`${this.resource}/${resourceId}/rollback`)
+      .post()
+      .json<T>()
+
+    return this.handleResponse<T>(data.value, error.value)
+  }
+
   public async start<T>(resourceId: number) {
     const { data, error } = await this.fetch(`${this.resource}/${resourceId}/start`)
       .post()
