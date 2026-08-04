@@ -19,6 +19,7 @@
 set -euo pipefail
 
 cd "$(dirname "$0")/.."   # repo root
+REPO_ROOT="$PWD"
 
 VERSION="${1:?usage: scripts/release.sh vX.Y.Z [--dry-run]}"
 DRY_RUN="${2:-}"
@@ -93,7 +94,7 @@ BODY=$(mktemp)
 cat > "$BODY" <<EOF
 ## $VERSION
 
-$(git log --oneline "$(git tag --sort=-version:refname | head -1 2>/dev/null || echo HEAD~10)..HEAD" 2>/dev/null | sed 's/^/- /' | head -40 || true)
+$(git -C "$REPO_ROOT" log --oneline "$(git -C "$REPO_ROOT" tag --sort=-version:refname | head -1 2>/dev/null || echo HEAD~10)..HEAD" 2>/dev/null | sed 's/^/- /' | head -40 || true)
 
 Image tarball (docker load) + SHA256SUMS. \`horizonx install server\` auto-fetches this from the latest dashboard release.
 EOF
