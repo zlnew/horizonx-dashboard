@@ -123,7 +123,10 @@ const { metrics } = storeToRefs(metricsStore)
           </div>
 
           <CardContent class="p-6">
-            <div class="space-y-4">
+            <div
+              v-if="metrics.gpu?.length"
+              class="space-y-4"
+            >
               <div
                 v-for="card in metrics.gpu"
                 :key="card.card"
@@ -152,7 +155,7 @@ const { metrics } = storeToRefs(metricsStore)
                   <div class="space-y-1.5">
                     <div class="flex items-center justify-between">
                       <span class="text-[10px] font-black tracking-widest uppercase opacity-40"
-                        >Core_Load</span
+                        >Core Load</span
                       >
                       <span class="font-mono text-[11px] font-bold"
                         >{{ formatNumber(card.core_usage_percent.ema, 0, 1) }}%</span
@@ -166,7 +169,7 @@ const { metrics } = storeToRefs(metricsStore)
                   <div class="space-y-1.5">
                     <div class="flex items-center justify-between">
                       <span class="text-[10px] font-black tracking-widest uppercase opacity-40"
-                        >VRAM_Used</span
+                        >VRAM Used</span
                       >
                       <span class="font-mono text-[11px] font-bold"
                         >{{ formatNumber(card.vram_used_gb, 0, 1) }} /
@@ -181,6 +184,12 @@ const { metrics } = storeToRefs(metricsStore)
                 </div>
               </div>
             </div>
+            <p
+              v-else
+              class="text-muted-foreground/60 py-6 text-center text-xs font-medium"
+            >
+              No GPU detected on this server
+            </p>
           </CardContent>
         </Card>
 
