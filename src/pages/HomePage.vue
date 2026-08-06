@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { onMounted, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { MonitorIcon, RocketIcon, ShieldCheckIcon, UsersIcon } from 'lucide-vue-next'
 import AppLogo from '@/components/AppLogo.vue'
@@ -15,8 +16,24 @@ const { isAuthenticated } = storeToRefs(authStore)
 
 const year = new Date().getFullYear()
 
-// Mirrors the latest server release tag; update on each release.
-const latestVersion = '0.3.9'
+// Latest release version, resolved live from the GitHub releases API so the
+// chip tracks real releases instead of a hand-edited constant. Falls back to
+// the last-known release if the API is unreachable (offline, rate-limited).
+const latestVersion = ref('')
+const FALLBACK_VERSION = '0.3.9'
+
+onMounted(async () => {
+  try {
+    const res = await fetch('https://api.github.com/repos/zlnew/horizonx/releases/latest', {
+      headers: { Accept: 'application/vnd.github+json' }
+    })
+    if (!res.ok) throw new Error(`release lookup failed: ${res.status}`)
+    const data = (await res.json()) as { tag_name?: string }
+    latestVersion.value = data.tag_name?.replace(/^v/, '') || FALLBACK_VERSION
+  } catch {
+    latestVersion.value = FALLBACK_VERSION
+  }
+})
 </script>
 
 <template>
@@ -94,7 +111,9 @@ const latestVersion = '0.3.9'
             <span class="text-muted-foreground italic"
               >Self-hosted fleet control plane</span
             >
-            <span class="bg-primary/10 text-primary/90 ml-2 rounded-full px-2.5 py-0.5 text-[11px] font-bold tracking-widest uppercase"
+            <span
+              v-if="latestVersion"
+              class="bg-primary/10 text-primary/90 ml-2 rounded-full px-2.5 py-0.5 text-[11px] font-bold tracking-widest uppercase"
               >v{{ latestVersion }}</span
             >
           </div>
@@ -149,10 +168,12 @@ const latestVersion = '0.3.9'
       </div>
 
       <div
-        class="animate-in fade-in slide-in-from-bottom-12 mt-6 flex items-center gap-2 rounded-full border border-white/5 bg-white/[0.03] px-5 py-2.5 font-mono text-sm backdrop-blur-md duration-1000"
+        class="animate-in fade-in slide-in-from-bottom-12 mt-6 flex max-w-full items-center gap-2 overflow-x-auto rounded-full border border-white/5 bg-white/[0.03] px-5 py-2.5 font-mono text-sm backdrop-blur-md duration-1000"
       >
-        <span class="text-muted-foreground/60">$</span>
-        <code class="text-foreground/80">horizonx install server</code>
+        <span class="text-muted-foreground/60 shrink-0">$</span>
+        <code class="text-foreground/80 whitespace-nowrap"
+          >curl -fsSL https://raw.githubusercontent.com/zlnew/horizonx/main/install.sh | sudo bash</code
+        >
       </div>
 
       <!-- Feature Grid -->
