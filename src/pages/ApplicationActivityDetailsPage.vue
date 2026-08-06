@@ -135,7 +135,7 @@ const listenJobEvents = () => {
     }
   })
 
-  logSub = subscribe('logs', (msg) => {
+  logSub = subscribe(`job:${job.value.id}`, (msg) => {
     if (!job.value) {
       return
     }
