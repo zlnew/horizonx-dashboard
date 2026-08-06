@@ -1,6 +1,17 @@
 <script setup lang="ts">
 import { FileSearchCornerIcon } from 'lucide-vue-next'
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
+
+withDefaults(
+  defineProps<{
+    title?: string
+    description?: string
+  }>(),
+  {
+    title: 'No Records Found',
+    description: 'Nothing here yet — check back once data is available.'
+  }
+)
 </script>
 
 <template>
@@ -9,9 +20,9 @@ import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/
       <EmptyMedia variant="icon">
         <FileSearchCornerIcon />
       </EmptyMedia>
-      <EmptyTitle>No Records Found</EmptyTitle>
+      <EmptyTitle>{{ title }}</EmptyTitle>
       <EmptyDescription>
-        No data is currently available. Please create a new entry to continue.
+        {{ description }}
       </EmptyDescription>
     </EmptyHeader>
   </Empty>

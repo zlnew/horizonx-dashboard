@@ -13,17 +13,20 @@ const { metrics } = storeToRefs(metricsStore)
 
 const gpuUsageAvg = computed(() => {
   const gpus = metrics.value?.gpu
-  if (!gpus?.length) return 0
+  if (!gpus?.length) return null
 
   const total = gpus.reduce((sum, gpu) => sum + gpu.core_usage_percent.ema, 0)
   return total / gpus.length
 })
 
+const hasGpu = computed(() => (metrics.value?.gpu?.length ?? 0) > 0)
+
 const diskUsageAvg = computed(() => {
   if (!metrics.value) return 0
-  const diskTotal = metrics.value.disk.length
-  const utllTotal = metrics.value.disk.reduce((sum, d) => sum + d.util_pct.ema, 0)
-  return utllTotal / diskTotal
+  const disks = metrics.value.disk
+  if (!disks.length) return 0
+  const utllTotal = disks.reduce((sum, d) => sum + d.util_pct.ema, 0)
+  return utllTotal / disks.length
 })
 </script>
 
@@ -44,7 +47,7 @@ const diskUsageAvg = computed(() => {
                 <CpuIcon :size="20" />
               </div>
               <span class="text-xs font-black tracking-widest uppercase opacity-40"
-                >CPU_CORE_LOAD</span
+                >CPU Load</span
               >
             </div>
 
@@ -75,22 +78,30 @@ const diskUsageAvg = computed(() => {
                 <GpuIcon :size="20" />
               </div>
               <span class="text-xs font-black tracking-widest uppercase opacity-40"
-                >GPU_MODULE_LOAD</span
+                >GPU Load</span
               >
             </div>
 
-            <div class="space-y-1">
-              <div class="flex items-baseline gap-1">
-                <span class="text-3xl font-black tracking-tighter">{{
-                  formatNumber(gpuUsageAvg, 0, 2)
-                }}</span>
-                <span class="text-muted-foreground/60 text-[11px] font-bold">%</span>
+            <template v-if="hasGpu">
+              <div class="space-y-1">
+                <div class="flex items-baseline gap-1">
+                  <span class="text-3xl font-black tracking-tighter">{{
+                    formatNumber(gpuUsageAvg ?? 0, 0, 2)
+                  }}</span>
+                  <span class="text-muted-foreground/60 text-[11px] font-bold">%</span>
+                </div>
+                <Progress
+                  :model-value="gpuUsageAvg ?? 0"
+                  class="h-1.5"
+                />
               </div>
-              <Progress
-                :model-value="gpuUsageAvg"
-                class="h-1.5"
-              />
-            </div>
+            </template>
+            <p
+              v-else
+              class="text-muted-foreground/60 text-xs font-medium"
+            >
+              No GPU detected
+            </p>
           </div>
         </CardContent>
       </Card>
@@ -106,7 +117,7 @@ const diskUsageAvg = computed(() => {
                 <MemoryStickIcon :size="20" />
               </div>
               <span class="text-xs font-black tracking-widest uppercase opacity-40"
-                >MEMORY_STACK_UTL</span
+                >Memory Usage</span
               >
             </div>
 
@@ -137,7 +148,7 @@ const diskUsageAvg = computed(() => {
                 <HardDriveIcon :size="20" />
               </div>
               <span class="text-xs font-black tracking-widest uppercase opacity-40"
-                >STORAGE_POOL_UTL</span
+                >Disk Usage</span
               >
             </div>
 

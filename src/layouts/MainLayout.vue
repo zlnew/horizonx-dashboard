@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, watchEffect } from 'vue'
+import { onMounted, watch, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useDocumentVisibility, useIdle } from '@vueuse/core'
@@ -22,13 +22,25 @@ const { user } = storeToRefs(authStore)
 const { serverID, servers } = storeToRefs(appStore)
 
 const { connect: connectWs, disconnect: disconnectWs } = useWebSocket()
-const { idle } = useIdle(3 * 60 * 1000)
+// Passive viewing shouldn't kill the socket: 15 min of zero interaction is
+// the threshold now, and the WS composable's heartbeat/watchdog handles
+// dead connections independently.
+const { idle } = useIdle(15 * 60 * 1000)
 const visibility = useDocumentVisibility()
 
 watchEffect(() => {
   if (idle.value || visibility.value === 'hidden') {
     disconnectWs()
   } else {
+    connectWs()
+  }
+})
+
+// When the tab comes back, reconnect immediately (don't wait for the next
+// interaction). The composable's connect() is idempotent — it no-ops on a
+// healthy OPEN socket and reconnects on a stale/closed one.
+watch(visibility, (v) => {
+  if (v === 'visible') {
     connectWs()
   }
 })

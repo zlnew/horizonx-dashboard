@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { SearchIcon, SettingsIcon } from 'lucide-vue-next'
 import ServerSelector from '@/components/ServerSelector.vue'
@@ -9,6 +10,7 @@ import { Separator } from '@/components/ui/separator'
 import useApp from '@/composables/app'
 import useAppStore from '@/stores/app'
 
+const route = useRoute()
 const { menu } = useApp()
 const appStore = useAppStore()
 const { searchOpen } = storeToRefs(appStore)
@@ -20,6 +22,12 @@ const overviewMenu = computed(() => {
 const settingsMenu = computed(() => {
   return menu.find((m) => m.value === 'settings')
 })
+
+const isActive = (to: { name?: string; path?: string }): boolean => {
+  if (to.name && route.name === to.name) return true
+  if (to.path && route.path.startsWith(to.path)) return true
+  return false
+}
 
 const openSearch = () => {
   searchOpen.value = true
@@ -41,13 +49,19 @@ const openSearch = () => {
           class="h-auto"
         >
           <RouterLink :to="m.to">
-            <div class="flex flex-col items-center gap-1">
+            <div
+              class="flex flex-col items-center gap-1 transition-colors"
+              :class="isActive(m.to) ? 'text-primary' : ''"
+            >
               <component
                 :is="m.icon"
                 v-if="m.icon"
                 :size="18"
               />
-              <div class="text-[9px] font-black tracking-widest uppercase opacity-60">
+              <div
+                class="text-[9px] font-black tracking-widest uppercase"
+                :class="isActive(m.to) ? 'opacity-100' : 'opacity-60'"
+              >
                 {{ m.label }}
               </div>
             </div>

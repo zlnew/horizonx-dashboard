@@ -163,7 +163,7 @@ const listenDeploymentEvents = () => {
     }
   })
 
-  logSub = subscribe('logs', (msg) => {
+  logSub = subscribe(`deployment:${deployment.value.id}`, (msg) => {
     if (!deployment.value) {
       return
     }

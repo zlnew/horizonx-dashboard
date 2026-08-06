@@ -4,6 +4,9 @@ import AppBreadcrumb from '@/components/AppBreadcrumb.vue'
 import AppLogo from '@/components/AppLogo.vue'
 import ServerSelector from '@/components/ServerSelector.vue'
 import { SidebarTrigger } from '@/components/ui/sidebar'
+import useWebSocket from '@/composables/web-socket'
+
+const { connected } = useWebSocket()
 </script>
 
 <template>
@@ -21,6 +24,16 @@ import { SidebarTrigger } from '@/components/ui/sidebar'
       </div>
 
       <div class="flex items-center gap-2">
+        <div
+          class="mr-1 hidden items-center gap-1.5 sm:flex"
+          :title="connected ? 'Live connection' : 'Reconnecting…'"
+        >
+          <span
+            class="size-2 rounded-full transition-colors duration-300"
+            :class="connected ? 'bg-emerald-500' : 'bg-amber-500 animate-pulse'"
+          />
+          <span class="text-muted-foreground text-xs">{{ connected ? 'Live' : 'Reconnecting' }}</span>
+        </div>
         <ServerSelector class="hidden sm:block" />
         <AccountDropdown />
       </div>

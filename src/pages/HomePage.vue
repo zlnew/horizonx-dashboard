@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { onMounted, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { MonitorIcon, RocketIcon, ShieldCheckIcon, UsersIcon } from 'lucide-vue-next'
 import AppLogo from '@/components/AppLogo.vue'
@@ -14,6 +15,25 @@ const authStore = useAuthStore()
 const { isAuthenticated } = storeToRefs(authStore)
 
 const year = new Date().getFullYear()
+
+// Latest release version, resolved live from the GitHub releases API so the
+// chip tracks real releases instead of a hand-edited constant. Falls back to
+// the last-known release if the API is unreachable (offline, rate-limited).
+const latestVersion = ref('')
+const FALLBACK_VERSION = '0.3.9'
+
+onMounted(async () => {
+  try {
+    const res = await fetch('https://api.github.com/repos/zlnew/horizonx/releases/latest', {
+      headers: { Accept: 'application/vnd.github+json' }
+    })
+    if (!res.ok) throw new Error(`release lookup failed: ${res.status}`)
+    const data = (await res.json()) as { tag_name?: string }
+    latestVersion.value = data.tag_name?.replace(/^v/, '') || FALLBACK_VERSION
+  } catch {
+    latestVersion.value = FALLBACK_VERSION
+  }
+})
 </script>
 
 <template>
@@ -89,7 +109,12 @@ const year = new Date().getFullYear()
           >
             <span class="mr-2">🚀</span>
             <span class="text-muted-foreground italic"
-              >Redefining infrastructure orchestration</span
+              >Self-hosted fleet control plane</span
+            >
+            <span
+              v-if="latestVersion"
+              class="bg-primary/10 text-primary/90 ml-2 rounded-full px-2.5 py-0.5 text-[11px] font-bold tracking-widest uppercase"
+              >v{{ latestVersion }}</span
             >
           </div>
         </div>
@@ -104,8 +129,9 @@ const year = new Date().getFullYear()
       <p
         class="text-muted-foreground animate-in fade-in slide-in-from-bottom-12 mb-12 max-w-[750px] text-lg leading-relaxed duration-1000 md:text-xl"
       >
-        The ultimate dashboard for modern infrastructure. Combine real-time telemetry, application
-        lifecycle management, and team collaboration in one unified, high-performance experience.
+        Deploy and monitor your fleet from one place. Real-time server telemetry, Git-based
+        docker-compose deploys with one-click rollback, and a full audit trail — all self-hosted,
+        all yours.
       </p>
 
       <div
@@ -141,6 +167,15 @@ const year = new Date().getFullYear()
         </Button>
       </div>
 
+      <div
+        class="animate-in fade-in slide-in-from-bottom-12 mt-6 flex max-w-full items-center gap-2 overflow-x-auto rounded-full border border-white/5 bg-white/[0.03] px-5 py-2.5 font-mono text-sm backdrop-blur-md duration-1000"
+      >
+        <span class="text-muted-foreground/60 shrink-0">$</span>
+        <code class="text-foreground/80 whitespace-nowrap"
+          >curl -fsSL https://raw.githubusercontent.com/zlnew/horizonx/main/install.sh | sudo bash</code
+        >
+      </div>
+
       <!-- Feature Grid -->
       <div
         class="animate-in fade-in slide-in-from-bottom-12 mt-36 grid w-full grid-cols-1 gap-4 duration-1000 md:grid-cols-2 md:gap-8 lg:grid-cols-4"
@@ -160,8 +195,8 @@ const year = new Date().getFullYear()
             </div>
             <h3 class="mb-3 text-xl font-bold tracking-tight">Real-Time Telemetry</h3>
             <p class="text-muted-foreground text-sm leading-relaxed">
-              Second-by-second hardware stats via Go-powered agents. Monitor CPU, RAM, and native
-              Nvidia GPU metrics for AI/ML workloads.
+              Second-by-second hardware stats from lightweight Go agents. CPU, RAM, disk, network —
+              plus GPU metrics when the host has a GPU.
             </p>
           </div>
         </div>
@@ -181,8 +216,8 @@ const year = new Date().getFullYear()
             </div>
             <h3 class="mb-3 text-xl font-bold tracking-tight">GitOps Deployments</h3>
             <p class="text-muted-foreground text-sm leading-relaxed">
-              Deploy from any Git repo with Docker Compose. Zero-downtime application lifecycle
-              management directly through your unified dashboard.
+              Deploy from any Git repo with docker-compose. One-click rollback and health-gated
+              rollouts, managed from one dashboard.
             </p>
           </div>
         </div>
@@ -200,10 +235,10 @@ const year = new Date().getFullYear()
             >
               <UsersIcon class="text-primary size-7" />
             </div>
-            <h3 class="mb-3 text-xl font-bold tracking-tight">Control Plane</h3>
+            <h3 class="mb-3 text-xl font-bold tracking-tight">Fleet Overview</h3>
             <p class="text-muted-foreground text-sm leading-relaxed">
-              Centralized API for fleet management. Secure Agent-Server communication via persistent
-              WebSockets and token-based authentication.
+              One place for every server and app: live status, job queue depth, and deployment
+              history across the whole fleet.
             </p>
           </div>
         </div>
@@ -221,10 +256,10 @@ const year = new Date().getFullYear()
             >
               <ShieldCheckIcon class="text-primary size-7" />
             </div>
-            <h3 class="mb-3 text-xl font-bold tracking-tight">Clean Architecture</h3>
+            <h3 class="mb-3 text-xl font-bold tracking-tight">Security & Audit</h3>
             <p class="text-muted-foreground text-sm leading-relaxed">
-              Built with resilience in mind. High-performance Go backend with PostgreSQL and Redis
-              for sub-millisecond data persistence.
+              Token-based agent auth, env vars encrypted at rest, rate-limited APIs, and a full
+              audit log of who did what.
             </p>
           </div>
         </div>
@@ -239,8 +274,8 @@ const year = new Date().getFullYear()
         <div class="flex flex-col items-center gap-4 md:items-start">
           <AppLogo />
           <p class="text-muted-foreground max-w-[300px] text-center text-sm md:text-left">
-            Empowering engineers to orchestrate the world's infrastructure with precision and
-            elegance.
+            A self-hosted control plane for your fleet — deploy, monitor, and audit without
+            leaving your own infrastructure.
           </p>
         </div>
 

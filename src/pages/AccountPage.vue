@@ -112,7 +112,7 @@ const onPasswordSubmit = async (values: GenericObject) => {
           />
         </div>
         <div class="border-border/50 flex flex-col gap-0 border-l pl-4">
-          <h1 class="text-2xl font-black tracking-tight uppercase">Dashboard Settings</h1>
+          <h1 class="text-2xl font-black tracking-tight uppercase">Account</h1>
           <p class="text-muted-foreground text-sm font-medium italic">
             Manage your account information and security
           </p>
