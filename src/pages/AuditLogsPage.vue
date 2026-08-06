@@ -47,10 +47,19 @@ const fetchLogs = async () => {
     const res = await auditApi.list<ApiResponse<AuditLog[]>>({
       page: page.value,
       limit: perPage,
-      paginate: 1
+      paginate: true
     })
-    logs.value = res.data ?? []
-    meta.value = res.meta ?? null
+    // Defensive: an older server returned { data: { data: [...], meta: {...} } }
+    // instead of the flat shape. Unwrap so the page never silently shows empty.
+    const payload = res.data as unknown
+    if (Array.isArray(payload)) {
+      logs.value = payload
+      meta.value = res.meta ?? null
+    } else {
+      const nested = payload as { data?: AuditLog[]; meta?: Meta } | null
+      logs.value = nested?.data ?? []
+      meta.value = nested?.meta ?? null
+    }
   } catch (error) {
     const fetchError = error as Error
     toast.error(fetchError.message)
