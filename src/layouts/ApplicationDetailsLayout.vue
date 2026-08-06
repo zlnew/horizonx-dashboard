@@ -30,7 +30,7 @@ import useWebSocket from '@/composables/web-socket'
 import WSEvent from '@/constants/ws-event'
 import useApplicationStore from '@/stores/application'
 
-const { subscribe } = useWebSocket()
+const { subscribe, connected } = useWebSocket()
 const applicationStore = useApplicationStore()
 
 const {
@@ -210,8 +210,13 @@ const showRestartConfirmation = () => {
           Node Status
         </p>
         <div class="mt-1 flex items-center gap-2">
-          <div class="bg-primary size-2 animate-pulse rounded-full"></div>
-          <span class="font-mono text-xs font-medium tracking-tighter">AGENT_READY</span>
+          <div
+            class="size-2 rounded-full transition-colors"
+            :class="connected ? 'bg-primary animate-pulse' : 'bg-destructive'"
+          ></div>
+          <span class="font-mono text-xs font-medium tracking-tighter">
+            {{ connected ? 'LIVE' : 'OFFLINE' }}
+          </span>
         </div>
       </div>
     </div>
@@ -317,7 +322,7 @@ const showRestartConfirmation = () => {
                         @click="showStartConfirmation"
                       >
                         <PlayIcon class="size-4 text-green-500" />
-                        <span>Start Engine</span>
+                        <span>Start</span>
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         :disabled="!canStopApp"
@@ -325,7 +330,7 @@ const showRestartConfirmation = () => {
                         @click="showStopConfirmation"
                       >
                         <BanIcon class="size-4" />
-                        <span>Kill Process</span>
+                        <span>Stop</span>
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>

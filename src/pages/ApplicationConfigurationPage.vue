@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent } from 'vue'
+import { computed, defineAsyncComponent, reactive } from 'vue'
 import { storeToRefs } from 'pinia'
-import { EditIcon, PlusIcon, Trash2Icon } from 'lucide-vue-next'
+import { EditIcon, EyeIcon, EyeOffIcon, LockIcon, PlusIcon, Trash2Icon } from 'lucide-vue-next'
 import DataNotFound from '@/components/DataNotFound.vue'
 import { Button } from '@/components/ui/button'
 import {
@@ -24,7 +24,22 @@ const applicationEnvStore = useApplicationEnvStore()
 const { selectedApplication, canWriteApp, canDeleteApp } = storeToRefs(applicationStore)
 const { selectedEnvironment } = storeToRefs(applicationEnvStore)
 
+// Values are masked by default; a reveal toggle shows them per row. The
+// mask state resets whenever the environment list changes (new fetch).
+const revealedKeys = reactive(new Set<string>())
+
 const pageTitle = computed(() => `${selectedApplication.value?.name} · Configuration`)
+
+const toggleReveal = (key: string) => {
+  if (revealedKeys.has(key)) {
+    revealedKeys.delete(key)
+  } else {
+    revealedKeys.add(key)
+  }
+}
+
+const maskValue = (key: string, value: string) =>
+  revealedKeys.has(key) ? value : '••••••••••••'
 
 usePageMeta({
   title: pageTitle,
@@ -87,6 +102,12 @@ const showDeleteDialog = () => {
               <CardDescription class="text-xs font-medium tracking-widest uppercase opacity-60"
                 >Runtime variables injected into the process</CardDescription
               >
+              <span
+                class="bg-primary/10 text-primary/90 mt-2 inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-bold tracking-widest uppercase"
+              >
+                <LockIcon class="size-3" />
+                Encrypted at rest
+              </span>
             </div>
           </div>
           <CardAction v-if="canWriteApp">
@@ -121,10 +142,23 @@ const showDeleteDialog = () => {
                       class="text-muted-foreground/40 mb-1 block text-xs font-black tracking-widest uppercase"
                       >Value</span
                     >
-                    <code
-                      class="text-muted-foreground bg-accent rounded border border-white/5 px-2 py-0.5 font-mono text-sm"
-                      >{{ env.value }}</code
-                    >
+                    <div class="flex items-center gap-2">
+                      <code
+                        class="text-muted-foreground bg-accent rounded border border-white/5 px-2 py-0.5 font-mono text-sm"
+                        >{{ maskValue(env.key, env.value) }}</code
+                      >
+                      <Button
+                        type="button"
+                        size="icon-sm"
+                        variant="ghost"
+                        class="text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                        :title="revealedKeys.has(env.key) ? 'Hide value' : 'Reveal value'"
+                        @click="toggleReveal(env.key)"
+                      >
+                        <EyeOffIcon v-if="!revealedKeys.has(env.key)" class="size-3.5" />
+                        <EyeIcon v-else class="size-3.5" />
+                      </Button>
+                    </div>
                   </TableCell>
                   <TableCell
                     v-if="canWriteApp"

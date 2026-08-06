@@ -170,10 +170,19 @@ const showUpdateDialog = () => {
                   class="text-muted-foreground/60 text-xs leading-none font-black tracking-widest uppercase"
                   >Upstream Source</span
                 >
-                <div class="group flex cursor-pointer items-center gap-2 leading-none">
+                <div class="group flex items-center gap-2 leading-none">
+                  <a
+                    v-if="application.repo_url"
+                    :href="application.repo_url"
+                    target="_blank"
+                    rel="noreferrer"
+                    class="truncate font-mono text-xs font-medium opacity-60 transition-opacity group-hover:opacity-100 hover:opacity-100 hover:underline"
+                    >{{ application.repo_url }}</a
+                  >
                   <span
-                    class="truncate font-mono text-xs font-medium opacity-60 transition-opacity group-hover:opacity-100"
-                    >{{ application.repo_url }}</span
+                    v-else
+                    class="truncate font-mono text-xs font-medium opacity-60"
+                    >—</span
                   >
                 </div>
               </div>
@@ -218,7 +227,7 @@ const showUpdateDialog = () => {
                   {{
                     application.last_deployment_at
                       ? formatDate(new Date(application.last_deployment_at), 'DD MMM, YYYY HH:mm')
-                      : 'NEVER_DEPLOYED'
+                      : 'Never'
                   }}
                 </span>
               </div>
