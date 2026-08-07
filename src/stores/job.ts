@@ -58,6 +58,29 @@ const useJobStore = defineStore('job', () => {
     }
   }
 
+  // patchJobStatus updates a single job's status in place (WS-driven).
+  const patchJobStatus = (jobID: number, status: string) => {
+    const idx = jobs.value.findIndex((j) => j.id === jobID)
+    if (idx !== -1 && jobs.value[idx]) {
+      jobs.value[idx].status = status
+    }
+  }
+
+  // upsertJob inserts (or replaces) a job at the front of the list — used
+  // when a job_created WS event arrives, so the new row appears without
+  // refetching the whole page. Keeps the list within the current page size.
+  const upsertJob = (job: Job) => {
+    const idx = jobs.value.findIndex((j) => j.id === job.id)
+    if (idx !== -1) {
+      jobs.value[idx] = job
+      return
+    }
+    jobs.value.unshift(job)
+    if (jobs.value.length > perPage.value) {
+      jobs.value = jobs.value.slice(0, perPage.value)
+    }
+  }
+
   const cleanupState = () => {
     jobs.value = []
     meta.value = null
@@ -82,6 +105,8 @@ const useJobStore = defineStore('job', () => {
     getJobs,
     showJob,
     retryJob,
+    patchJobStatus,
+    upsertJob,
     cleanupState
   }
 })
