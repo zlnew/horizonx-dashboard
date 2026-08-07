@@ -96,37 +96,68 @@ const scrollTo = (id: string) => {
 
           <div class="space-y-4 text-sm leading-relaxed">
             <div>
-              <h3 class="mb-1 font-bold">1. Install an agent on a host</h3>
+              <h3 class="mb-1 font-bold">1. Install the binary</h3>
               <p class="text-muted-foreground">
-                On each machine you want to monitor or deploy to, run
+                On each machine (control plane box and every app host), run
                 <code class="bg-accent/60 text-accent-foreground rounded px-1.5 py-0.5 font-mono text-xs">
                   curl -fsSL https://raw.githubusercontent.com/zlnew/horizonx/main/install.sh | sudo bash
                 </code>
-                and choose <span class="font-semibold">agent</span>.
+                — this installs the <code class="bg-accent/60 text-accent-foreground rounded px-1.5 py-0.5 font-mono text-xs">horizonx</code>
+                binary to <code class="bg-accent/60 text-accent-foreground rounded px-1.5 py-0.5 font-mono text-xs">/usr/local/bin</code>
+                (checksum-verified against the release).
               </p>
             </div>
 
             <div>
-              <h3 class="mb-1 font-bold">2. Register the server</h3>
+              <h3 class="mb-1 font-bold">2. Install the control plane</h3>
               <p class="text-muted-foreground">
-                In the dashboard, open <span class="font-semibold">Servers → Add Server</span>. The
-                control plane shows the agent token <span class="font-semibold">once</span> — copy
-                it and paste it when the agent installer asks for the server address and token.
+                On the server box, run
+                <code class="bg-accent/60 text-accent-foreground rounded px-1.5 py-0.5 font-mono text-xs">sudo horizonx install server</code>.
+                This stands up the whole instance at <code class="bg-accent/60 text-accent-foreground rounded px-1.5 py-0.5 font-mono text-xs">/opt/horizonx</code>
+                — API on <span class="font-semibold">4858</span>, dashboard on
+                <span class="font-semibold">4859</span>, private Postgres + Redis — and
+                prints the admin credentials once.
               </p>
             </div>
 
             <div>
-              <h3 class="mb-1 font-bold">3. Deploy your first app</h3>
+              <h3 class="mb-1 font-bold">3. Install the agent on each app host</h3>
               <p class="text-muted-foreground">
-                Use <span class="font-semibold">Applications → Create</span>. Point the app at a git
-                repo, pick the registered server, and HorizonX builds and runs it via Docker Compose
-                on the agent host. Deployments, logs, and health checks are visible on the
-                application pages.
+                Run
+                <code class="bg-accent/60 text-accent-foreground rounded px-1.5 py-0.5 font-mono text-xs">sudo horizonx install agent</code>.
+                On the same box as the server it reads credentials from the instance's
+                <code class="bg-accent/60 text-accent-foreground rounded px-1.5 py-0.5 font-mono text-xs">.env</code>
+                — no token juggling. On a different host, pass them:
+                <code class="bg-accent/60 text-accent-foreground rounded px-1.5 py-0.5 font-mono text-xs">sudo horizonx install agent --server http://host:4858 --token &lt;token&gt;</code>.
+                The agent runs as a systemd service (never docker).
               </p>
             </div>
 
             <div>
-              <h3 class="mb-1 font-bold">4. Watch the queue</h3>
+              <h3 class="mb-1 font-bold">4. Register the server</h3>
+              <p class="text-muted-foreground">
+                In the dashboard, open <span class="font-semibold">Servers → Add Server</span>.
+                The control plane shows the agent token <span class="font-semibold">once</span> —
+                copy it. If the agent wasn't installed with a token already, re-run
+                <code class="bg-accent/60 text-accent-foreground rounded px-1.5 py-0.5 font-mono text-xs">sudo horizonx install agent</code>
+                with the <code class="bg-accent/60 text-accent-foreground rounded px-1.5 py-0.5 font-mono text-xs">--server</code>
+                and <code class="bg-accent/60 text-accent-foreground rounded px-1.5 py-0.5 font-mono text-xs">--token</code>
+                flags above.
+              </p>
+            </div>
+
+            <div>
+              <h3 class="mb-1 font-bold">5. Deploy your first app</h3>
+              <p class="text-muted-foreground">
+                Use <span class="font-semibold">Applications → Create Application</span>. Point the
+                app at a git repo + branch, pick the registered server, set env vars, and deploy.
+                HorizonX clones, builds, and health-gates the rollout on the agent host.
+                Deployments, rollbacks, and job logs are all in the UI.
+              </p>
+            </div>
+
+            <div>
+              <h3 class="mb-1 font-bold">6. Watch the queue</h3>
               <p class="text-muted-foreground">
                 Every deploy, start, stop, rollback, and health check runs as a job in the control
                 plane. The <span class="font-semibold">Jobs</span> page shows the full queue; failed
