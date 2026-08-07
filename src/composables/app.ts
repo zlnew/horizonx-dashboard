@@ -5,7 +5,8 @@ import {
   HistoryIcon,
   LayoutGridIcon,
   ServerIcon,
-  UsersIcon
+  UsersIcon,
+  WebhookIcon
 } from 'lucide-vue-next'
 
 type To = {
@@ -74,6 +75,12 @@ const useApp = () => {
           value: 'account',
           to: { name: 'account' },
           icon: CircleUserIcon
+        },
+        {
+          label: 'Webhooks',
+          value: 'webhooks',
+          to: { name: 'settings.webhooks' },
+          icon: WebhookIcon
         }
       ]
     }

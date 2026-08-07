@@ -113,6 +113,11 @@ const router = createRouter({
           name: 'account',
           path: 'account',
           component: () => import('@/pages/AccountPage.vue')
+        },
+        {
+          name: 'settings.webhooks',
+          path: 'webhooks',
+          component: () => import('@/pages/WebhookSettingsPage.vue')
         }
       ]
     }
