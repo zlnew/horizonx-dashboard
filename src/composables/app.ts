@@ -4,6 +4,7 @@ import {
   CircleUserIcon,
   HistoryIcon,
   LayoutGridIcon,
+  ListChecksIcon,
   ServerIcon,
   UsersIcon,
   WebhookIcon
@@ -45,6 +46,12 @@ const useApp = () => {
           value: 'applications',
           to: { name: 'applications' },
           icon: LayoutGridIcon
+        },
+        {
+          label: 'Jobs',
+          value: 'jobs',
+          to: { name: 'jobs' },
+          icon: ListChecksIcon
         }
       ]
     },
