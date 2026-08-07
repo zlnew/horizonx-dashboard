@@ -55,14 +55,38 @@ usePageMeta({
 onMounted(() => {
   fetchJobs(criteria.value)
 
-  jobSub = subscribe('jobs', (msg) => {
-    if (
-      msg.event === WSEvent.JOB_STATUS_CHANGED ||
-      msg.event === WSEvent.JOB_CREATED ||
-      msg.event === WSEvent.JOB_STARTED ||
-      msg.event === WSEvent.JOB_FINISHED
-    ) {
-      fetchJobs(criteria.value)
+  // WS-driven live updates: status events patch the row in place; only a
+  // genuinely new job (job_created) fetches that single record to prepend.
+  // No full-page refetch on every event.
+  jobSub = subscribe('jobs', async (msg) => {
+    if (msg.event === WSEvent.JOB_STATUS_CHANGED) {
+      const payload = msg.payload as EventJobStatusChanged
+      jobStore.patchJobStatus(payload.job_id, payload.status)
+      return
+    }
+
+    if (msg.event === WSEvent.JOB_STARTED) {
+      const payload = msg.payload as EventJobStarted
+      jobStore.patchJobStatus(payload.job_id, JobStatus.RUNNING)
+      return
+    }
+
+    if (msg.event === WSEvent.JOB_FINISHED) {
+      const payload = msg.payload as EventJobFinished
+      jobStore.patchJobStatus(payload.job_id, payload.status)
+      return
+    }
+
+    if (msg.event === WSEvent.JOB_CREATED) {
+      const payload = msg.payload as EventJobCreated
+      try {
+        const job = await jobStore.showJob(payload.job_id)
+        if (job) {
+          jobStore.upsertJob(job)
+        }
+      } catch {
+        // Show failed; the row will appear on the next manual refetch.
+      }
     }
   })
 })
