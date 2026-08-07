@@ -73,7 +73,12 @@ docker run --rm --entrypoint nginx "$IMG" -t 2>&1 | tail -1
 echo ""
 echo "== 6. checksum =="
 cd "$OUT"
-sha256sum "$TARBALL" > SHA256SUMS
+# basename only! sha256sum "$TARBALL" (absolute) would write the full temp
+# path into SHA256SUMS; the installer (verifySHA256SUMS) matches on
+# filepath.Base() and can never resolve a full path. This bug shipped in
+# v0.3.2 (installer: "SHA256SUMS has no entry for <basename>"). Glob like
+# the server script so the filename field is always the basename.
+sha256sum "$(basename "$TARBALL")" > SHA256SUMS
 cat SHA256SUMS
 sha256sum -c SHA256SUMS
 
