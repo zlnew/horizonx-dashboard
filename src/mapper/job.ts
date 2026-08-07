@@ -28,6 +28,8 @@ export const jobStatusLabel = (status: string) => {
       return 'Running'
     case JobStatus.SUCCESS:
       return 'Success'
+    case JobStatus.EXPIRED:
+      return 'Expired'
     default:
       return ''
   }

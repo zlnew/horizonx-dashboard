@@ -1,11 +1,14 @@
 import type { Component } from 'vue'
 import {
+  BookOpenIcon,
   ChartColumnBigIcon,
   CircleUserIcon,
   HistoryIcon,
   LayoutGridIcon,
+  ListChecksIcon,
   ServerIcon,
-  UsersIcon
+  UsersIcon,
+  WebhookIcon
 } from 'lucide-vue-next'
 
 type To = {
@@ -44,6 +47,12 @@ const useApp = () => {
           value: 'applications',
           to: { name: 'applications' },
           icon: LayoutGridIcon
+        },
+        {
+          label: 'Jobs',
+          value: 'jobs',
+          to: { name: 'jobs' },
+          icon: ListChecksIcon
         }
       ]
     },
@@ -74,6 +83,18 @@ const useApp = () => {
           value: 'account',
           to: { name: 'account' },
           icon: CircleUserIcon
+        },
+        {
+          label: 'Webhooks',
+          value: 'webhooks',
+          to: { name: 'settings.webhooks' },
+          icon: WebhookIcon
+        },
+        {
+          label: 'Help',
+          value: 'help',
+          to: { name: 'settings.help' },
+          icon: BookOpenIcon
         }
       ]
     }
