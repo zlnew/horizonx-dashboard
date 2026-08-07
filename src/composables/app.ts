@@ -1,5 +1,6 @@
 import type { Component } from 'vue'
 import {
+  BookOpenIcon,
   ChartColumnBigIcon,
   CircleUserIcon,
   HistoryIcon,
@@ -88,6 +89,12 @@ const useApp = () => {
           value: 'webhooks',
           to: { name: 'settings.webhooks' },
           icon: WebhookIcon
+        },
+        {
+          label: 'Help',
+          value: 'help',
+          to: { name: 'settings.help' },
+          icon: BookOpenIcon
         }
       ]
     }

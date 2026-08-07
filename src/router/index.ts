@@ -123,6 +123,11 @@ const router = createRouter({
           name: 'settings.webhooks',
           path: 'webhooks',
           component: () => import('@/pages/WebhookSettingsPage.vue')
+        },
+        {
+          name: 'settings.help',
+          path: 'help',
+          component: () => import('@/pages/HelpPage.vue')
         }
       ]
     }
