@@ -105,6 +105,11 @@ const router = createRouter({
           component: () => import('@/pages/AuditLogsPage.vue')
         },
         {
+          name: 'jobs',
+          path: 'jobs',
+          component: () => import('@/pages/JobsPage.vue')
+        },
+        {
           name: 'members',
           path: 'members',
           component: () => import('@/pages/MembersPage.vue')
@@ -113,6 +118,16 @@ const router = createRouter({
           name: 'account',
           path: 'account',
           component: () => import('@/pages/AccountPage.vue')
+        },
+        {
+          name: 'settings.webhooks',
+          path: 'webhooks',
+          component: () => import('@/pages/WebhookSettingsPage.vue')
+        },
+        {
+          name: 'settings.help',
+          path: 'help',
+          component: () => import('@/pages/HelpPage.vue')
         }
       ]
     }

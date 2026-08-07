@@ -8,6 +8,12 @@ class JobApi extends Api {
 
     return this.handleResponse<T>(data.value, error.value)
   }
+
+  public async retry<T>(jobID: number) {
+    const { data, error } = await this.fetch(`${this.resource}/${jobID}/retry`).post().json<T>()
+
+    return this.handleResponse<T>(data.value, error.value)
+  }
 }
 
 export default JobApi

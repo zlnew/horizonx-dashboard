@@ -49,6 +49,15 @@ const useJobStore = defineStore('job', () => {
     }
   }
 
+  const retryJob = async (jobID: number) => {
+    try {
+      const res = await api.retry<ApiResponse<Job>>(jobID)
+      return res.data
+    } catch (error) {
+      throw error
+    }
+  }
+
   const cleanupState = () => {
     jobs.value = []
     meta.value = null
@@ -72,6 +81,7 @@ const useJobStore = defineStore('job', () => {
     jobID,
     getJobs,
     showJob,
+    retryJob,
     cleanupState
   }
 })
