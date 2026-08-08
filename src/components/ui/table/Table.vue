@@ -10,7 +10,10 @@ const props = defineProps<{
 <template>
   <div
     data-slot="table-container"
-    class="relative w-full overflow-auto"
+    role="region"
+    aria-label="Scrollable table"
+    tabindex="0"
+    class="relative w-full overflow-auto focus-visible:ring-ring/40 focus-visible:outline-none focus-visible:ring-2"
   >
     <table
       data-slot="table"
@@ -18,5 +21,10 @@ const props = defineProps<{
     >
       <slot />
     </table>
+    <!-- right edge fade: signals scrollability on tablet widths (TK-0030 B6) -->
+    <div
+      class="pointer-events-none absolute inset-y-0 right-0 w-6 bg-gradient-to-l from-background to-transparent"
+      aria-hidden="true"
+    ></div>
   </div>
 </template>

@@ -85,7 +85,7 @@ const fetchServers = async () => {
     <SidebarInset>
       <AppHeader />
 
-      <main class="flex flex-1 flex-col p-4 sm:p-8">
+      <main class="flex flex-1 flex-col p-4 pb-24 sm:p-8 md:p-6 lg:p-8">
         <RouterView />
       </main>
     </SidebarInset>

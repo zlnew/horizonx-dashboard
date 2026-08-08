@@ -230,9 +230,9 @@ const fleetSummary = computed(() => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead class="w-8">#</TableHead>
+                <TableHead class="hidden w-8 lg:table-cell">#</TableHead>
                 <TableHead>Name</TableHead>
-                <TableHead>IP Address</TableHead>
+                <TableHead class="hidden md:table-cell">IP Address</TableHead>
                 <TableHead>Agent Status</TableHead>
                 <TableHead class="text-end">Apps</TableHead>
                 <TableHead
@@ -248,12 +248,12 @@ const fleetSummary = computed(() => {
                 v-for="(row, index) in servers"
                 :key="index"
               >
-                <TableCell>{{ index + 1 }}.</TableCell>
+                <TableCell class="hidden lg:table-cell">{{ index + 1 }}.</TableCell>
                 <TableCell class="font-bold">
                   <div>{{ row.name }}</div>
                   <div class="text-muted-foreground text-xs font-normal">ID: {{ row.id }}</div>
                 </TableCell>
-                <TableCell>{{ row.ip_address }}</TableCell>
+                <TableCell class="hidden md:table-cell">{{ row.ip_address }}</TableCell>
                 <TableCell>
                   <Badge :variant="row.is_online ? 'default' : 'outline'">
                     {{ row.is_online ? 'Online' : 'Offline' }}

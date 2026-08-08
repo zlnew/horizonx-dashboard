@@ -148,9 +148,9 @@ const showDeleteModal = (user: User) => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead class="w-8">#</TableHead>
+                <TableHead class="hidden w-8 lg:table-cell">#</TableHead>
                 <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
+                <TableHead class="hidden md:table-cell">Email</TableHead>
                 <TableHead>Role</TableHead>
                 <TableHead
                   v-if="canWriteMember"
@@ -165,9 +165,9 @@ const showDeleteModal = (user: User) => {
                 v-for="(row, index) in users"
                 :key="index"
               >
-                <TableCell>{{ index + 1 }}.</TableCell>
+                <TableCell class="hidden lg:table-cell">{{ index + 1 }}.</TableCell>
                 <TableCell class="font-bold">{{ row.name }}</TableCell>
-                <TableCell>{{ row.email }}</TableCell>
+                <TableCell class="hidden md:table-cell">{{ row.email }}</TableCell>
                 <TableCell>
                   <RoleBadge :role-name="row.role.name" />
                 </TableCell>
