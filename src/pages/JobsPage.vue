@@ -169,8 +169,8 @@ const fetchJobs = async (criteria: Criteria) => {
 const applyFilters = () => {
   const q: Record<string, string> = {}
   if (search.value) q.search = search.value
-  if (statusFilter.value) q.status = statusFilter.value
-  if (typeFilter.value) q.type = typeFilter.value
+  if (statusFilter.value) q.statuses = statusFilter.value
+  if (typeFilter.value) q.job_type = typeFilter.value
   router.push({ query: q })
 }
 
@@ -212,8 +212,8 @@ const onRetry = async (job: Job) => {
 watch(
   () => route.query,
   (q) => {
-    statusFilter.value = (q.status as string) ?? null
-    typeFilter.value = (q.type as string) ?? null
+    statusFilter.value = (q.statuses as string) ?? null
+    typeFilter.value = (q.job_type as string) ?? null
   },
   { immediate: true }
 )

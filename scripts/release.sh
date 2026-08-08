@@ -121,7 +121,10 @@ rm -rf "$OUT" && mkdir -p "$OUT"
 # -- build -------------------------------------------------------------------
 echo ""
 echo "== 1. docker build (multi-stage: npm build -> nginx) =="
-docker build -t "$IMG" . 2>&1 | tail -3
+# --no-cache: a cached npm ci layer can mask a fresh type error (v0.5.0's
+# usePageMeta slipped through exactly this way). Release builds must be
+# cold every time — the artifact IS the product.
+docker build --no-cache -t "$IMG" . 2>&1 | tail -3
 
 echo ""
 echo "== 2. dual-tag :latest + :${VERSION} =="

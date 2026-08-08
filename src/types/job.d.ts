@@ -19,7 +19,7 @@ type JobCriteria = Criteria & {
   server_id?: string | null
   application_id?: string | null
   deployment_id?: string | null
-  type?: string | null
+  job_type?: string | null
   statuses?: string | null
 }
 
