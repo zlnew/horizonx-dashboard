@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
-import { DownloadIcon, SearchIcon, WrapTextIcon, XIcon } from 'lucide-vue-next'
+import { DownloadIcon, SearchIcon, WrapTextIcon } from 'lucide-vue-next'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
@@ -21,7 +21,9 @@ const emit = defineEmits<{
 
 const consoleEl = ref<HTMLElement>()
 const search = ref('')
-const wrap = ref(true)
+// Unwrapped by default — log lines keep their native shape; the toggle is
+// there for the rare long-line service. (Maul, 08-08.)
+const wrap = ref(false)
 
 const services = computed(() => {
   const set = new Set<string>()
