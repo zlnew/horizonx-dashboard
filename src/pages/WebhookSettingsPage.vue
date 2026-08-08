@@ -7,6 +7,7 @@ import { Form, type FormContext, type GenericObject } from 'vee-validate'
 import { toast } from 'vue-sonner'
 import { z } from 'zod'
 import SettingsApi, { type WebhookSettings } from '@/api/Settings'
+import PageHeader from '@/components/PageHeader.vue'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -29,10 +30,7 @@ usePageMeta({
 const webhookForm = ref<FormContext>()
 const webhookFormSchema = toTypedSchema(
   z.object({
-    url: z
-      .string()
-      .min(1, 'Webhook URL is required')
-      .url('Enter a valid URL'),
+    url: z.string().min(1, 'Webhook URL is required').url('Enter a valid URL'),
     secret: z.string().optional()
   })
 )
@@ -126,22 +124,11 @@ const onTestPing = async () => {
 
 <template>
   <section>
-    <div class="flex flex-wrap items-center justify-between gap-8">
-      <div class="flex items-center gap-4">
-        <div class="bg-accent/50 border-border/50 rounded-xl border p-3">
-          <WebhookIcon
-            :size="24"
-            class="text-primary"
-          />
-        </div>
-        <div class="border-border/50 flex flex-col gap-0 border-l pl-4">
-          <h1 class="text-2xl font-black tracking-tight uppercase">Webhooks</h1>
-          <p class="text-muted-foreground text-sm font-medium italic">
-            Configure outbound webhook notifications for your applications
-          </p>
-        </div>
-      </div>
-    </div>
+    <PageHeader
+      :icon="WebhookIcon"
+      title="Webhooks"
+      description="Configure outbound webhook notifications for your applications"
+    />
   </section>
 
   <section class="mt-12">
@@ -192,7 +179,7 @@ const onTestPing = async () => {
                 <SwitchRoot
                   v-model="enabled"
                   aria-label="Enable webhooks"
-                  class="data-[state=checked]:bg-primary data-[state=unchecked]:bg-input relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border border-transparent shadow-xs transition-colors focus-visible:ring-ring/50 focus-visible:ring-[3px] outline-none focus-visible:ring disabled:cursor-not-allowed disabled:opacity-50"
+                  class="data-[state=checked]:bg-primary data-[state=unchecked]:bg-input focus-visible:ring-ring/50 relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border border-transparent shadow-xs transition-colors outline-none focus-visible:ring focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <SwitchThumb
                     class="bg-background pointer-events-none block size-4 rounded-full shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
@@ -264,7 +251,9 @@ const onTestPing = async () => {
                 <div class="flex items-center justify-between gap-4">
                   <p class="text-muted-foreground text-xs">
                     <template v-if="secretIsSet">
-                      A secret is currently set{{ clearSecret ? ' and will be cleared on save' : '' }}.
+                      A secret is currently set{{
+                        clearSecret ? ' and will be cleared on save' : ''
+                      }}.
                     </template>
                     <template v-else>No secret is currently set.</template>
                   </p>

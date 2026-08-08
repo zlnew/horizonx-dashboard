@@ -7,6 +7,7 @@ import { Form, type FormContext, type GenericObject } from 'vee-validate'
 import { toast } from 'vue-sonner'
 import { z } from 'zod'
 import AccountApi from '@/api/Account'
+import PageHeader from '@/components/PageHeader.vue'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -103,22 +104,11 @@ const onPasswordSubmit = async (values: GenericObject) => {
 
 <template>
   <section>
-    <div class="flex flex-wrap items-center justify-between gap-8">
-      <div class="flex items-center gap-4">
-        <div class="bg-accent/50 border-border/50 rounded-xl border p-3">
-          <CircleUserIcon
-            :size="24"
-            class="text-primary"
-          />
-        </div>
-        <div class="border-border/50 flex flex-col gap-0 border-l pl-4">
-          <h1 class="text-2xl font-black tracking-tight uppercase">Account</h1>
-          <p class="text-muted-foreground text-sm font-medium italic">
-            Manage your account information and security
-          </p>
-        </div>
-      </div>
-    </div>
+    <PageHeader
+      :icon="CircleUserIcon"
+      title="Account"
+      description="Manage your account information and security"
+    />
   </section>
 
   <section class="mt-12">

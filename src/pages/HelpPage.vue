@@ -1,12 +1,8 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import {
-  BookOpenIcon,
-  KeyRoundIcon,
-  RocketIcon,
-  WebhookIcon
-} from 'lucide-vue-next'
+import { BookOpenIcon, KeyRoundIcon, RocketIcon, WebhookIcon } from 'lucide-vue-next'
+import PageHeader from '@/components/PageHeader.vue'
 import { Card, CardContent } from '@/components/ui/card'
 import { usePageMeta } from '@/composables/page-meta'
 
@@ -45,22 +41,11 @@ const scrollTo = (id: string) => {
 
 <template>
   <section>
-    <div class="flex flex-wrap items-center justify-between gap-8">
-      <div class="flex items-center gap-4">
-        <div class="bg-accent/50 border-border/50 rounded-xl border p-3">
-          <BookOpenIcon
-            :size="24"
-            class="text-primary"
-          />
-        </div>
-        <div class="border-border/50 flex flex-col gap-0 border-l pl-4">
-          <h1 class="text-2xl font-black tracking-tight uppercase">Help</h1>
-          <p class="text-muted-foreground text-sm font-medium italic">
-            Getting started, webhooks, and security for the control plane
-          </p>
-        </div>
-      </div>
-    </div>
+    <PageHeader
+      :icon="BookOpenIcon"
+      title="Help"
+      description="Getting started, webhooks, and security for the control plane"
+    />
   </section>
 
   <section class="mt-12 grid gap-8 lg:grid-cols-[220px_1fr]">
@@ -99,11 +84,22 @@ const scrollTo = (id: string) => {
               <h3 class="mb-1 font-bold">1. Install the binary</h3>
               <p class="text-muted-foreground">
                 On each machine (control plane box and every app host), run
-                <code class="bg-accent/60 text-accent-foreground rounded px-1.5 py-0.5 font-mono text-xs">
-                  curl -fsSL https://raw.githubusercontent.com/zlnew/horizonx/main/install.sh | sudo bash
+                <code
+                  class="bg-accent/60 text-accent-foreground rounded px-1.5 py-0.5 font-mono text-xs"
+                >
+                  curl -fsSL https://raw.githubusercontent.com/zlnew/horizonx/main/install.sh | sudo
+                  bash
                 </code>
-                — this installs the <code class="bg-accent/60 text-accent-foreground rounded px-1.5 py-0.5 font-mono text-xs">horizonx</code>
-                binary to <code class="bg-accent/60 text-accent-foreground rounded px-1.5 py-0.5 font-mono text-xs">/usr/local/bin</code>
+                — this installs the
+                <code
+                  class="bg-accent/60 text-accent-foreground rounded px-1.5 py-0.5 font-mono text-xs"
+                  >horizonx</code
+                >
+                binary to
+                <code
+                  class="bg-accent/60 text-accent-foreground rounded px-1.5 py-0.5 font-mono text-xs"
+                  >/usr/local/bin</code
+                >
                 (checksum-verified against the release).
               </p>
             </div>
@@ -112,11 +108,17 @@ const scrollTo = (id: string) => {
               <h3 class="mb-1 font-bold">2. Install the control plane</h3>
               <p class="text-muted-foreground">
                 On the server box, run
-                <code class="bg-accent/60 text-accent-foreground rounded px-1.5 py-0.5 font-mono text-xs">sudo horizonx install server</code>.
-                This stands up the whole instance at <code class="bg-accent/60 text-accent-foreground rounded px-1.5 py-0.5 font-mono text-xs">/opt/horizonx</code>
+                <code
+                  class="bg-accent/60 text-accent-foreground rounded px-1.5 py-0.5 font-mono text-xs"
+                  >sudo horizonx install server</code
+                >. This stands up the whole instance at
+                <code
+                  class="bg-accent/60 text-accent-foreground rounded px-1.5 py-0.5 font-mono text-xs"
+                  >/opt/horizonx</code
+                >
                 — API on <span class="font-semibold">4858</span>, dashboard on
-                <span class="font-semibold">4859</span>, private Postgres + Redis — and
-                prints the admin credentials once.
+                <span class="font-semibold">4859</span>, private Postgres + Redis — and prints the
+                admin credentials once.
               </p>
             </div>
 
@@ -124,24 +126,42 @@ const scrollTo = (id: string) => {
               <h3 class="mb-1 font-bold">3. Install the agent on each app host</h3>
               <p class="text-muted-foreground">
                 Run
-                <code class="bg-accent/60 text-accent-foreground rounded px-1.5 py-0.5 font-mono text-xs">sudo horizonx install agent</code>.
-                On the same box as the server it reads credentials from the instance's
-                <code class="bg-accent/60 text-accent-foreground rounded px-1.5 py-0.5 font-mono text-xs">.env</code>
+                <code
+                  class="bg-accent/60 text-accent-foreground rounded px-1.5 py-0.5 font-mono text-xs"
+                  >sudo horizonx install agent</code
+                >. On the same box as the server it reads credentials from the instance's
+                <code
+                  class="bg-accent/60 text-accent-foreground rounded px-1.5 py-0.5 font-mono text-xs"
+                  >.env</code
+                >
                 — no token juggling. On a different host, pass them:
-                <code class="bg-accent/60 text-accent-foreground rounded px-1.5 py-0.5 font-mono text-xs">sudo horizonx install agent --server http://host:4858 --token &lt;token&gt;</code>.
-                The agent runs as a systemd service (never docker).
+                <code
+                  class="bg-accent/60 text-accent-foreground rounded px-1.5 py-0.5 font-mono text-xs"
+                  >sudo horizonx install agent --server http://host:4858 --token &lt;token&gt;</code
+                >. The agent runs as a systemd service (never docker).
               </p>
             </div>
 
             <div>
               <h3 class="mb-1 font-bold">4. Register the server</h3>
               <p class="text-muted-foreground">
-                In the dashboard, open <span class="font-semibold">Servers → Add Server</span>.
-                The control plane shows the agent token <span class="font-semibold">once</span> —
-                copy it. If the agent wasn't installed with a token already, re-run
-                <code class="bg-accent/60 text-accent-foreground rounded px-1.5 py-0.5 font-mono text-xs">sudo horizonx install agent</code>
-                with the <code class="bg-accent/60 text-accent-foreground rounded px-1.5 py-0.5 font-mono text-xs">--server</code>
-                and <code class="bg-accent/60 text-accent-foreground rounded px-1.5 py-0.5 font-mono text-xs">--token</code>
+                In the dashboard, open <span class="font-semibold">Servers → Add Server</span>. The
+                control plane shows the agent token <span class="font-semibold">once</span> — copy
+                it. If the agent wasn't installed with a token already, re-run
+                <code
+                  class="bg-accent/60 text-accent-foreground rounded px-1.5 py-0.5 font-mono text-xs"
+                  >sudo horizonx install agent</code
+                >
+                with the
+                <code
+                  class="bg-accent/60 text-accent-foreground rounded px-1.5 py-0.5 font-mono text-xs"
+                  >--server</code
+                >
+                and
+                <code
+                  class="bg-accent/60 text-accent-foreground rounded px-1.5 py-0.5 font-mono text-xs"
+                  >--token</code
+                >
                 flags above.
               </p>
             </div>
@@ -190,7 +210,11 @@ const scrollTo = (id: string) => {
               <h3 class="mb-1 font-bold">Payload</h3>
               <p class="text-muted-foreground">
                 Each notification is a POST with a JSON body containing the event name and payload,
-                e.g. <code class="bg-accent/60 text-accent-foreground rounded px-1.5 py-0.5 font-mono text-xs">job_status_changed</code>.
+                e.g.
+                <code
+                  class="bg-accent/60 text-accent-foreground rounded px-1.5 py-0.5 font-mono text-xs"
+                  >job_status_changed</code
+                >.
               </p>
             </div>
 
@@ -198,7 +222,10 @@ const scrollTo = (id: string) => {
               <h3 class="mb-1 font-bold">Signing secret</h3>
               <p class="text-muted-foreground">
                 Set a secret to sign requests. HorizonX sends an
-                <code class="bg-accent/60 text-accent-foreground rounded px-1.5 py-0.5 font-mono text-xs">X-HorizonX-Signature</code>
+                <code
+                  class="bg-accent/60 text-accent-foreground rounded px-1.5 py-0.5 font-mono text-xs"
+                  >X-HorizonX-Signature</code
+                >
                 header — an HMAC-SHA256 of the raw body keyed with your secret. Verify it on your
                 receiver to prove the request came from this control plane. The secret is never
                 returned by the API; leave the field empty to keep the current one, or use
@@ -241,9 +268,12 @@ const scrollTo = (id: string) => {
             <div>
               <h3 class="mb-1 font-bold">Network</h3>
               <p class="text-muted-foreground">
-                The control plane binds to localhost and is intended to be reached through a
-                reverse proxy or tunnel with TLS. Behind Cloudflare, client IPs are taken from
-                <code class="bg-accent/60 text-accent-foreground rounded px-1.5 py-0.5 font-mono text-xs">X-Forwarded-For</code>
+                The control plane binds to localhost and is intended to be reached through a reverse
+                proxy or tunnel with TLS. Behind Cloudflare, client IPs are taken from
+                <code
+                  class="bg-accent/60 text-accent-foreground rounded px-1.5 py-0.5 font-mono text-xs"
+                  >X-Forwarded-For</code
+                >
                 so rate limits apply to the real client, not the proxy.
               </p>
             </div>
