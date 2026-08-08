@@ -2,8 +2,22 @@
 # Build + publish a HorizonX Dashboard image release.
 #
 # Usage:
-#   scripts/release.sh v0.3.2            # build, verify, publish
-#   scripts/release.sh v0.3.2 --dry-run  # build + verify only, no publish
+#   scripts/release.sh minor              # bump + build, verify, publish
+#   scripts/release.sh v0.3.2            # explicit version (same as before)
+#   scripts/release.sh minor --dry-run   # build + verify only, no publish
+#
+# Version semantics (semver 2.0.0, resolved from the latest git tag):
+#   major  = breaking change (incompatible API contract, dropped feature)
+#   minor  = backward-compatible new capability (new pages, new dialogs,
+#            redesigns that change behavior)
+#   patch  = bug fix or invisible refactor (fixes, wording, styling-only)
+#   Explicit vX.Y.Z skips resolution and publishes exactly that version.
+#
+# package.json sync: this script keeps package.json's version equal to the
+# released tag (it has drifted before — was still 0.3.1 at the v0.3.5 tag).
+# In publish mode it writes a dedicated "chore: release vX.Y.Z" commit and
+# pushes it, so the tag points at a commit that includes the bump. Dry-run
+# does NOT touch the tree.
 #
 # Requires:
 #   - docker (buildx optional; plain docker build used)
@@ -21,17 +35,66 @@ set -euo pipefail
 cd "$(dirname "$0")/.."   # repo root
 REPO_ROOT="$PWD"
 
-VERSION="${1:?usage: scripts/release.sh vX.Y.Z [--dry-run]}"
+RESOLVE="${1:?usage: scripts/release.sh <major|minor|patch|vX.Y.Z> [--dry-run]}"
 DRY_RUN="${2:-}"
 if [ -n "$DRY_RUN" ] && [ "$DRY_RUN" != "--dry-run" ]; then
   echo "unknown arg: $DRY_RUN (expected --dry-run)" >&2; exit 2
 fi
-[[ "$VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "version must look like v0.3.2" >&2; exit 2; }
+
+# -- resolve version ----------------------------------------------------------
+# Accept a semver bump keyword or an explicit vX.Y.Z. Keywords compute the
+# next version from the latest git tag (sorted as versions, not strings).
+case "$RESOLVE" in
+  v[0-9]*.[0-9]*.[0-9]*)
+    VERSION="$RESOLVE"
+    ;;
+  major|minor|patch)
+    LATEST=$(git tag --sort=-version:refname | head -1 || true)
+    LATEST="${LATEST:-v0.0.0}"
+    if [[ "$LATEST" =~ ^v([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
+      MAJOR=${BASH_REMATCH[1]}; MINOR=${BASH_REMATCH[2]}; PATCH=${BASH_REMATCH[3]}
+      case "$RESOLVE" in
+        major) MAJOR=$((MAJOR+1)); MINOR=0; PATCH=0 ;;
+        minor) MINOR=$((MINOR+1)); PATCH=0 ;;
+        patch) PATCH=$((PATCH+1)) ;;
+      esac
+      VERSION="v${MAJOR}.${MINOR}.${PATCH}"
+    else
+      echo "cannot parse latest tag: $LATEST" >&2; exit 2
+    fi
+    echo "== version: $RESOLVE bump → $VERSION (latest tag: $LATEST) =="
+    ;;
+  *)
+    echo "usage: scripts/release.sh <major|minor|patch|vX.Y.Z> [--dry-run]" >&2
+    exit 2
+    ;;
+esac
+[[ "$VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "resolved version invalid: $VERSION" >&2; exit 2; }
 
 REPO="zlnew/horizonx-dashboard"
 OUT="/tmp/hx-dash-release-${VERSION}"
 TARBALL="$OUT/horizonx-dashboard-${VERSION}-image.tar.gz"
 IMG="horizonx-dashboard:${VERSION}"
+
+# -- sync package.json (publish only) -----------------------------------------
+# package.json is the dashboard's source-of-truth version string (nothing in
+# the build renders it today, but it must not lie). Write the bump as its own
+# commit BEFORE the release tag so the tag includes the version bump.
+if [ -z "$DRY_RUN" ]; then
+  PKG_VERSION=$(node -p "require('./package.json').version" 2>/dev/null || true)
+  if [ "$PKG_VERSION" != "${VERSION#v}" ]; then
+    echo ""
+    echo "== 0. sync package.json → ${VERSION#v} =="
+    git diff --quiet -- package.json || { echo "package.json has uncommitted changes — commit or stash them first" >&2; exit 1; }
+    node -e "const p=require('./package.json'); p.version='${VERSION#v}'; require('fs').writeFileSync('package.json', JSON.stringify(p, null, 2) + '\n')"
+    git add package.json
+    git commit -q -m "chore: release ${VERSION}"
+    git push -q origin HEAD
+    echo "  committed + pushed: chore: release ${VERSION}"
+  else
+    echo "== 0. package.json already at ${VERSION#v} — nothing to sync =="
+  fi
+fi
 
 # -- preflight ---------------------------------------------------------------
 echo "== preflight =="
