@@ -16,6 +16,7 @@ export default defineConfigWithVueTs(
     '**/coverage/**',
     '**/node_modules/**',
     '**/components/ui/**',
+    'apps/**',
     'vite.config.{js,ts}',
     'vitest.config.{js,ts}'
   ]),

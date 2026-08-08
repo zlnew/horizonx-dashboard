@@ -47,9 +47,9 @@ watch(
 const setFilter = (status: string | null) => {
   const query = { ...route.query }
   if (status) {
-    query.status = status
+    query.statuses = status
   } else {
-    delete query.status
+    delete query.statuses
   }
   router.push({ query })
 }
@@ -70,7 +70,7 @@ const chipValue = (key: keyof JobStatusCounts) => counts.value?.[key] ?? 0
       <div
         v-for="i in 4"
         :key="i"
-        class="h-7 w-16 rounded-full bg-accent/50 animate-pulse"
+        class="bg-accent/50 h-7 w-16 animate-pulse rounded-full"
       />
     </template>
 
@@ -79,7 +79,7 @@ const chipValue = (key: keyof JobStatusCounts) => counts.value?.[key] ?? 0
         v-for="chip in chips"
         :key="chip.key"
         type="button"
-        class="hover:bg-accent/80 flex items-center gap-1.5 rounded-full border border-border/50 bg-accent/30 px-3 py-1 text-xs font-bold tracking-widest uppercase transition-all"
+        class="hover:bg-accent/80 border-border/50 bg-accent/30 flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold tracking-widest uppercase transition-all"
         :class="[
           status === chip.status
             ? 'border-primary/50 bg-primary/10 text-primary'

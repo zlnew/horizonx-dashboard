@@ -46,9 +46,7 @@ const diskUsageAvg = computed(() => {
               >
                 <CpuIcon :size="20" />
               </div>
-              <span class="text-xs font-black tracking-widest uppercase opacity-40"
-                >CPU Load</span
-              >
+              <span class="text-xs font-black tracking-widest uppercase opacity-40">CPU Load</span>
             </div>
 
             <div class="space-y-1">
@@ -77,9 +75,7 @@ const diskUsageAvg = computed(() => {
               >
                 <GpuIcon :size="20" />
               </div>
-              <span class="text-xs font-black tracking-widest uppercase opacity-40"
-                >GPU Load</span
-              >
+              <span class="text-xs font-black tracking-widest uppercase opacity-40">GPU Load</span>
             </div>
 
             <template v-if="hasGpu">

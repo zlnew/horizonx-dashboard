@@ -38,8 +38,7 @@ const toggleReveal = (key: string) => {
   }
 }
 
-const maskValue = (key: string, value: string) =>
-  revealedKeys.has(key) ? value : '••••••••••••'
+const maskValue = (key: string, value: string) => (revealedKeys.has(key) ? value : '••••••••••••')
 
 usePageMeta({
   title: pageTitle,
@@ -90,7 +89,9 @@ const showDeleteDialog = () => {
     <!-- Environment Variables Section -->
     <section>
       <Card class="border-border/50 bg-card/30 overflow-hidden backdrop-blur-md">
-        <CardHeader class="border-border/50 flex-row items-center justify-between border-b pb-6">
+        <CardHeader
+          class="border-border/50 flex flex-col items-start justify-between gap-4 border-b pb-6 sm:flex-row sm:items-center"
+        >
           <div class="flex items-center gap-4">
             <div class="bg-primary/10 text-primary rounded-xl p-2.5">
               <PlusIcon :size="20" />
@@ -155,8 +156,14 @@ const showDeleteDialog = () => {
                         :title="revealedKeys.has(env.key) ? 'Hide value' : 'Reveal value'"
                         @click="toggleReveal(env.key)"
                       >
-                        <EyeOffIcon v-if="!revealedKeys.has(env.key)" class="size-3.5" />
-                        <EyeIcon v-else class="size-3.5" />
+                        <EyeOffIcon
+                          v-if="!revealedKeys.has(env.key)"
+                          class="size-3.5"
+                        />
+                        <EyeIcon
+                          v-else
+                          class="size-3.5"
+                        />
                       </Button>
                     </div>
                   </TableCell>
@@ -165,7 +172,7 @@ const showDeleteDialog = () => {
                     class="py-4 pr-8"
                   >
                     <div
-                      class="flex items-center justify-end gap-1 opacity-0 transition-opacity group-hover:opacity-100"
+                      class="flex items-center justify-end gap-1 transition-opacity sm:opacity-0 sm:group-hover:opacity-100"
                     >
                       <Button
                         type="button"

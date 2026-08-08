@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { DownloadIcon, SearchIcon, WrapTextIcon } from 'lucide-vue-next'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
 
 const props = defineProps<{
   lines: ContainerLogLine[]
@@ -97,7 +97,7 @@ onUnmounted(() => {
     <!-- toolbar -->
     <div class="flex flex-wrap items-center gap-2">
       <div class="relative">
-        <SearchIcon class="absolute top-1/2 left-2 h-4 w-4 -translate-y-1/2 text-muted" />
+        <SearchIcon class="text-muted absolute top-1/2 left-2 h-4 w-4 -translate-y-1/2" />
         <Input
           v-model="search"
           placeholder="Filter text…"
@@ -108,11 +108,17 @@ onUnmounted(() => {
       <select
         v-if="services.length > 1"
         :value="service"
-        class="h-8 rounded-md border bg-background px-2 text-xs"
+        class="bg-background h-8 rounded-md border px-2 text-xs"
         @change="emit('update:service', ($event.target as HTMLSelectElement).value)"
       >
         <option value="">All services</option>
-        <option v-for="s in services" :key="s" :value="s">{{ s }}</option>
+        <option
+          v-for="s in services"
+          :key="s"
+          :value="s"
+        >
+          {{ s }}
+        </option>
       </select>
 
       <Button
@@ -125,15 +131,29 @@ onUnmounted(() => {
         <WrapTextIcon class="h-3.5 w-3.5" />
       </Button>
 
-      <Button variant="ghost" size="sm" class="h-8 px-2 text-xs" title="Download as .log" @click="download">
+      <Button
+        variant="ghost"
+        size="sm"
+        class="h-8 px-2 text-xs"
+        title="Download as .log"
+        @click="download"
+      >
         <DownloadIcon class="h-3.5 w-3.5" />
       </Button>
 
-      <Badge v-if="!following" variant="secondary" class="h-6 text-[10px]">
+      <Badge
+        v-if="!following"
+        variant="secondary"
+        class="h-6 text-[10px]"
+      >
         Scroll to bottom to resume
       </Badge>
 
-      <Badge v-if="streaming" variant="outline" class="h-6 text-[10px] text-emerald-500">
+      <Badge
+        v-if="streaming"
+        variant="outline"
+        class="h-6 text-[10px] text-emerald-500"
+      >
         ● LIVE
       </Badge>
     </div>
@@ -143,18 +163,27 @@ onUnmounted(() => {
       v-if="droppedChunks"
       class="rounded-md border border-yellow-500/30 bg-yellow-500/10 px-3 py-1 text-[11px] text-yellow-200"
     >
-      ⚠ {{ droppedChunks }} chunk{{ droppedChunks === 1 ? '' : 's' }} dropped — the connection couldn't keep up
-      <button class="ml-1 underline" @click="$emit('update:following', false)">pause</button>
+      ⚠ {{ droppedChunks }} chunk{{ droppedChunks === 1 ? '' : 's' }} dropped — the connection
+      couldn't keep up
+      <button
+        class="ml-1 underline"
+        @click="$emit('update:following', false)"
+      >
+        pause
+      </button>
     </div>
 
     <!-- console -->
     <div
       ref="consoleEl"
-      class="h-96 overflow-auto rounded-lg bg-foreground p-3 font-mono text-xs leading-5 text-background dark:bg-background dark:text-foreground"
+      class="bg-foreground text-background dark:bg-background dark:text-foreground h-96 overflow-auto rounded-lg p-3 font-mono text-xs leading-5"
       :class="heightClass"
       @scroll.passive="onScroll"
     >
-      <div v-if="!filtered.length" class="text-muted italic">
+      <div
+        v-if="!filtered.length"
+        class="text-muted italic"
+      >
         {{ streaming ? 'Waiting for output…' : 'No logs yet. Start tailing or run a query.' }}
       </div>
       <div
@@ -163,7 +192,11 @@ onUnmounted(() => {
         class="flex gap-2 whitespace-pre"
         :class="wrap ? 'flex-wrap' : ''"
       >
-        <span v-if="line.ts" class="shrink-0 text-muted">{{ line.ts }}</span>
+        <span
+          v-if="line.ts"
+          class="text-muted shrink-0"
+          >{{ line.ts }}</span
+        >
         <span
           v-if="line.service"
           class="shrink-0 font-semibold"

@@ -1,22 +1,18 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { storeToRefs } from 'pinia'
-import { SearchIcon, SettingsIcon } from 'lucide-vue-next'
+import { SettingsIcon } from 'lucide-vue-next'
 import ServerSelector from '@/components/ServerSelector.vue'
 import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Separator } from '@/components/ui/separator'
 import useApp from '@/composables/app'
-import useAppStore from '@/stores/app'
 
 const route = useRoute()
 const { menu } = useApp()
-const appStore = useAppStore()
-const { searchOpen } = storeToRefs(appStore)
 
 const overviewMenu = computed(() => {
-  return menu.find((m) => m.value === 'overview')
+  return menu.find((m) => m.value === 'mobile_overview')
 })
 
 const settingsMenu = computed(() => {
@@ -28,10 +24,6 @@ const isActive = (to: { name?: string; path?: string }): boolean => {
   if (to.path && route.path.startsWith(to.path)) return true
   return false
 }
-
-const openSearch = () => {
-  searchOpen.value = true
-}
 </script>
 
 <template>
@@ -39,7 +31,7 @@ const openSearch = () => {
     class="border-border/50 bg-background/60 fixed bottom-0 z-50 w-full border-t backdrop-blur-md sm:hidden"
     style="padding-bottom: env(safe-area-inset-bottom)"
   >
-    <div class="grid h-16 grid-cols-5 items-center justify-evenly gap-1 px-2">
+    <div class="grid h-16 grid-cols-4 items-center justify-evenly gap-1 px-2">
       <template
         v-for="m in overviewMenu?.items"
         :key="m.value"
@@ -69,16 +61,6 @@ const openSearch = () => {
           </RouterLink>
         </Button>
       </template>
-      <Button
-        variant="ghost"
-        class="h-auto"
-        @click="openSearch"
-      >
-        <div class="flex flex-col items-center gap-1">
-          <SearchIcon :size="18" />
-          <div class="text-[9px] font-black tracking-widest uppercase opacity-60">Search</div>
-        </div>
-      </Button>
       <Popover #="{ close }">
         <PopoverTrigger as-child>
           <Button

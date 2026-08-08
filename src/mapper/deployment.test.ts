@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { deployStatusLabel } from '@/mapper/deployment'
 import DeploymentStatus from '@/constants/deployment-status'
+import { deployStatusLabel } from '@/mapper/deployment'
 
 describe('deployStatusLabel', () => {
   it('maps every known status to a label', () => {

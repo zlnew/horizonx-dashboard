@@ -167,7 +167,9 @@ const handleLogsCopy = (copy: (text: string) => Promise<void>) => {
     <!-- Activity Metadata Overview -->
     <section>
       <Card class="border-border/50 bg-card/30 overflow-hidden backdrop-blur-md">
-        <CardHeader class="border-border/50 flex-row items-center justify-between border-b pb-6">
+        <CardHeader
+          class="border-border/50 flex flex-col items-start justify-between gap-4 border-b pb-6 sm:flex-row sm:items-center"
+        >
           <div class="flex items-center gap-4">
             <div class="bg-primary/10 text-primary rounded-xl p-2.5">
               <ClipboardIcon :size="20" />
@@ -191,7 +193,7 @@ const handleLogsCopy = (copy: (text: string) => Promise<void>) => {
             />
           </CardAction>
         </CardHeader>
-        <CardContent class="px-8 pt-8">
+        <CardContent class="px-4 pt-6 sm:px-8 sm:pt-8">
           <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
             <div class="border-accent flex flex-col gap-2 border-l-2 pl-4">
               <span
@@ -232,7 +234,9 @@ const handleLogsCopy = (copy: (text: string) => Promise<void>) => {
     <!-- Activity Logs Section -->
     <section>
       <Card class="border-border/50 backdrop-blur-xl">
-        <CardHeader class="border-border/50 flex-row items-center justify-between border-b pb-6">
+        <CardHeader
+          class="border-border/50 flex flex-col items-start justify-between gap-4 border-b pb-6 sm:flex-row sm:items-center"
+        >
           <div class="flex items-center gap-4">
             <div class="bg-accent/50 text-muted-foreground rounded-xl p-2.5">
               <CheckIcon

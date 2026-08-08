@@ -7,9 +7,7 @@ class ApplicationDeploymentApi extends Api {
   }
 
   public async getDiff<T>(deploymentId: number) {
-    const { data, error } = await this.fetch(
-      `${this.resource}/${deploymentId}/diff`
-    )
+    const { data, error } = await this.fetch(`${this.resource}/${deploymentId}/diff`)
       .get()
       .json<T>()
 

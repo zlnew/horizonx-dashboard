@@ -195,7 +195,9 @@ const handleLogsCopy = (copy: (text: string) => Promise<void>) => {
     <!-- Deployment Metadata Overview -->
     <section>
       <Card class="border-border/50 bg-card/30 overflow-hidden backdrop-blur-md">
-        <CardHeader class="border-border/50 flex-row items-center justify-between border-b pb-6">
+        <CardHeader
+          class="border-border/50 flex flex-col items-start justify-between gap-4 border-b pb-6 sm:flex-row sm:items-center"
+        >
           <div class="flex items-center gap-4">
             <div class="bg-primary/10 text-primary rounded-xl p-2.5">
               <ClipboardIcon :size="20" />
@@ -218,7 +220,7 @@ const handleLogsCopy = (copy: (text: string) => Promise<void>) => {
             />
           </CardAction>
         </CardHeader>
-        <CardContent class="px-8 pt-8">
+        <CardContent class="px-4 pt-6 sm:px-8 sm:pt-8">
           <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
             <!-- Commit Info -->
             <div class="border-accent flex flex-col gap-2 border-l-2 pl-4 md:col-span-2">
@@ -227,16 +229,18 @@ const handleLogsCopy = (copy: (text: string) => Promise<void>) => {
                 >Version Source</span
               >
               <div class="flex flex-col gap-1">
-                <div class="flex items-center gap-2">
+                <div class="flex min-w-0 flex-wrap items-center gap-2">
                   <span
                     class="bg-primary/10 text-primary rounded px-1.5 py-0.5 text-[10px] font-black tracking-tighter uppercase"
                     >{{ deployment.branch }}</span
                   >
-                  <code class="font-mono text-sm font-bold opacity-80">{{
+                  <code class="font-mono text-sm font-bold break-all opacity-80">{{
                     deployment.commit_hash ?? 'FETCHING_HASH'
                   }}</code>
                 </div>
-                <div class="text-foreground/80 text-sm leading-relaxed font-medium italic">
+                <div
+                  class="text-foreground/80 min-w-0 text-sm leading-relaxed font-medium break-words italic"
+                >
                   "{{ deployment.commit_message ?? 'Awaiting commit metadata...' }}"
                 </div>
               </div>
@@ -286,13 +290,17 @@ const handleLogsCopy = (copy: (text: string) => Promise<void>) => {
     <!-- Deployment Diff Section (P3-19) -->
     <section v-if="deploymentDiff">
       <Card class="border-border/50 backdrop-blur-xl">
-        <CardHeader class="border-border/50 flex-row items-center justify-between border-b pb-6">
+        <CardHeader
+          class="border-border/50 flex flex-col items-start justify-between gap-4 border-b pb-6 sm:flex-row sm:items-center"
+        >
           <div class="flex items-center gap-4">
             <div class="bg-primary/10 text-primary rounded-xl p-2.5">
               <GitCompareIcon :size="20" />
             </div>
             <div>
-              <CardTitle class="text-xl font-black tracking-tight uppercase">Deployment Diff</CardTitle>
+              <CardTitle class="text-xl font-black tracking-tight uppercase"
+                >Deployment Diff</CardTitle
+              >
               <CardDescription class="text-xs font-medium tracking-widest uppercase opacity-60">
                 <template v-if="deploymentDiff.has_previous">
                   {{ deploymentDiff.commit_from?.slice(0, 7) ?? 'n/a' }} →
@@ -303,11 +311,24 @@ const handleLogsCopy = (copy: (text: string) => Promise<void>) => {
             </div>
           </div>
         </CardHeader>
-        <CardContent class="px-8 pt-6">
-          <div v-if="diffLoading" class="py-6 text-sm text-muted-foreground">Loading diff…</div>
-          <div v-else class="space-y-6">
-            <div v-if="deploymentDiff.env_additions.length" class="space-y-2">
-              <p class="text-xs font-black tracking-widest text-green-500 uppercase">Added env vars</p>
+        <CardContent class="px-4 pt-4 sm:px-8 sm:pt-6">
+          <div
+            v-if="diffLoading"
+            class="text-muted-foreground py-6 text-sm"
+          >
+            Loading diff…
+          </div>
+          <div
+            v-else
+            class="space-y-6"
+          >
+            <div
+              v-if="deploymentDiff.env_additions.length"
+              class="space-y-2"
+            >
+              <p class="text-xs font-black tracking-widest text-green-500 uppercase">
+                Added env vars
+              </p>
               <div class="border-border/40 divide-border/40 divide-y rounded-lg border">
                 <div
                   v-for="entry in deploymentDiff.env_additions"
@@ -315,13 +336,20 @@ const handleLogsCopy = (copy: (text: string) => Promise<void>) => {
                   class="flex items-center justify-between gap-4 px-4 py-2.5"
                 >
                   <code class="text-sm font-semibold">{{ entry.key }}</code>
-                  <code class="text-muted-foreground text-xs break-all text-right">{{ entry.new }}</code>
+                  <code class="text-muted-foreground text-right text-xs break-all">{{
+                    entry.new
+                  }}</code>
                 </div>
               </div>
             </div>
 
-            <div v-if="deploymentDiff.env_updates.length" class="space-y-2">
-              <p class="text-xs font-black tracking-widest text-amber-500 uppercase">Changed env vars</p>
+            <div
+              v-if="deploymentDiff.env_updates.length"
+              class="space-y-2"
+            >
+              <p class="text-xs font-black tracking-widest text-amber-500 uppercase">
+                Changed env vars
+              </p>
               <div class="border-border/40 divide-border/40 divide-y rounded-lg border">
                 <div
                   v-for="entry in deploymentDiff.env_updates"
@@ -337,8 +365,13 @@ const handleLogsCopy = (copy: (text: string) => Promise<void>) => {
               </div>
             </div>
 
-            <div v-if="deploymentDiff.env_removals.length" class="space-y-2">
-              <p class="text-xs font-black tracking-widest text-red-500 uppercase">Removed env vars</p>
+            <div
+              v-if="deploymentDiff.env_removals.length"
+              class="space-y-2"
+            >
+              <p class="text-xs font-black tracking-widest text-red-500 uppercase">
+                Removed env vars
+              </p>
               <div class="border-border/40 divide-border/40 divide-y rounded-lg border">
                 <div
                   v-for="entry in deploymentDiff.env_removals"
@@ -357,7 +390,7 @@ const handleLogsCopy = (copy: (text: string) => Promise<void>) => {
                 !deploymentDiff.env_updates.length &&
                 !deploymentDiff.env_removals.length
               "
-              class="text-sm text-muted-foreground"
+              class="text-muted-foreground text-sm"
             >
               No environment variable changes in this deployment.
             </p>
@@ -369,7 +402,9 @@ const handleLogsCopy = (copy: (text: string) => Promise<void>) => {
     <!-- Build Logs Section -->
     <section>
       <Card class="border-border/50 backdrop-blur-xl">
-        <CardHeader class="border-border/50 flex-row items-center justify-between border-b pb-6">
+        <CardHeader
+          class="border-border/50 flex flex-col items-start justify-between gap-4 border-b pb-6 sm:flex-row sm:items-center"
+        >
           <div class="flex items-center gap-4">
             <div class="bg-accent/50 text-muted-foreground rounded-xl p-2.5">
               <CheckIcon

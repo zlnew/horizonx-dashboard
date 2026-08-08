@@ -163,11 +163,11 @@ const showRestartConfirmation = () => {
 </script>
 
 <template>
-  <div class="grid grid-cols-1 gap-12 xl:grid-cols-4">
+  <div class="grid grid-cols-1 gap-8 xl:grid-cols-4 xl:gap-12">
     <!-- Sidebar Navigation -->
-    <div class="flex w-full flex-col gap-8">
-      <div class="bg-accent/30 border-border/50 rounded-2xl border p-4 backdrop-blur-md">
-        <nav class="flex flex-col gap-1">
+    <div class="flex w-full flex-col gap-8 xl:gap-8">
+      <div class="bg-accent/30 border-border/50 rounded-2xl border p-2 backdrop-blur-md xl:p-4">
+        <nav class="flex flex-row gap-1 overflow-x-auto xl:flex-col">
           <template
             v-for="(m, index) in menu"
             :key="index"
@@ -179,7 +179,7 @@ const showRestartConfirmation = () => {
             >
               <a
                 href="javascript:void(0)"
-                class="group relative flex items-center gap-3 rounded-xl px-4 py-3 transition-all duration-300"
+                class="group relative flex shrink-0 items-center gap-2.5 rounded-xl px-3 py-3 transition-all duration-300 xl:w-full xl:gap-3 xl:px-4"
                 :class="[
                   isExactActive
                     ? 'bg-primary text-primary-foreground shadow-primary/20 shadow-lg'
@@ -202,7 +202,7 @@ const showRestartConfirmation = () => {
                 <!-- Active Indicator -->
                 <div
                   v-if="isExactActive"
-                  class="absolute -left-1 h-6 w-1 rounded-full bg-white shadow-[0_0_8px_#fff]"
+                  class="absolute -left-1 hidden h-6 w-1 rounded-full bg-white shadow-[0_0_8px_#fff] xl:block"
                 ></div>
               </a>
             </RouterLink>
@@ -239,28 +239,32 @@ const showRestartConfirmation = () => {
               />
             </div>
 
-            <CardHeader class="flex-row items-center justify-between gap-6 pb-2">
-              <div class="flex items-center gap-6">
+            <CardHeader
+              class="flex flex-col items-start justify-between gap-6 pb-2 sm:flex-row sm:items-center"
+            >
+              <div class="flex min-w-0 items-center gap-4 sm:gap-6">
                 <!-- App Icon/Box -->
-                <div class="bg-primary/10 border-primary/20 rounded-2xl border p-4 shadow-inner">
+                <div
+                  class="bg-primary/10 border-primary/20 rounded-2xl border p-3 shadow-inner sm:p-4"
+                >
                   <GaugeIcon
-                    :size="32"
-                    class="text-primary"
+                    :size="28"
+                    class="text-primary sm:size-8"
                   />
                 </div>
                 <!-- Title Group -->
-                <div class="border-border/50 flex flex-col gap-1 border-l pl-6">
-                  <h1 class="text-3xl leading-none font-black tracking-tight uppercase">
+                <div class="border-border/50 flex min-w-0 flex-col gap-1 border-l pl-4 sm:pl-6">
+                  <h1 class="text-2xl leading-none font-black tracking-tight uppercase sm:text-3xl">
                     {{ application.name }}
                   </h1>
-                  <div class="flex items-center gap-3">
+                  <div class="flex min-w-0 items-center gap-3">
                     <AppStatusBadge
                       :status="application.status"
                       class="px-2.5 py-0.5 text-xs font-black tracking-wider uppercase"
                     />
                     <span class="text-muted-foreground/40 font-light italic">/</span>
                     <span
-                      class="text-muted-foreground group-hover:text-foreground font-mono text-sm font-medium tracking-widest uppercase opacity-70 transition-colors"
+                      class="text-muted-foreground group-hover:text-foreground truncate font-mono text-sm font-medium tracking-widest uppercase opacity-70 transition-colors"
                     >
                       {{ application.repo_name }}
                     </span>
@@ -268,16 +272,19 @@ const showRestartConfirmation = () => {
                 </div>
               </div>
 
-              <CardAction class="shrink-0">
+              <CardAction class="w-full shrink-0 sm:w-auto">
                 <div
                   v-if="canReadApp || canWriteApp"
-                  class="flex items-center gap-3"
+                  class="flex flex-wrap items-center gap-3"
                 >
-                  <div v-if="canReadApp && application.site_url">
+                  <div
+                    v-if="canReadApp && application.site_url"
+                    class="flex-1 sm:flex-none"
+                  >
                     <Button
                       as-child
                       variant="outline"
-                      class="hover:bg-primary hover:text-primary-foreground dark:hover:text-primary hover:border-primary rounded-full px-6 transition-all active:scale-95"
+                      class="hover:bg-primary hover:text-primary-foreground dark:hover:text-primary hover:border-primary w-full rounded-full px-6 transition-all active:scale-95 sm:w-auto"
                     >
                       <a
                         :href="application.site_url"
@@ -290,10 +297,13 @@ const showRestartConfirmation = () => {
                     </Button>
                   </div>
 
-                  <DropdownMenu v-if="canWriteApp">
+                  <DropdownMenu
+                    v-if="canWriteApp"
+                    class="flex-1 sm:flex-none"
+                  >
                     <DropdownMenuTrigger as-child>
                       <Button
-                        class="shadow-primary/20 rounded-full shadow-lg transition-all active:scale-95"
+                        class="shadow-primary/20 w-full rounded-full shadow-lg transition-all active:scale-95 sm:w-auto"
                       >
                         <span class="text-sm font-bold tracking-tight uppercase"
                           >Service Controls</span

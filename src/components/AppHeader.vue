@@ -30,11 +30,13 @@ const { connected } = useWebSocket()
         >
           <span
             class="size-2 rounded-full transition-colors duration-300"
-            :class="connected ? 'bg-emerald-500' : 'bg-amber-500 animate-pulse'"
+            :class="connected ? 'bg-emerald-500' : 'animate-pulse bg-amber-500'"
           />
-          <span class="text-muted-foreground text-xs">{{ connected ? 'Live' : 'Reconnecting' }}</span>
+          <span class="text-muted-foreground text-xs">{{
+            connected ? 'Live' : 'Reconnecting'
+          }}</span>
         </div>
-        <ServerSelector class="hidden sm:block" />
+        <ServerSelector class="hidden md:block" />
         <AccountDropdown />
       </div>
     </div>
