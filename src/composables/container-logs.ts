@@ -1,6 +1,5 @@
 import { computed, ref } from 'vue'
 import ApplicationApi from '@/api/Application'
-import WSEvent from '@/constants/ws-event'
 import useWebSocket from '@/composables/web-socket'
 
 const MAX_LINES = 5000
@@ -131,7 +130,12 @@ export function useContainerLogs(applicationId: number) {
     detach()
   }
 
-  const query = async (opts?: { tail?: number; service?: string; since?: string; until?: string }) => {
+  const query = async (opts?: {
+    tail?: number
+    service?: string
+    since?: string
+    until?: string
+  }) => {
     resetSession()
     error.value = null
     status.value = 'querying'

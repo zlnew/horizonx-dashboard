@@ -16,12 +16,12 @@ import { z } from 'zod'
 import AccountApi from '@/api/Account'
 import PageHeader from '@/components/PageHeader.vue'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useDate } from '@/composables/date'
 import { usePageMeta } from '@/composables/page-meta'
@@ -216,10 +216,10 @@ const switchTab = (tab: 'profile' | 'password' | 'sessions') => {
   <section class="mt-12">
     <div class="max-w-4xl">
       <!-- Tab Navigation -->
-      <div class="border-border/50 mb-8 flex gap-4 border-b">
+      <div class="border-border/50 mb-8 flex gap-1 overflow-x-auto border-b sm:gap-4">
         <button
           type="button"
-          class="flex items-center gap-2 border-b-2 px-6 py-4 text-sm font-bold tracking-widest uppercase transition-all"
+          class="flex shrink-0 items-center gap-1.5 border-b-2 px-3 py-4 text-sm font-bold tracking-wide uppercase transition-all sm:gap-2 sm:px-6 sm:tracking-widest"
           :class="
             activeTab === 'profile'
               ? 'border-primary text-primary opacity-100 shadow-[0_4px_0_-2px_var(--primary)]'
@@ -232,7 +232,7 @@ const switchTab = (tab: 'profile' | 'password' | 'sessions') => {
         </button>
         <button
           type="button"
-          class="flex items-center gap-2 border-b-2 px-6 py-4 text-sm font-bold tracking-widest uppercase transition-all"
+          class="flex shrink-0 items-center gap-1.5 border-b-2 px-3 py-4 text-sm font-bold tracking-wide uppercase transition-all sm:gap-2 sm:px-6 sm:tracking-widest"
           :class="
             activeTab === 'password'
               ? 'border-primary text-primary opacity-100 shadow-[0_4px_0_-2px_var(--primary)]'
@@ -245,7 +245,7 @@ const switchTab = (tab: 'profile' | 'password' | 'sessions') => {
         </button>
         <button
           type="button"
-          class="flex items-center gap-2 border-b-2 px-6 py-4 text-sm font-bold tracking-widest uppercase transition-all"
+          class="flex shrink-0 items-center gap-1.5 border-b-2 px-3 py-4 text-sm font-bold tracking-wide uppercase transition-all sm:gap-2 sm:px-6 sm:tracking-widest"
           :class="
             activeTab === 'sessions'
               ? 'border-primary text-primary opacity-100 shadow-[0_4px_0_-2px_var(--primary)]'
@@ -440,12 +440,12 @@ const switchTab = (tab: 'profile' | 'password' | 'sessions') => {
         </Alert>
 
         <Card>
-          <CardHeader class="flex-row items-center justify-between">
+          <CardHeader
+            class="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center"
+          >
             <div>
               <CardTitle>Registered Sessions</CardTitle>
-              <CardDescription>
-                Devices with an active session on your account
-              </CardDescription>
+              <CardDescription> Devices with an active session on your account </CardDescription>
             </div>
             <Button
               v-if="sessions.some((s) => !s.is_current)"
@@ -505,8 +505,8 @@ const switchTab = (tab: 'profile' | 'password' | 'sessions') => {
                     </div>
                     <p class="text-muted-foreground truncate text-xs">
                       {{ session.ip }} · created
-                      {{ formatDate(session.created_at, 'DD-MM-YYYY HH:mm') }} ·
-                      expires {{ formatDate(session.expires_at, 'DD-MM-YYYY HH:mm') }}
+                      {{ formatDate(session.created_at, 'DD-MM-YYYY HH:mm') }} · expires
+                      {{ formatDate(session.expires_at, 'DD-MM-YYYY HH:mm') }}
                     </p>
                   </div>
                 </div>

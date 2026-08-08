@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { SearchIcon } from 'lucide-vue-next'
@@ -23,6 +24,10 @@ import useAppStore from '@/stores/app'
 const route = useRoute()
 const { menu } = useApp()
 const appStore = useAppStore()
+
+const menuGroups = computed(() => {
+  return menu.filter((m) => m.value !== 'mobile_overview')
+})
 
 const { searchOpen } = storeToRefs(appStore)
 
@@ -73,7 +78,7 @@ const onMobileMenuClickCapture = () => {
 
     <SidebarContent>
       <SidebarGroup
-        v-for="(parent, pi) in menu"
+        v-for="(parent, pi) in menuGroups"
         :key="pi"
       >
         <template v-if="parent.items?.length">

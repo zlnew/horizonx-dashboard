@@ -29,7 +29,7 @@ watch(tokenCopied, (clipCopied) => {
   }
 })
 
-const rotateSecret = async (closeDialog: () => void) => {
+const rotateSecret = async () => {
   if (!serverStore.selectedServer?.id || rotating.value) {
     return
   }
@@ -61,8 +61,8 @@ const rotateSecret = async (closeDialog: () => void) => {
             Rotate server token
           </DialogTitle>
           <DialogDescription>
-            The agent on this server will be disconnected until its config is updated with the
-            new token. Any in-flight deploys or jobs on this server will fail.
+            The agent on this server will be disconnected until its config is updated with the new
+            token. Any in-flight deploys or jobs on this server will fail.
           </DialogDescription>
         </DialogHeader>
 
@@ -74,7 +74,7 @@ const rotateSecret = async (closeDialog: () => void) => {
             type="button"
             variant="destructive"
             :disabled="rotating"
-            @click="rotateSecret(close)"
+            @click="rotateSecret"
           >
             <Loader2Icon
               v-if="rotating"
@@ -116,8 +116,8 @@ const rotateSecret = async (closeDialog: () => void) => {
           </div>
 
           <p class="text-muted-foreground text-xs">
-            The agent returns a permanent unauthorized error on a stale token — it will not
-            retry its way back. Update the config and restart, don't wait.
+            The agent returns a permanent unauthorized error on a stale token — it will not retry
+            its way back. Update the config and restart, don't wait.
           </p>
         </div>
 

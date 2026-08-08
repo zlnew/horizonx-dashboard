@@ -26,6 +26,16 @@ const totalPages = computed(() => {
   return Math.max(1, Math.ceil(meta.value.total / perPage))
 })
 
+const prevPage = () => {
+  page.value--
+  fetchLogs()
+}
+
+const nextPage = () => {
+  page.value++
+  fetchLogs()
+}
+
 usePageMeta({
   title: 'Audit Log',
   breadcrumb: [
@@ -108,23 +118,25 @@ onMounted(fetchLogs)
               :key="log.id"
               class="border-border/40 hover:bg-muted/40 flex flex-col gap-2 rounded-lg border px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
             >
-              <div class="flex items-center gap-3">
+              <div class="flex min-w-0 items-center gap-3">
                 <Badge
                   :variant="actionColor(log.action)"
                   class="font-mono text-[10px] font-bold tracking-wider uppercase"
                 >
                   {{ actionLabel(log.action) }}
                 </Badge>
-                <span class="text-muted-foreground text-xs">
+                <span class="text-muted-foreground min-w-0 text-xs">
                   {{ log.resource_type }}
                   <span
                     v-if="log.resource_id"
-                    class="font-mono"
+                    class="font-mono break-all"
                     >#{{ log.resource_id }}</span
                   >
                 </span>
               </div>
-              <div class="text-muted-foreground flex items-center gap-4 text-xs">
+              <div
+                class="text-muted-foreground flex flex-wrap items-center gap-x-4 gap-y-1 text-xs"
+              >
                 <span v-if="log.actor_email">{{ log.actor_email }}</span>
                 <span>{{ formatDate(new Date(log.created_at), 'DD MMM, HH:mm:ss') }}</span>
               </div>
@@ -139,7 +151,7 @@ onMounted(fetchLogs)
               variant="outline"
               size="sm"
               :disabled="page <= 1 || loading"
-              @click="page--; fetchLogs()"
+              @click="prevPage"
             >
               Previous
             </Button>
@@ -148,7 +160,7 @@ onMounted(fetchLogs)
               variant="outline"
               size="sm"
               :disabled="page >= totalPages || loading"
-              @click="page++; fetchLogs()"
+              @click="nextPage"
             >
               Next
             </Button>

@@ -2,6 +2,7 @@
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
+import { useDebounceFn } from '@vueuse/core'
 import { ListChecksIcon, RotateCcwIcon, SearchIcon } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
 import DataLoading from '@/components/DataLoading.vue'
@@ -35,9 +36,7 @@ import JobStatus from '@/constants/job-status'
 import JobType from '@/constants/job-type'
 import WSEvent from '@/constants/ws-event'
 import { jobTypeLabel } from '@/mapper/job'
-import useApplicationStore from '@/stores/application'
 import useJobStore from '@/stores/job'
-import useServerStore from '@/stores/server'
 
 type Criteria = JobCriteria
 
@@ -45,12 +44,8 @@ const route = useRoute()
 const router = useRouter()
 const { subscribe } = useWebSocket()
 const jobStore = useJobStore()
-const serverStore = useServerStore()
-const applicationStore = useApplicationStore()
 
 const { jobs, meta, loading, notFound } = storeToRefs(jobStore)
-const { servers } = storeToRefs(serverStore)
-const { applications } = storeToRefs(applicationStore)
 
 const { formatDate } = useDate()
 
@@ -62,16 +57,6 @@ const typeFilter = ref<string | null>(null)
 // Bumped (debounced 500ms) on job WS events; JobQueueSummary refetches on it.
 const summaryTick = ref(0)
 let summaryDebounce: ReturnType<typeof setTimeout> | null = null
-
-const serverName = (id: string) => {
-  const s = servers.value.find((server) => server.id === id)
-  return s?.name ?? id.slice(0, 8)
-}
-const applicationName = (id: number | null) => {
-  if (id === null) return '—'
-  const app = applications.value.find((a) => a.id === id)
-  return app?.name ?? `#${id}`
-}
 
 const criteria = computed<Criteria>(() => ({ ...route.query }))
 
@@ -95,8 +80,6 @@ const bumpSummary = () => {
 }
 
 onMounted(() => {
-  serverStore.getServers()
-  applicationStore.getApplications()
   fetchJobs(criteria.value)
 
   // WS-driven live updates: status events patch the row in place; only a
@@ -166,13 +149,13 @@ const fetchJobs = async (criteria: Criteria) => {
   }
 }
 
-const applyFilters = () => {
+const applyFilters = useDebounceFn(() => {
   const q: Record<string, string> = {}
   if (search.value) q.search = search.value
   if (statusFilter.value) q.statuses = statusFilter.value
   if (typeFilter.value) q.job_type = typeFilter.value
   router.push({ query: q })
-}
+}, 300)
 
 const clearFilters = () => {
   search.value = ''
@@ -185,8 +168,20 @@ const hasActiveFilters = computed(
   () => !!search.value || !!statusFilter.value || !!typeFilter.value
 )
 
-const canRetry = (job: Job) =>
-  job.status === JobStatus.FAILED || job.status === JobStatus.EXPIRED
+const onTypeFilter = (v: string) => {
+  let value = ''
+
+  if (v === 'all') {
+    value = ''
+  } else {
+    value = v
+  }
+
+  typeFilter.value = value
+  applyFilters()
+}
+
+const canRetry = (job: Job) => job.status === JobStatus.FAILED || job.status === JobStatus.EXPIRED
 
 const retrying = new Set<number>()
 
@@ -217,14 +212,6 @@ watch(
   },
   { immediate: true }
 )
-
-watch(search, (val) => {
-  if (!val) {
-    const q = { ...route.query }
-    delete q.search
-    router.push({ query: q })
-  }
-})
 </script>
 
 <template>
@@ -250,7 +237,7 @@ watch(search, (val) => {
           <InputGroupInput
             v-model="search"
             placeholder="Search jobs&hellip;"
-            @keyup.enter="applyFilters"
+            @input="applyFilters"
           />
           <InputGroupAddon>
             <SearchIcon />
@@ -261,7 +248,7 @@ watch(search, (val) => {
       <div class="flex flex-wrap items-center gap-2">
         <Select
           :model-value="typeFilter ?? undefined"
-          @update:model-value="(v) => (typeFilter = String(v ?? '') === 'all' ? null : String(v ?? ''))"
+          @update:model-value="(v) => onTypeFilter(String(v))"
         >
           <SelectTrigger class="w-44">
             <SelectValue placeholder="All types" />
@@ -298,19 +285,16 @@ watch(search, (val) => {
                 <TableHead>Status</TableHead>
                 <TableHead>Server</TableHead>
                 <TableHead>Application</TableHead>
-                <TableHead
-                  class="hidden md:table-cell"
-                >
-                  Queued At
-                </TableHead>
+                <TableHead class="hidden md:table-cell"> Queued At </TableHead>
                 <TableHead class="w-24 text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              <TableRow v-for="job in jobs" :key="job.id">
-                <TableCell class="font-mono text-xs">
-                  #{{ job.id }}
-                </TableCell>
+              <TableRow
+                v-for="job in jobs"
+                :key="job.id"
+              >
+                <TableCell class="font-mono text-xs"> #{{ job.id }} </TableCell>
                 <TableCell>{{ jobTypeLabel(job.type) }}</TableCell>
                 <TableCell>
                   <JobStatusBadge :status="job.status" />
@@ -320,7 +304,7 @@ watch(search, (val) => {
                     :title="job.server_id"
                     class="font-mono text-xs"
                   >
-                    {{ serverName(job.server_id) }}
+                    #{{ job.server_id }}
                   </span>
                 </TableCell>
                 <TableCell>
@@ -328,7 +312,7 @@ watch(search, (val) => {
                     :title="job.application_id != null ? `#${job.application_id}` : undefined"
                     class="font-mono text-xs"
                   >
-                    {{ applicationName(job.application_id) }}
+                    #{{ job.application_id }}
                   </span>
                 </TableCell>
                 <TableCell class="text-muted-foreground hidden text-xs md:table-cell">
@@ -355,7 +339,8 @@ watch(search, (val) => {
                     <span
                       v-else
                       class="text-muted-foreground text-xs"
-                    >—</span>
+                      >—</span
+                    >
                   </div>
                 </TableCell>
               </TableRow>

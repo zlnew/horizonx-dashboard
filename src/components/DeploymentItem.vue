@@ -16,15 +16,15 @@ const { formatDate } = useDate()
       name: 'applications.deploys.show',
       params: { id: data.application_id, deploymentID: data.id }
     }"
-    class="group flex items-center justify-between transition-all active:scale-[0.99]"
+    class="group flex min-w-0 items-center justify-between gap-3 transition-all active:scale-[0.99]"
   >
-    <div class="flex flex-col gap-1">
+    <div class="flex min-w-0 flex-col gap-1">
       <span
-        class="group-hover:text-primary text-sm font-black tracking-tight uppercase transition-colors"
+        class="group-hover:text-primary truncate text-sm font-black tracking-tight uppercase transition-colors"
       >
         {{ data.branch }}@{{ data.commit_hash?.substring(0, 7) ?? '~~~~~~~' }}
       </span>
-      <div class="flex items-center gap-3">
+      <div class="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1">
         <AppDeployBadge
           :status="data.status"
           class="px-2 py-0.5 text-xs font-black tracking-wider uppercase"
@@ -33,9 +33,7 @@ const { formatDate } = useDate()
           {{ formatDate(new Date(data.triggered_at), 'DD MMM, YYYY HH:mm') }}
         </span>
         <span class="text-muted-foreground/30 font-light">•</span>
-        <span
-          class="text-muted-foreground/50 max-w-[200px] truncate text-xs italic sm:max-w-[400px]"
-        >
+        <span class="text-muted-foreground/50 min-w-0 truncate text-xs italic">
           {{ data.commit_message || 'No deployment notes' }}
         </span>
       </div>

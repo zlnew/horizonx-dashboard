@@ -97,6 +97,30 @@ const useApp = () => {
           icon: BookOpenIcon
         }
       ]
+    },
+    {
+      label: 'Mobile Overview',
+      value: 'mobile_overview',
+      items: [
+        {
+          label: 'Monitor',
+          value: 'system monitor',
+          to: { name: 'system-monitor' },
+          icon: ChartColumnBigIcon
+        },
+        {
+          label: 'Apps',
+          value: 'applications',
+          to: { name: 'applications' },
+          icon: LayoutGridIcon
+        },
+        {
+          label: 'Jobs',
+          value: 'jobs',
+          to: { name: 'jobs' },
+          icon: ListChecksIcon
+        }
+      ]
     }
   ]
 

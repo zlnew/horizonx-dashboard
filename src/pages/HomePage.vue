@@ -108,9 +108,7 @@ onMounted(async () => {
             class="bg-background/50 border-border/50 relative rounded-full border px-4 py-1.5 text-xs font-medium backdrop-blur-md sm:text-sm"
           >
             <span class="mr-2">🚀</span>
-            <span class="text-muted-foreground italic"
-              >Self-hosted fleet control plane</span
-            >
+            <span class="text-muted-foreground italic">Self-hosted fleet control plane</span>
             <span
               v-if="latestVersion"
               class="bg-primary/10 text-primary/90 ml-2 rounded-full px-2.5 py-0.5 text-[11px] font-bold tracking-widest uppercase"
@@ -172,7 +170,8 @@ onMounted(async () => {
       >
         <span class="text-muted-foreground/60 shrink-0">$</span>
         <code class="text-foreground/80 whitespace-nowrap"
-          >curl -fsSL https://raw.githubusercontent.com/zlnew/horizonx/main/install.sh | sudo bash</code
+          >curl -fsSL https://raw.githubusercontent.com/zlnew/horizonx/main/install.sh | sudo
+          bash</code
         >
       </div>
 
@@ -274,8 +273,8 @@ onMounted(async () => {
         <div class="flex flex-col items-center gap-4 md:items-start">
           <AppLogo />
           <p class="text-muted-foreground max-w-[300px] text-center text-sm md:text-left">
-            A self-hosted control plane for your fleet — deploy, monitor, and audit without
-            leaving your own infrastructure.
+            A self-hosted control plane for your fleet — deploy, monitor, and audit without leaving
+            your own infrastructure.
           </p>
         </div>
 

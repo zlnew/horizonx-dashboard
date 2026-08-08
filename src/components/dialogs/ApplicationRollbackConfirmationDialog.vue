@@ -51,8 +51,8 @@ const rollbackApp = async (closeDialog: () => void) => {
       <DialogHeader>
         <DialogTitle>Rollback Application</DialogTitle>
         <DialogDescription>
-          This will redeploy the last successful deployment's image without rebuilding. The
-          current running image stays untouched until the recreate finishes. Proceed?
+          This will redeploy the last successful deployment's image without rebuilding. The current
+          running image stays untouched until the recreate finishes. Proceed?
         </DialogDescription>
       </DialogHeader>
 
