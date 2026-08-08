@@ -189,8 +189,7 @@ const fetchLatestMetrics = async () => {
         </div>
       </template>
 
-      <!-- P2-17: queue depth — lives server-side, visible even if agent is offline -->
-      <JobQueuePanel />
+      <!-- P2-17: queue depth moved to Jobs page header (B4) — visible even if agent is offline -->
     </div>
   </div>
 </template>
