@@ -5,7 +5,6 @@ import { ActivityIcon, ChartColumnBigIcon } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
 import ServerApi from '@/api/Server'
 import AgentIsOffline from '@/components/AgentIsOffline.vue'
-import JobQueuePanel from '@/components/JobQueuePanel.vue'
 import StorageResource from '@/components/StorageResource.vue'
 import SystemHealth from '@/components/SystemHealth.vue'
 import SystemPerformance from '@/components/SystemPerformance.vue'
@@ -195,8 +194,7 @@ const fetchLatestMetrics = async () => {
         </div>
       </template>
 
-      <!-- P2-17: queue depth — lives server-side, visible even if agent is offline -->
-      <JobQueuePanel />
+      <!-- P2-17: queue depth moved to Jobs page header (B4) — visible even if agent is offline -->
     </div>
   </div>
 </template>
