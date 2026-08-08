@@ -36,9 +36,10 @@ const openSearch = () => {
 
 <template>
   <div
-    class="border-border/50 bg-background/60 sticky bottom-0 z-50 h-16 w-full border-t backdrop-blur-md sm:hidden"
+    class="border-border/50 bg-background/60 fixed bottom-0 z-50 w-full border-t backdrop-blur-md sm:hidden"
+    style="padding-bottom: env(safe-area-inset-bottom)"
   >
-    <div class="grid h-full w-full grid-cols-4 items-center justify-evenly gap-2 px-4">
+    <div class="grid h-16 grid-cols-5 items-center justify-evenly gap-1 px-2">
       <template
         v-for="m in overviewMenu?.items"
         :key="m.value"
