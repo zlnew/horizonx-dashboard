@@ -32,7 +32,7 @@ const {
   dispose
 } = useContainerLogs(appID.value)
 
-usePageMeta({ title: 'Application Logs', description: 'Live container output' })
+usePageMeta({ title: 'Application Logs' })
 
 const serviceFilter = ref('')
 const sincePreset = ref<'15m' | '1h' | '6h' | '24h'>('15m')
