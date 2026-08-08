@@ -6,6 +6,7 @@ import { toast } from 'vue-sonner'
 import AppStatusBadge from '@/components/AppStatusBadge.vue'
 import DataLoading from '@/components/DataLoading.vue'
 import DataNotFound from '@/components/DataNotFound.vue'
+import PageHeader from '@/components/PageHeader.vue'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -59,37 +60,28 @@ const fetchApplications = async () => {
 
 <template>
   <section>
-    <div class="flex flex-wrap items-center justify-between gap-8">
-      <div class="flex items-center gap-4">
-        <div class="bg-accent/50 border-border/50 rounded-xl border p-3">
-          <LayoutGridIcon
-            :size="24"
-            class="text-primary"
-          />
-        </div>
-        <div class="border-border/50 flex flex-col gap-0 border-l pl-4">
-          <h1 class="text-2xl font-black tracking-tight uppercase">Applications</h1>
-          <p class="text-muted-foreground text-sm font-medium italic">
-            Track and manage server-deployed applications.
-          </p>
-        </div>
-      </div>
-
-      <div
-        v-if="canWriteApp"
-        class="flex items-center gap-2"
-      >
-        <Button
-          as-child
-          class="shadow-primary/10 rounded-full shadow-lg transition-transform active:scale-95"
+    <PageHeader
+      :icon="LayoutGridIcon"
+      title="Applications"
+      description="Track and manage server-deployed applications."
+    >
+      <template #actions>
+        <div
+          v-if="canWriteApp"
+          class="flex items-center gap-2"
         >
-          <RouterLink :to="{ name: 'applications.create' }">
-            <PlusIcon />
-            Create Application
-          </RouterLink>
-        </Button>
-      </div>
-    </div>
+          <Button
+            as-child
+            class="shadow-primary/10 rounded-full shadow-lg transition-transform active:scale-95"
+          >
+            <RouterLink :to="{ name: 'applications.create' }">
+              <PlusIcon />
+              Create Application
+            </RouterLink>
+          </Button>
+        </div>
+      </template>
+    </PageHeader>
   </section>
 
   <section class="mt-12 space-y-4">

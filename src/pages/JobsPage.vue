@@ -7,6 +7,7 @@ import { toast } from 'vue-sonner'
 import DataLoading from '@/components/DataLoading.vue'
 import DataNotFound from '@/components/DataNotFound.vue'
 import JobStatusBadge from '@/components/JobStatusBadge.vue'
+import PageHeader from '@/components/PageHeader.vue'
 import RoutePagination from '@/components/RoutePagination.vue'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -21,8 +22,8 @@ import {
 import { useDate } from '@/composables/date'
 import { usePageMeta } from '@/composables/page-meta'
 import useWebSocket from '@/composables/web-socket'
-import WSEvent from '@/constants/ws-event'
 import JobStatus from '@/constants/job-status'
+import WSEvent from '@/constants/ws-event'
 import { jobTypeLabel } from '@/mapper/job'
 import useJobStore from '@/stores/job'
 
@@ -114,8 +115,7 @@ const fetchJobs = async (criteria: Criteria) => {
   }
 }
 
-const canRetry = (job: Job) =>
-  job.status === JobStatus.FAILED || job.status === JobStatus.EXPIRED
+const canRetry = (job: Job) => job.status === JobStatus.FAILED || job.status === JobStatus.EXPIRED
 
 const onRetry = async (job: Job) => {
   if (retrying.has(job.id)) {
@@ -139,22 +139,11 @@ const onRetry = async (job: Job) => {
 
 <template>
   <section>
-    <div class="flex flex-wrap items-center justify-between gap-8">
-      <div class="flex items-center gap-4">
-        <div class="bg-accent/50 border-border/50 rounded-xl border p-3">
-          <ListChecksIcon
-            :size="24"
-            class="text-primary"
-          />
-        </div>
-        <div class="border-border/50 flex flex-col gap-0 border-l pl-4">
-          <h1 class="text-2xl font-black tracking-tight uppercase">Jobs</h1>
-          <p class="text-muted-foreground text-sm font-medium italic">
-            Control-plane job queue across all servers and applications
-          </p>
-        </div>
-      </div>
-    </div>
+    <PageHeader
+      :icon="ListChecksIcon"
+      title="Jobs"
+      description="Control-plane job queue across all servers and applications"
+    />
   </section>
 
   <section class="mt-12">
@@ -163,7 +152,10 @@ const onRetry = async (job: Job) => {
         <DataLoading v-if="loading" />
         <DataNotFound v-else-if="notFound" />
 
-        <div v-else class="overflow-x-auto">
+        <div
+          v-else
+          class="overflow-x-auto"
+        >
           <Table>
             <TableHeader>
               <TableRow>
@@ -177,17 +169,16 @@ const onRetry = async (job: Job) => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              <TableRow v-for="job in jobs" :key="job.id">
-                <TableCell class="font-mono text-xs">
-                  #{{ job.id }}
-                </TableCell>
+              <TableRow
+                v-for="job in jobs"
+                :key="job.id"
+              >
+                <TableCell class="font-mono text-xs"> #{{ job.id }} </TableCell>
                 <TableCell>{{ jobTypeLabel(job.type) }}</TableCell>
                 <TableCell>
                   <JobStatusBadge :status="job.status" />
                 </TableCell>
-                <TableCell class="font-mono text-xs">
-                  {{ job.server_id.slice(0, 8) }}…
-                </TableCell>
+                <TableCell class="font-mono text-xs"> {{ job.server_id.slice(0, 8) }}… </TableCell>
                 <TableCell>
                   {{ job.application_id ? `#${job.application_id}` : '—' }}
                 </TableCell>
@@ -211,7 +202,8 @@ const onRetry = async (job: Job) => {
                   <span
                     v-else
                     class="text-muted-foreground text-xs"
-                  >—</span>
+                    >—</span
+                  >
                 </TableCell>
               </TableRow>
             </TableBody>
