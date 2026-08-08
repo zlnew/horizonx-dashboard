@@ -68,6 +68,14 @@ const useServerStore = defineStore('server', () => {
     }
   }
 
+  const rotateSecret = async (resourceId: string) => {
+    try {
+      return await api.rotateSecret<ApiResponse>(resourceId)
+    } catch (error) {
+      throw error
+    }
+  }
+
   const updateServerStatus = (status: EventServerStatusChanged) => {
     const idx = servers.value.findIndex((s) => s.id === status.server_id)
     if (idx != -1 && servers.value[idx]) {
@@ -101,6 +109,7 @@ const useServerStore = defineStore('server', () => {
     registerServer,
     updateServer,
     deleteServer,
+    rotateSecret,
     updateServerStatus,
     cleanupState
   }

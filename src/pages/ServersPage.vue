@@ -4,6 +4,7 @@ import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import {
   BoxesIcon,
+  KeyRoundIcon,
   PlusIcon,
   SearchIcon,
   ServerIcon,
@@ -121,6 +122,12 @@ const showUpdateModal = (server: Server) => {
 const showDeleteModal = (server: Server) => {
   serverStore.selectedServer = server
   dialog.open(defineAsyncComponent(() => import('@/components/dialogs/ServerDeleteDialog.vue')))
+}
+const showRotateSecretModal = (server: Server) => {
+  serverStore.selectedServer = server
+  dialog.open(
+    defineAsyncComponent(() => import('@/components/dialogs/ServerRotateSecretDialog.vue'))
+  )
 }
 
 // P3-20: fleet overview summary.
@@ -257,6 +264,17 @@ const fleetSummary = computed(() => {
                 </TableCell>
                 <TableCell v-if="canWriteServer">
                   <div class="flex items-center justify-end gap-2">
+                    <Button
+                      type="button"
+                      size="icon-sm"
+                      variant="ghost"
+                      class="border-border/50 bg-accent/30 hover:bg-primary/10 hover:text-primary hover:border-primary/30 rounded-lg border transition-all"
+                      aria-label="Rotate server token"
+                      title="Rotate server token"
+                      @click="showRotateSecretModal(row)"
+                    >
+                      <KeyRoundIcon :size="16" />
+                    </Button>
                     <Button
                       type="button"
                       size="icon-sm"

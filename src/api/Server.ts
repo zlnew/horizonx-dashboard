@@ -30,6 +30,14 @@ class ServerApi extends Api {
 
     return this.handleResponse<T>(data.value, error.value)
   }
+
+  public async rotateSecret<T>(resourceId: number | string) {
+    const { data, error } = await this.fetch(`${this.resource}/${resourceId}/rotate-secret`)
+      .post()
+      .json<T>()
+
+    return this.handleResponse<T>(data.value, error.value)
+  }
 }
 
 export default ServerApi
