@@ -5,7 +5,7 @@ import { ActivityIcon, ChartColumnBigIcon } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
 import ServerApi from '@/api/Server'
 import AgentIsOffline from '@/components/AgentIsOffline.vue'
-import JobQueuePanel from '@/components/JobQueuePanel.vue'
+import PageHeader from '@/components/PageHeader.vue'
 import StorageResource from '@/components/StorageResource.vue'
 import SystemHealth from '@/components/SystemHealth.vue'
 import SystemPerformance from '@/components/SystemPerformance.vue'
@@ -101,74 +101,67 @@ const fetchLatestMetrics = async () => {
   <div class="flex flex-col gap-10">
     <!-- Header Section -->
     <section>
-      <div class="flex flex-wrap items-center justify-between gap-6">
-        <div class="flex items-center gap-4">
-          <div class="bg-primary/10 border-primary/20 rounded-2xl border p-4 shadow-inner">
-            <ChartColumnBigIcon
-              :size="28"
-              class="text-primary"
-            />
-          </div>
-          <div class="border-border/50 flex flex-col gap-1 border-l pl-6">
-            <h1 class="text-3xl leading-none font-black tracking-tight uppercase">
-              System Monitor
-            </h1>
-
-            <template v-if="!server?.is_online">
-              <span
-                class="text-muted-foreground text-[11px] font-black tracking-widest uppercase opacity-50"
-                >Agent is offline or unreachable</span
-              >
-            </template>
-
-            <template v-else>
-              <div
-                v-if="server"
-                class="flex flex-wrap items-center gap-3 text-xs font-bold tracking-tight uppercase"
-              >
-                <span class="text-primary truncate">@{{ server.os_info?.hostname ?? '-' }}</span>
-                <span class="text-muted-foreground/30 font-light">/</span>
-                <span
-                  class="text-muted-foreground/70 font-mono text-[11px] tracking-normal lowercase italic"
-                >
-                  {{ server.os_info?.kernel_version ?? '-' }}
-                </span>
-              </div>
-              <div
-                v-else
-                class="flex flex-wrap items-center gap-2"
-              >
-                <Skeleton class="h-4 w-20 rounded-full" />
-                <Skeleton class="h-4 w-28 rounded-full" />
-              </div>
-            </template>
-          </div>
-        </div>
-
-        <template v-if="server?.is_online">
-          <div
-            v-if="metrics"
-            class="bg-accent/30 border-border/50 flex items-center gap-4 rounded-full border px-6 py-2 shadow-lg shadow-black/20 backdrop-blur-md"
-          >
-            <div
-              class="bg-primary size-2.5 animate-pulse rounded-full shadow-[0_0_12px_rgba(var(--primary),0.6)]"
-            ></div>
-            <div
-              class="flex items-center gap-2.5 text-sm font-black tracking-tight whitespace-nowrap uppercase"
+      <PageHeader
+        :icon="ChartColumnBigIcon"
+        title="System Monitor"
+      >
+        <template #description>
+          <template v-if="!server?.is_online">
+            <span
+              class="text-muted-foreground text-[11px] font-black tracking-widest uppercase opacity-50"
+              >Agent is offline or unreachable</span
             >
-              <ActivityIcon
-                :size="16"
-                class="text-primary"
-              />
-              <span class="font-mono text-sm">{{ formatDuration(metrics.uptime_seconds) }}</span>
+          </template>
+
+          <template v-else>
+            <div
+              v-if="server"
+              class="flex flex-wrap items-center gap-3 text-xs font-bold tracking-tight uppercase"
+            >
+              <span class="text-primary truncate">@{{ server.os_info?.hostname ?? '-' }}</span>
+              <span class="text-muted-foreground/30 font-light">/</span>
+              <span
+                class="text-muted-foreground/70 font-mono text-[11px] tracking-normal lowercase italic"
+              >
+                {{ server.os_info?.kernel_version ?? '-' }}
+              </span>
             </div>
-          </div>
-          <Skeleton
-            v-else
-            class="h-10 w-48 rounded-full"
-          />
+            <div
+              v-else
+              class="flex flex-wrap items-center gap-2"
+            >
+              <Skeleton class="h-4 w-20 rounded-full" />
+              <Skeleton class="h-4 w-28 rounded-full" />
+            </div>
+          </template>
         </template>
-      </div>
+
+        <template #actions>
+          <template v-if="server?.is_online">
+            <div
+              v-if="metrics"
+              class="bg-accent/30 border-border/50 flex items-center gap-4 rounded-full border px-6 py-2 shadow-lg shadow-black/20 backdrop-blur-md"
+            >
+              <div
+                class="bg-primary size-2.5 animate-pulse rounded-full shadow-[0_0_12px_rgba(var(--primary),0.6)]"
+              ></div>
+              <div
+                class="flex items-center gap-2.5 text-sm font-black tracking-tight whitespace-nowrap uppercase"
+              >
+                <ActivityIcon
+                  :size="16"
+                  class="text-primary"
+                />
+                <span class="font-mono text-sm">{{ formatDuration(metrics.uptime_seconds) }}</span>
+              </div>
+            </div>
+            <Skeleton
+              v-else
+              class="h-10 w-48 rounded-full"
+            />
+          </template>
+        </template>
+      </PageHeader>
     </section>
 
     <!-- Main Dashboard Grid -->
@@ -195,8 +188,7 @@ const fetchLatestMetrics = async () => {
         </div>
       </template>
 
-      <!-- P2-17: queue depth — lives server-side, visible even if agent is offline -->
-      <JobQueuePanel />
+      <!-- P2-17: queue depth moved to Jobs page header (B4) — visible even if agent is offline -->
     </div>
   </div>
 </template>

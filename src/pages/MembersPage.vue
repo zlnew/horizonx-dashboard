@@ -6,6 +6,7 @@ import { PlusIcon, SearchIcon, SquarePenIcon, TrashIcon, UsersIcon } from 'lucid
 import { toast } from 'vue-sonner'
 import DataLoading from '@/components/DataLoading.vue'
 import DataNotFound from '@/components/DataNotFound.vue'
+import PageHeader from '@/components/PageHeader.vue'
 import RoleBadge from '@/components/RoleBadge.vue'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -106,23 +107,12 @@ const showDeleteModal = (user: User) => {
 
 <template>
   <section>
-    <div class="flex flex-wrap items-center justify-between gap-8">
-      <div class="flex items-center gap-4">
-        <div class="bg-accent/50 border-border/50 rounded-xl border p-3">
-          <UsersIcon
-            :size="24"
-            class="text-primary"
-          />
-        </div>
-        <div class="border-border/50 flex flex-col gap-0 border-l pl-4">
-          <h1 class="text-2xl font-black tracking-tight uppercase">Members</h1>
-          <p class="text-muted-foreground text-sm font-medium italic">
-            Everything about your team, organized and easy to manage.
-          </p>
-        </div>
-      </div>
-
-      <div class="flex items-center gap-2">
+    <PageHeader
+      :icon="UsersIcon"
+      title="Members"
+      description="Everything about your team, organized and easy to manage."
+    >
+      <template #actions>
         <Button
           v-if="canWriteMember"
           type="button"
@@ -132,8 +122,8 @@ const showDeleteModal = (user: User) => {
           <PlusIcon />
           Create User
         </Button>
-      </div>
-    </div>
+      </template>
+    </PageHeader>
   </section>
 
   <section class="mt-12 space-y-4">
@@ -158,9 +148,9 @@ const showDeleteModal = (user: User) => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead class="w-8">#</TableHead>
+                <TableHead class="hidden w-8 lg:table-cell">#</TableHead>
                 <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
+                <TableHead class="hidden md:table-cell">Email</TableHead>
                 <TableHead>Role</TableHead>
                 <TableHead
                   v-if="canWriteMember"
@@ -175,9 +165,9 @@ const showDeleteModal = (user: User) => {
                 v-for="(row, index) in users"
                 :key="index"
               >
-                <TableCell>{{ index + 1 }}.</TableCell>
+                <TableCell class="hidden lg:table-cell">{{ index + 1 }}.</TableCell>
                 <TableCell class="font-bold">{{ row.name }}</TableCell>
-                <TableCell>{{ row.email }}</TableCell>
+                <TableCell class="hidden md:table-cell">{{ row.email }}</TableCell>
                 <TableCell>
                   <RoleBadge :role-name="row.role.name" />
                 </TableCell>

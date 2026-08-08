@@ -131,7 +131,9 @@ const showRollbackConfirmation = () => {
 <template>
   <section>
     <Card class="border-border/50 bg-card/20 overflow-hidden backdrop-blur-md">
-      <CardHeader class="border-border/50 flex-row items-center justify-between border-b pb-6">
+      <CardHeader
+        class="border-border/50 flex flex-col items-start justify-between gap-4 border-b pb-6 sm:flex-row sm:items-center"
+      >
         <div class="flex items-center gap-4">
           <div class="bg-primary/10 text-primary rounded-xl p-2.5">
             <PackagePlusIcon :size="20" />
@@ -145,13 +147,16 @@ const showRollbackConfirmation = () => {
             >
           </div>
         </div>
-        <CardAction v-if="canWriteApp">
-          <div class="flex items-center gap-2">
+        <CardAction
+          v-if="canWriteApp"
+          class="w-full sm:w-auto"
+        >
+          <div class="flex flex-wrap items-center gap-2">
             <Button
               v-if="canRollbackApp"
               type="button"
               variant="destructive"
-              class="shadow-destructive/20 rounded-full text-xs font-black tracking-tight uppercase shadow-lg transition-all active:scale-95"
+              class="shadow-destructive/20 flex-1 rounded-full text-xs font-black tracking-tight uppercase shadow-lg transition-all active:scale-95 sm:flex-none"
               :disabled="!canRollbackApp"
               @click="showRollbackConfirmation"
             >
@@ -159,7 +164,7 @@ const showRollbackConfirmation = () => {
             </Button>
             <Button
               type="button"
-              class="shadow-primary/20 rounded-full text-xs font-black tracking-tight uppercase shadow-lg transition-all active:scale-95"
+              class="shadow-primary/20 flex-1 rounded-full text-xs font-black tracking-tight uppercase shadow-lg transition-all active:scale-95 sm:flex-none"
               :disabled="!canDeployApp"
               @click="showDeployConfirmation"
             >

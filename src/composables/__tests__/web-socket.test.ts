@@ -79,9 +79,7 @@ describe('useWebSocket', () => {
     const sock = MockWebSocket.instances[0]!
     sock.open()
 
-    expect(sock.sent).toContain(
-      JSON.stringify({ type: 'subscribe', channel: 'deployment:1' })
-    )
+    expect(sock.sent).toContain(JSON.stringify({ type: 'subscribe', channel: 'deployment:1' }))
   })
 
   it('reconnects with backoff when the socket closes unexpectedly', async () => {

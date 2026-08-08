@@ -123,7 +123,9 @@ const listenJobEvents = () => {
 <template>
   <section>
     <Card class="border-border/50 bg-card/20 overflow-hidden backdrop-blur-md">
-      <CardHeader class="border-border/50 flex-row items-center justify-between border-b pb-6">
+      <CardHeader
+        class="border-border/50 flex flex-col items-start justify-between gap-4 border-b pb-6 sm:flex-row sm:items-center"
+      >
         <div class="flex items-center gap-4">
           <div class="bg-accent/50 text-muted-foreground rounded-xl p-2.5">
             <ActivityIcon :size="20" />
@@ -151,7 +153,7 @@ const listenJobEvents = () => {
                 name: 'applications.activities.show',
                 params: { id: job.application_id, jobID: job.id }
               }"
-              class="group flex items-center justify-between px-8 py-5 transition-all hover:bg-white/5 active:scale-[0.99]"
+              class="group flex items-center justify-between gap-3 px-4 py-4 transition-all hover:bg-white/5 active:scale-[0.99] sm:px-8 sm:py-5"
             >
               <div class="flex flex-col gap-1">
                 <span

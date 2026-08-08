@@ -71,6 +71,11 @@ const router = createRouter({
                   component: () => import('@/pages/ApplicationDeploysPage.vue')
                 },
                 {
+                  name: 'applications.logs',
+                  path: 'logs',
+                  component: () => import('@/pages/ApplicationLogsPage.vue')
+                },
+                {
                   name: 'applications.deploys.show',
                   path: 'deploys/:deploymentID',
                   component: () => import('@/pages/ApplicationDeployDetailsPage.vue')

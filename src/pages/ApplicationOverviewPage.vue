@@ -94,7 +94,9 @@ const showUpdateDialog = () => {
     <!-- Basic Information Grid -->
     <section>
       <Card class="border-border/50 bg-card/30 backdrop-blur-md">
-        <CardHeader class="border-border/50 flex-row items-center justify-between border-b pb-6">
+        <CardHeader
+          class="border-border/50 flex flex-col items-start justify-between gap-4 border-b pb-6 sm:flex-row sm:items-center"
+        >
           <div class="flex items-center gap-4">
             <div class="bg-accent/50 rounded-xl p-2.5">
               <FolderIcon
@@ -173,10 +175,9 @@ const showUpdateDialog = () => {
                 <div class="group flex items-center gap-2 leading-none">
                   <a
                     v-if="application.repo_url"
-                    :href="application.repo_url"
                     target="_blank"
                     rel="noreferrer"
-                    class="truncate font-mono text-xs font-medium opacity-60 transition-opacity group-hover:opacity-100 hover:opacity-100 hover:underline"
+                    class="truncate font-mono text-xs font-medium opacity-80"
                     >{{ application.repo_url }}</a
                   >
                   <span

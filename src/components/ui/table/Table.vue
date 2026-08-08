@@ -10,7 +10,10 @@ const props = defineProps<{
 <template>
   <div
     data-slot="table-container"
-    class="relative w-full overflow-auto"
+    role="region"
+    aria-label="Scrollable table"
+    tabindex="0"
+    class="focus-visible:ring-ring/40 relative w-full overflow-auto focus-visible:ring-2 focus-visible:outline-none"
   >
     <table
       data-slot="table"

@@ -4,6 +4,7 @@ import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import {
   BoxesIcon,
+  KeyRoundIcon,
   PlusIcon,
   SearchIcon,
   ServerIcon,
@@ -13,6 +14,7 @@ import {
 import { toast } from 'vue-sonner'
 import DataLoading from '@/components/DataLoading.vue'
 import DataNotFound from '@/components/DataNotFound.vue'
+import PageHeader from '@/components/PageHeader.vue'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -121,6 +123,12 @@ const showDeleteModal = (server: Server) => {
   serverStore.selectedServer = server
   dialog.open(defineAsyncComponent(() => import('@/components/dialogs/ServerDeleteDialog.vue')))
 }
+const showRotateSecretModal = (server: Server) => {
+  serverStore.selectedServer = server
+  dialog.open(
+    defineAsyncComponent(() => import('@/components/dialogs/ServerRotateSecretDialog.vue'))
+  )
+}
 
 // P3-20: fleet overview summary.
 const fleetSummary = computed(() => {
@@ -133,23 +141,12 @@ const fleetSummary = computed(() => {
 
 <template>
   <section>
-    <div class="flex flex-wrap items-center justify-between gap-8">
-      <div class="flex items-center gap-4">
-        <div class="bg-accent/50 border-border/50 rounded-xl border p-3">
-          <ServerIcon
-            :size="24"
-            class="text-primary"
-          />
-        </div>
-        <div class="border-border/50 flex flex-col gap-0 border-l pl-4">
-          <h1 class="text-2xl font-black tracking-tight uppercase">Servers</h1>
-          <p class="text-muted-foreground text-sm font-medium italic">
-            Overview of all registered servers and their real-time agent status.
-          </p>
-        </div>
-      </div>
-
-      <div class="flex items-center gap-2">
+    <PageHeader
+      :icon="ServerIcon"
+      title="Servers"
+      description="Overview of all registered servers and their real-time agent status."
+    >
+      <template #actions>
         <Button
           v-if="canWriteServer"
           type="button"
@@ -159,8 +156,8 @@ const fleetSummary = computed(() => {
           <PlusIcon />
           Register Server
         </Button>
-      </div>
-    </div>
+      </template>
+    </PageHeader>
   </section>
 
   <!-- P3-20: fleet summary cards -->
@@ -178,7 +175,7 @@ const fleetSummary = computed(() => {
     </Card>
     <Card class="border-border/50 bg-card/30 backdrop-blur-md">
       <CardContent class="flex items-center gap-3 py-5">
-        <div class="bg-emerald-500/10 text-emerald-500 rounded-xl p-2.5">
+        <div class="rounded-xl bg-emerald-500/10 p-2.5 text-emerald-500">
           <ServerIcon :size="18" />
         </div>
         <div>
@@ -189,7 +186,7 @@ const fleetSummary = computed(() => {
     </Card>
     <Card class="border-border/50 bg-card/30 backdrop-blur-md">
       <CardContent class="flex items-center gap-3 py-5">
-        <div class="bg-red-500/10 text-red-500 rounded-xl p-2.5">
+        <div class="rounded-xl bg-red-500/10 p-2.5 text-red-500">
           <ServerIcon :size="18" />
         </div>
         <div>
@@ -200,7 +197,7 @@ const fleetSummary = computed(() => {
     </Card>
     <Card class="border-border/50 bg-card/30 backdrop-blur-md">
       <CardContent class="flex items-center gap-3 py-5">
-        <div class="bg-sky-500/10 text-sky-500 rounded-xl p-2.5">
+        <div class="rounded-xl bg-sky-500/10 p-2.5 text-sky-500">
           <BoxesIcon :size="18" />
         </div>
         <div>
@@ -233,9 +230,9 @@ const fleetSummary = computed(() => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead class="w-8">#</TableHead>
+                <TableHead class="hidden w-8 lg:table-cell">#</TableHead>
                 <TableHead>Name</TableHead>
-                <TableHead>IP Address</TableHead>
+                <TableHead class="hidden md:table-cell">IP Address</TableHead>
                 <TableHead>Agent Status</TableHead>
                 <TableHead class="text-end">Apps</TableHead>
                 <TableHead
@@ -251,12 +248,12 @@ const fleetSummary = computed(() => {
                 v-for="(row, index) in servers"
                 :key="index"
               >
-                <TableCell>{{ index + 1 }}.</TableCell>
+                <TableCell class="hidden lg:table-cell">{{ index + 1 }}.</TableCell>
                 <TableCell class="font-bold">
                   <div>{{ row.name }}</div>
                   <div class="text-muted-foreground text-xs font-normal">ID: {{ row.id }}</div>
                 </TableCell>
-                <TableCell>{{ row.ip_address }}</TableCell>
+                <TableCell class="hidden md:table-cell">{{ row.ip_address }}</TableCell>
                 <TableCell>
                   <Badge :variant="row.is_online ? 'default' : 'outline'">
                     {{ row.is_online ? 'Online' : 'Offline' }}
@@ -267,6 +264,17 @@ const fleetSummary = computed(() => {
                 </TableCell>
                 <TableCell v-if="canWriteServer">
                   <div class="flex items-center justify-end gap-2">
+                    <Button
+                      type="button"
+                      size="icon-sm"
+                      variant="ghost"
+                      class="border-border/50 bg-accent/30 hover:bg-primary/10 hover:text-primary hover:border-primary/30 rounded-lg border transition-all"
+                      aria-label="Rotate server token"
+                      title="Rotate server token"
+                      @click="showRotateSecretModal(row)"
+                    >
+                      <KeyRoundIcon :size="16" />
+                    </Button>
                     <Button
                       type="button"
                       size="icon-sm"

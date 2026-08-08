@@ -35,6 +35,13 @@ set -euo pipefail
 cd "$(dirname "$0")/.."   # repo root
 REPO_ROOT="$PWD"
 
+# The branch releases tag. Default main, but this repo's flow ships FROM
+# develop (PRs merge to develop; main is a stale mirror). Without an
+# explicit target, gh release create tags origin/main — v0.5.0's tag landed
+# on a pre-A3 commit because of exactly that (caught 2026-08-08).
+RELEASE_BRANCH="${RELEASE_BRANCH:-$(git branch --show-current)}"
+echo "== release target branch: $RELEASE_BRANCH =="
+
 RESOLVE="${1:?usage: scripts/release.sh <major|minor|patch|vX.Y.Z> [--dry-run]}"
 DRY_RUN="${2:-}"
 if [ -n "$DRY_RUN" ] && [ "$DRY_RUN" != "--dry-run" ]; then
@@ -44,6 +51,9 @@ fi
 # -- resolve version ----------------------------------------------------------
 # Accept a semver bump keyword or an explicit vX.Y.Z. Keywords compute the
 # next version from the latest git tag (sorted as versions, not strings).
+# Tags are fetched FIRST: a stale local tag list made `patch` resolve below
+# an already-published release (caught 2026-08-08).
+git fetch --tags origin -q 2>/dev/null || true
 case "$RESOLVE" in
   v[0-9]*.[0-9]*.[0-9]*)
     VERSION="$RESOLVE"
@@ -111,7 +121,10 @@ rm -rf "$OUT" && mkdir -p "$OUT"
 # -- build -------------------------------------------------------------------
 echo ""
 echo "== 1. docker build (multi-stage: npm build -> nginx) =="
-docker build -t "$IMG" . 2>&1 | tail -3
+# --no-cache: a cached npm ci layer can mask a fresh type error (v0.5.0's
+# usePageMeta slipped through exactly this way). Release builds must be
+# cold every time — the artifact IS the product.
+docker build --no-cache -t "$IMG" . 2>&1 | tail -3
 
 echo ""
 echo "== 2. dual-tag :latest + :${VERSION} =="
@@ -167,7 +180,7 @@ $(git -C "$REPO_ROOT" log --oneline "$(git -C "$REPO_ROOT" tag --sort=-version:r
 Image tarball (docker load) + SHA256SUMS. \`horizonx install server\` auto-fetches this from the latest dashboard release.
 EOF
 
-gh release create "$VERSION" --repo "$REPO" --title "$VERSION" --notes-file "$BODY" "$TARBALL" "$OUT/SHA256SUMS"
+gh release create "$VERSION" --repo "$REPO" --title "$VERSION" --notes-file "$BODY" --target "$RELEASE_BRANCH" "$TARBALL" "$OUT/SHA256SUMS"
 rm -f "$BODY"
 echo ""
 echo "✔ published: https://github.com/$REPO/releases/tag/$VERSION"

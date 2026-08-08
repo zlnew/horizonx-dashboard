@@ -40,6 +40,30 @@ class ApplicationApi extends Api {
 
     return this.handleResponse<T>(data.value, error.value)
   }
+
+  public async tailLogs<T>(resourceId: number, body?: LogsTailRequest) {
+    const { data, error } = await this.fetch(`${this.resource}/${resourceId}/logs/tail`)
+      .post(body ?? {})
+      .json<T>()
+
+    return this.handleResponse<T>(data.value, error.value)
+  }
+
+  public async stopTailLogs<T>(resourceId: number, streamId: string) {
+    const { data, error } = await this.fetch(`${this.resource}/${resourceId}/logs/tail/stop`)
+      .post({ stream_id: streamId })
+      .json<T>()
+
+    return this.handleResponse<T>(data.value, error.value)
+  }
+
+  public async queryLogs<T>(resourceId: number, body?: LogsQueryRequest) {
+    const { data, error } = await this.fetch(`${this.resource}/${resourceId}/logs/query`)
+      .post(body ?? {})
+      .json<T>()
+
+    return this.handleResponse<T>(data.value, error.value)
+  }
 }
 
 export default ApplicationApi
