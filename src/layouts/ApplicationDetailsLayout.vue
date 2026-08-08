@@ -11,7 +11,8 @@ import {
   LogsIcon,
   PackagePlusIcon,
   PlayIcon,
-  RefreshCcwIcon
+  RefreshCcwIcon,
+  TerminalSquareIcon
 } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
 import AppStatusBadge from '@/components/AppStatusBadge.vue'
@@ -63,6 +64,11 @@ const menu = [
     label: 'Deploys',
     to: { name: 'applications.deploys', params: { id: appID.value } },
     icon: FileClockIcon
+  },
+  {
+    label: 'Logs',
+    to: { name: 'applications.logs', params: { id: appID.value } },
+    icon: TerminalSquareIcon
   },
   {
     label: 'Activities',

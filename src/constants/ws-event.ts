@@ -11,7 +11,9 @@ const WSEvent = {
   JOB_CREATED: 'job_created',
   JOB_STARTED: 'job_started',
   JOB_FINISHED: 'job_finished',
-  JOB_STATUS_CHANGED: 'job_status_changed'
+  JOB_STATUS_CHANGED: 'job_status_changed',
+
+  CONTAINER_LOG_CHUNK: 'container_log_chunk'
 }
 
 export default WSEvent
