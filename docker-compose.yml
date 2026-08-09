@@ -8,3 +8,9 @@ services:
     ports:
       - '${APP_HOST:-127.0.0.1}:${APP_PORT:-4859}:80'
     restart: unless-stopped
+    networks:
+      - personal-network
+
+networks:
+  personal-network:
+    external: true
