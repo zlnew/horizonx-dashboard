@@ -6,5 +6,5 @@ services:
     image: ${APP_IMAGE:-horizonx-dashboard:latest}
     container_name: ${APP_CONTAINER_NAME:-horizonx-dashboard}
     ports:
-      - '${APP_HOST:-127.0.0.1}:${APP_PORT:-3003}:80'
+      - '${APP_HOST:-127.0.0.1}:${APP_PORT:-4859}:80'
     restart: unless-stopped
