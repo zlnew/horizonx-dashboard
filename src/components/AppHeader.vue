@@ -1,12 +1,19 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+import { BellIcon } from 'lucide-vue-next'
 import AccountDropdown from '@/components/AccountDropdown.vue'
 import AppBreadcrumb from '@/components/AppBreadcrumb.vue'
 import AppLogo from '@/components/AppLogo.vue'
 import ServerSelector from '@/components/ServerSelector.vue'
+import { Button } from '@/components/ui/button'
 import { SidebarTrigger } from '@/components/ui/sidebar'
+import useActiveAlertCount from '@/composables/active-alert-count'
 import useWebSocket from '@/composables/web-socket'
 
 const { connected } = useWebSocket()
+const { count } = useActiveAlertCount()
+
+const showBadge = computed(() => count.value > 0)
 </script>
 
 <template>
@@ -37,6 +44,24 @@ const { connected } = useWebSocket()
           }}</span>
         </div>
         <ServerSelector class="hidden md:block" />
+        <Button
+          as-child
+          variant="ghost"
+          size="icon"
+          class="relative rounded-full"
+          aria-label="View alerts"
+          :title="showBadge ? `${count} active alert${count > 1 ? 's' : ''}` : 'View alerts'"
+        >
+          <RouterLink :to="{ name: 'alerts.history' }">
+            <BellIcon />
+            <span
+              v-if="showBadge"
+              class="bg-destructive text-destructive-foreground absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-bold"
+            >
+              {{ count > 99 ? '99+' : count }}
+            </span>
+          </RouterLink>
+        </Button>
         <AccountDropdown />
       </div>
     </div>
