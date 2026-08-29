@@ -1,5 +1,7 @@
 import type { Component } from 'vue'
 import {
+  BellIcon,
+  BellRingIcon,
   BookOpenIcon,
   ChartColumnBigIcon,
   CircleUserIcon,
@@ -53,6 +55,24 @@ const useApp = () => {
           value: 'jobs',
           to: { name: 'jobs' },
           icon: ListChecksIcon
+        }
+      ]
+    },
+    {
+      label: 'Alerts',
+      value: 'alerts',
+      items: [
+        {
+          label: 'Alert Rules',
+          value: 'alert rules',
+          to: { name: 'alerts.rules' },
+          icon: BellIcon
+        },
+        {
+          label: 'Alerts',
+          value: 'alerts',
+          to: { name: 'alerts.history' },
+          icon: BellRingIcon
         }
       ]
     },

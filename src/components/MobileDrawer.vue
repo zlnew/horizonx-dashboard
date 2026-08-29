@@ -19,6 +19,10 @@ const settingsMenu = computed(() => {
   return menu.find((m) => m.value === 'settings')
 })
 
+const alertsMenu = computed(() => {
+  return menu.find((m) => m.value === 'alerts')
+})
+
 const isActive = (to: { name?: string; path?: string }): boolean => {
   if (to.name && route.name === to.name) return true
   if (to.path && route.path.startsWith(to.path)) return true
@@ -79,6 +83,27 @@ const isActive = (to: { name?: string; path?: string }): boolean => {
           :side-offset="12"
         >
           <div class="flex flex-col items-start gap-1">
+            <template
+              v-for="m in alertsMenu?.items"
+              :key="m.value"
+            >
+              <Button
+                variant="ghost"
+                as-child
+                class="w-full justify-start px-0!"
+                @click.capture="close"
+              >
+                <RouterLink :to="m.to">
+                  <component
+                    :is="m.icon"
+                    v-if="m.icon"
+                    :size="16"
+                  />
+                  <span class="text-xs font-bold tracking-tight uppercase">{{ m.label }}</span>
+                </RouterLink>
+              </Button>
+              <Separator class="bg-border/50" />
+            </template>
             <template
               v-for="m in settingsMenu?.items"
               :key="m.value"
