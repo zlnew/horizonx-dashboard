@@ -163,16 +163,6 @@ const hasActiveFilters = computed(
   () => !!search.value || !!scopeFilter.value || !!severityFilter.value || !!enabledFilter.value
 )
 
-watch(
-  () => route.query,
-  (q) => {
-    scopeFilter.value = (q.scope as string) ?? null
-    severityFilter.value = (q.severity as string) ?? null
-    enabledFilter.value = (q.enabled as string) ?? null
-  },
-  { immediate: true }
-)
-
 const openCreate = () => {
   createOpen.value = true
 }
