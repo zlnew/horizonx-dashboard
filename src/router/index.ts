@@ -110,6 +110,16 @@ const router = createRouter({
           component: () => import('@/pages/AuditLogsPage.vue')
         },
         {
+          name: 'alerts.rules',
+          path: 'alerts/rules',
+          component: () => import('@/pages/AlertRulesPage.vue')
+        },
+        {
+          name: 'alerts.history',
+          path: 'alerts/history',
+          component: () => import('@/pages/AlertsPage.vue')
+        },
+        {
           name: 'jobs',
           path: 'jobs',
           component: () => import('@/pages/JobsPage.vue')
