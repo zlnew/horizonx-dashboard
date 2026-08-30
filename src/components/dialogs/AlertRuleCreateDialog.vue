@@ -16,7 +16,7 @@ import {
   DialogHeader,
   DialogTitle
 } from '@/components/ui/dialog'
-import { FormItem, FormLabel } from '@/components/ui/form'
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import {
   Select,
@@ -110,7 +110,7 @@ const ruleFormSchema = toTypedSchema(
     })
 )
 
-const { values, errors, defineField, handleSubmit, resetForm, setFieldValue } = useForm({
+const { values, errors, handleSubmit, resetForm, setFieldValue } = useForm({
   validationSchema: ruleFormSchema,
   initialValues: {
     name: '',
@@ -127,8 +127,6 @@ const { values, errors, defineField, handleSubmit, resetForm, setFieldValue } = 
     enabled: true
   }
 })
-
-const [name, nameAttrs] = defineField('name')
 
 // Select/switch/input change handlers. reka-ui emits a broad AcceptableValue
 // type, so handlers accept `unknown` and normalize to the schema's string
@@ -280,256 +278,277 @@ const onSubmit = handleSubmit(async (formValues) => {
           {{ submitError }}
         </div>
 
-        <FormItem>
-          <FormLabel>Name</FormLabel>
-          <Input
-            v-model="name"
-            v-bind="nameAttrs"
-            placeholder="High CPU usage"
-          />
-          <p
-            v-if="errors.name"
-            class="text-destructive text-sm"
-          >
-            {{ errors.name }}
-          </p>
-        </FormItem>
+        <FormField
+          v-slot="{ componentField }"
+          name="name"
+        >
+          <FormItem>
+            <FormLabel>Name</FormLabel>
+            <FormControl>
+              <Input
+                placeholder="High CPU usage"
+                v-bind="componentField"
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        </FormField>
 
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <FormItem>
-            <FormLabel>Scope</FormLabel>
-            <Select
-              :model-value="values.scope"
-              @update:model-value="onScopeChange"
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select scope" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem :value="AlertScope.GLOBAL">All servers</SelectItem>
-                <SelectItem :value="AlertScope.SERVER">Specific server</SelectItem>
-                <SelectItem :value="AlertScope.APP">Specific application</SelectItem>
-              </SelectContent>
-            </Select>
-            <p
-              v-if="errors.scope"
-              class="text-destructive text-sm"
-            >
-              {{ errors.scope }}
-            </p>
-          </FormItem>
-
-          <FormItem v-if="isServerScope">
-            <FormLabel>Server</FormLabel>
-            <Select
-              :model-value="values.server_id ?? ''"
-              @update:model-value="onServerChange"
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select server" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem
-                  v-for="server in servers"
-                  :key="server.id"
-                  :value="server.id"
+          <FormField
+            v-slot="{ componentField }"
+            name="scope"
+          >
+            <FormItem>
+              <FormLabel>Scope</FormLabel>
+              <FormControl>
+                <Select
+                  v-bind="componentField"
+                  @update:model-value="onScopeChange"
                 >
-                  {{ server.name }}
-                </SelectItem>
-              </SelectContent>
-            </Select>
-            <p
-              v-if="errors.server_id"
-              class="text-destructive text-sm"
-            >
-              {{ errors.server_id }}
-            </p>
-          </FormItem>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select scope" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem :value="AlertScope.GLOBAL">All servers</SelectItem>
+                    <SelectItem :value="AlertScope.SERVER">Specific server</SelectItem>
+                    <SelectItem :value="AlertScope.APP">Specific application</SelectItem>
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          </FormField>
 
-          <FormItem v-if="isAppScope">
-            <FormLabel>Application</FormLabel>
-            <Select
-              :model-value="values.app_id ?? ''"
-              :disabled="applicationsLoading"
-              @update:model-value="onAppChange"
-            >
-              <SelectTrigger>
-                <SelectValue
-                  :placeholder="applicationsLoading ? 'Loading…' : 'Select application'"
-                />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem
-                  v-for="app in applications"
-                  :key="app.id"
-                  :value="String(app.id)"
+          <FormField
+            v-if="isServerScope"
+            v-slot="{ componentField }"
+            name="server_id"
+          >
+            <FormItem>
+              <FormLabel>Server</FormLabel>
+              <FormControl>
+                <Select
+                  v-bind="componentField"
+                  @update:model-value="onServerChange"
                 >
-                  {{ app.name }}
-                </SelectItem>
-              </SelectContent>
-            </Select>
-            <p
-              v-if="errors.app_id"
-              class="text-destructive text-sm"
-            >
-              {{ errors.app_id }}
-            </p>
-          </FormItem>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select server" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem
+                      v-for="server in servers"
+                      :key="server.id"
+                      :value="server.id"
+                    >
+                      {{ server.name }}
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          </FormField>
+
+          <FormField
+            v-if="isAppScope"
+            v-slot="{ componentField }"
+            name="app_id"
+          >
+            <FormItem>
+              <FormLabel>Application</FormLabel>
+              <FormControl>
+                <Select
+                  v-bind="componentField"
+                  :disabled="applicationsLoading"
+                  @update:model-value="onAppChange"
+                >
+                  <SelectTrigger>
+                    <SelectValue
+                      :placeholder="applicationsLoading ? 'Loading…' : 'Select application'"
+                    />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem
+                      v-for="app in applications"
+                      :key="app.id"
+                      :value="String(app.id)"
+                    >
+                      {{ app.name }}
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          </FormField>
         </div>
 
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <FormItem>
-            <FormLabel>Source</FormLabel>
-            <Select
-              :model-value="values.source"
-              @update:model-value="onSourceChange"
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select source" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem :value="AlertSource.METRIC">Metric</SelectItem>
-                <SelectItem :value="AlertSource.HEALTH">Health</SelectItem>
-                <SelectItem :value="AlertSource.OFFLINE">Offline</SelectItem>
-              </SelectContent>
-            </Select>
-            <p
-              v-if="errors.source"
-              class="text-destructive text-sm"
-            >
-              {{ errors.source }}
-            </p>
-          </FormItem>
+          <FormField
+            v-slot="{ componentField }"
+            name="source"
+          >
+            <FormItem>
+              <FormLabel>Source</FormLabel>
+              <FormControl>
+                <Select
+                  v-bind="componentField"
+                  @update:model-value="onSourceChange"
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select source" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem :value="AlertSource.METRIC">Metric</SelectItem>
+                    <SelectItem :value="AlertSource.HEALTH">Health</SelectItem>
+                    <SelectItem :value="AlertSource.OFFLINE">Offline</SelectItem>
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          </FormField>
 
-          <FormItem>
-            <FormLabel>Severity</FormLabel>
-            <Select
-              :model-value="values.severity"
-              @update:model-value="onSeverityChange"
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select severity" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem :value="AlertSeverity.INFO">Info</SelectItem>
-                <SelectItem :value="AlertSeverity.WARNING">Warning</SelectItem>
-                <SelectItem :value="AlertSeverity.CRITICAL">Critical</SelectItem>
-                <SelectItem :value="AlertSeverity.FATAL">Fatal</SelectItem>
-              </SelectContent>
-            </Select>
-            <p
-              v-if="errors.severity"
-              class="text-destructive text-sm"
-            >
-              {{ errors.severity }}
-            </p>
-          </FormItem>
+          <FormField
+            v-slot="{ componentField }"
+            name="severity"
+          >
+            <FormItem>
+              <FormLabel>Severity</FormLabel>
+              <FormControl>
+                <Select
+                  v-bind="componentField"
+                  @update:model-value="onSeverityChange"
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select severity" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem :value="AlertSeverity.INFO">Info</SelectItem>
+                    <SelectItem :value="AlertSeverity.WARNING">Warning</SelectItem>
+                    <SelectItem :value="AlertSeverity.CRITICAL">Critical</SelectItem>
+                    <SelectItem :value="AlertSeverity.FATAL">Fatal</SelectItem>
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          </FormField>
         </div>
 
         <template v-if="isMetric">
-          <FormItem>
-            <FormLabel>Metric path</FormLabel>
-            <Input
-              :model-value="values.metric_path ?? ''"
-              placeholder="cpu.usage_percent"
-              @update:model-value="onMetricPathChange"
-            />
-            <p
-              v-if="errors.metric_path"
-              class="text-destructive text-sm"
-            >
-              {{ errors.metric_path }}
-            </p>
-          </FormItem>
+          <FormField
+            v-slot="{ componentField }"
+            name="metric_path"
+          >
+            <FormItem>
+              <FormLabel>Metric path</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="cpu.usage_percent"
+                  v-bind="componentField"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          </FormField>
 
           <div class="grid grid-cols-2 gap-4">
-            <FormItem>
-              <FormLabel>Operator</FormLabel>
-              <Select
-                :model-value="values.operator ?? ''"
-                @update:model-value="onOperatorChange"
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select operator" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="&gt;">&gt;</SelectItem>
-                  <SelectItem value="&gt;=">&gt;=</SelectItem>
-                  <SelectItem value="&lt;">&lt;</SelectItem>
-                  <SelectItem value="&lt;=">&lt;=</SelectItem>
-                </SelectContent>
-              </Select>
-              <p
-                v-if="errors.operator"
-                class="text-destructive text-sm"
-              >
-                {{ errors.operator }}
-              </p>
-            </FormItem>
+            <FormField
+              v-slot="{ componentField }"
+              name="operator"
+            >
+              <FormItem>
+                <FormLabel>Operator</FormLabel>
+                <FormControl>
+                  <Select
+                    v-bind="componentField"
+                    @update:model-value="onOperatorChange"
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select operator" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="&gt;">&gt;</SelectItem>
+                      <SelectItem value="&gt;=">&gt;=</SelectItem>
+                      <SelectItem value="&lt;">&lt;</SelectItem>
+                      <SelectItem value="&lt;=">&lt;=</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            </FormField>
 
-            <FormItem>
-              <FormLabel>Threshold</FormLabel>
-              <Input
-                :model-value="values.threshold ?? ''"
-                type="number"
-                step="any"
-                placeholder="90"
-                @update:model-value="onThresholdChange"
-              />
-              <p
-                v-if="errors.threshold"
-                class="text-destructive text-sm"
-              >
-                {{ errors.threshold }}
-              </p>
-            </FormItem>
+            <FormField
+              v-slot="{ componentField }"
+              name="threshold"
+            >
+              <FormItem>
+                <FormLabel>Threshold</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    step="any"
+                    placeholder="90"
+                    v-bind="componentField"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            </FormField>
           </div>
         </template>
 
-        <FormItem v-if="isHealth">
-          <FormLabel>Target status</FormLabel>
-          <Select
-            :model-value="values.target_status ?? ''"
-            @update:model-value="onTargetStatusChange"
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem
-                v-for="status in healthTargetStatuses"
-                :key="status"
-                :value="status"
+        <FormField
+          v-if="isHealth"
+          v-slot="{ componentField }"
+          name="target_status"
+        >
+          <FormItem>
+            <FormLabel>Target status</FormLabel>
+            <FormControl>
+              <Select
+                v-bind="componentField"
+                @update:model-value="onTargetStatusChange"
               >
-                {{ status }}
-              </SelectItem>
-            </SelectContent>
-          </Select>
-          <p
-            v-if="errors.target_status"
-            class="text-destructive text-sm"
-          >
-            {{ errors.target_status }}
-          </p>
-        </FormItem>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem
+                    v-for="status in healthTargetStatuses"
+                    :key="status"
+                    :value="status"
+                  >
+                    {{ status }}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        </FormField>
 
-        <FormItem>
-          <FormLabel>For duration (seconds)</FormLabel>
-          <Input
-            :model-value="values.for_duration ?? '0'"
-            type="number"
-            min="0"
-            step="1"
-            placeholder="0"
-            @update:model-value="onForDurationChange"
-          />
-          <p
-            v-if="errors.for_duration"
-            class="text-destructive text-sm"
-          >
-            {{ errors.for_duration }}
-          </p>
-        </FormItem>
+        <FormField
+          v-slot="{ componentField }"
+          name="for_duration"
+        >
+          <FormItem>
+            <FormLabel>For duration (seconds)</FormLabel>
+            <FormControl>
+              <Input
+                type="number"
+                min="0"
+                step="1"
+                placeholder="0"
+                v-bind="componentField"
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        </FormField>
 
         <div class="border-border/50 flex items-center justify-between rounded-lg border p-4">
           <div class="space-y-1">
