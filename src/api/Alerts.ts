@@ -69,7 +69,7 @@ class AlertsApi extends Api {
   }
 
   public async acknowledge<T>(alertId: number | string) {
-    const { data, error } = await this.fetch(`${this.resource}/history/${alertId}/ack`)
+    const { data, error } = await this.fetch(`${this.resource}/${alertId}/ack`)
       .post()
       .json<T>()
 
@@ -77,7 +77,7 @@ class AlertsApi extends Api {
   }
 
   public async silenceRule<T>(ruleId: number | string, request: SilenceRequest) {
-    const { data, error } = await this.fetch(`${this.resource}/rule/${ruleId}/silence`)
+    const { data, error } = await this.fetch(`${this.resource}/${ruleId}/silence`)
       .post(request)
       .json<T>()
 
