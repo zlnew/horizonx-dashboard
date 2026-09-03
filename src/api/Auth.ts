@@ -18,6 +18,12 @@ class AuthApi extends Api {
 
     return this.handleResponse<T>(null, error.value)
   }
+
+  public async config<T>() {
+    const { data, error } = await this.fetch('auth/config').get().json<T>()
+
+    return this.handleResponse<T>(data.value, error.value)
+  }
 }
 
 export default AuthApi
