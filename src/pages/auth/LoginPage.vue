@@ -6,6 +6,7 @@ import { toTypedSchema } from '@vee-validate/zod'
 import { useForm } from 'vee-validate'
 import { toast } from 'vue-sonner'
 import { z } from 'zod'
+import { SparklesIcon } from 'lucide-vue-next'
 import ServerApi from '@/api/Server'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
@@ -19,7 +20,7 @@ const router = useRouter()
 const appStore = useAppStore()
 const authStore = useAuthStore()
 const { serverID } = storeToRefs(appStore)
-const { loginError } = storeToRefs(authStore)
+const { loginError, isDemoMode } = storeToRefs(authStore)
 
 const formSchema = toTypedSchema(
   z.object({
@@ -32,8 +33,9 @@ const form = useForm({
   validationSchema: formSchema
 })
 
-onMounted(() => {
+onMounted(async () => {
   appStore.title = 'Login'
+  await authStore.fetchConfig()
 })
 
 onBeforeUnmount(() => {
@@ -66,12 +68,26 @@ const onSubmit = form.handleSubmit((values) => {
     router.push({ name: 'dashboard' })
   })
 })
+
+const onDemoLogin = () => {
+  form.setFieldValue('email', 'demo@horizonx.dev')
+  form.setFieldValue('password', 'demo123456')
+  onSubmit()
+}
 </script>
 
 <template>
   <Card class="w-full sm:w-sm">
     <CardHeader>
-      <CardTitle>Login to your account</CardTitle>
+      <div class="flex items-center justify-between gap-2">
+        <CardTitle>Login to your account</CardTitle>
+        <span
+          v-if="isDemoMode"
+          class="bg-emerald-500/10 text-emerald-500 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border border-emerald-500/20"
+        >
+          Demo Sandbox
+        </span>
+      </div>
       <CardDescription>Enter your email below to login to your account</CardDescription>
     </CardHeader>
 
@@ -128,6 +144,35 @@ const onSubmit = form.handleSubmit((values) => {
         >
           Sign In
         </Button>
+
+        <div
+          v-if="isDemoMode"
+          class="space-y-3 pt-2"
+        >
+          <div class="relative flex items-center justify-center">
+            <div class="border-border/60 absolute inset-0 flex items-center">
+              <div class="w-full border-t" />
+            </div>
+            <span
+              class="bg-card text-muted-foreground relative px-2 text-xs uppercase tracking-wider"
+            >
+              Public Sandbox
+            </span>
+          </div>
+
+          <Button
+            type="button"
+            variant="secondary"
+            class="w-full font-semibold border border-primary/20 hover:border-primary/40 text-primary transition-colors flex items-center justify-center gap-2"
+            @click="onDemoLogin"
+          >
+            <SparklesIcon class="size-4 text-emerald-500" />
+            Try Demo Account (1-Click)
+          </Button>
+          <p class="text-[11px] text-muted-foreground text-center">
+            Instant access to the interactive demo. No registration required.
+          </p>
+        </div>
       </form>
     </CardContent>
   </Card>

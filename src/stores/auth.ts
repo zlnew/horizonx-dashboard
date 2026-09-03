@@ -53,14 +53,29 @@ const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  const isDemoMode = ref<boolean>(import.meta.env.VITE_DEMO_MODE === 'true')
+
+  const fetchConfig = async () => {
+    try {
+      const res = await api.config<{ demo_mode: boolean }>()
+      if (res?.demo_mode !== undefined) {
+        isDemoMode.value = res.demo_mode
+      }
+    } catch {
+      // ignore network errors
+    }
+  }
+
   return {
     user,
     isAuthenticated,
     loginError,
     permissions,
+    isDemoMode,
     can,
     login,
-    logout
+    logout,
+    fetchConfig
   }
 })
 

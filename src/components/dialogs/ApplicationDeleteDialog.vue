@@ -12,11 +12,19 @@ import {
   DialogTitle
 } from '@/components/ui/dialog'
 import useApplicationStore from '@/stores/application'
+import useAuthStore from '@/stores/auth'
+import { storeToRefs } from 'pinia'
 
 const router = useRouter()
 const applicationStore = useApplicationStore()
+const authStore = useAuthStore()
+const { isDemoMode } = storeToRefs(authStore)
 
 const deleteApplication = async (closeDialog: () => void) => {
+  if (isDemoMode.value) {
+    toast.error('Application deletion is disabled in public demo sandbox mode.')
+    return
+  }
   if (!applicationStore.selectedApplication?.id) {
     return
   }
@@ -48,6 +56,13 @@ const deleteApplication = async (closeDialog: () => void) => {
         </DialogDescription>
       </DialogHeader>
 
+      <div
+        v-if="isDemoMode"
+        class="bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 rounded p-2 text-xs font-medium"
+      >
+        Application deletion is disabled in public demo sandbox mode to keep showcase apps available for all visitors.
+      </div>
+
       <DialogFooter>
         <DialogClose as-child>
           <Button variant="outline">Cancel</Button>
@@ -55,6 +70,7 @@ const deleteApplication = async (closeDialog: () => void) => {
         <Button
           type="button"
           variant="destructive"
+          :disabled="isDemoMode"
           @click="deleteApplication(close)"
         >
           Delete

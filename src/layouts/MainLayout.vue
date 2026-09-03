@@ -18,7 +18,7 @@ import useAuthStore from '@/stores/auth'
 const router = useRouter()
 const appStore = useAppStore()
 const authStore = useAuthStore()
-const { user } = storeToRefs(authStore)
+const { user, isDemoMode } = storeToRefs(authStore)
 const { serverID, servers } = storeToRefs(appStore)
 
 const { connect: connectWs, disconnect: disconnectWs } = useWebSocket()
@@ -49,6 +49,7 @@ onMounted(() => {
   redirectToServerSelection()
   fetchUser()
   fetchServers()
+  authStore.fetchConfig()
 })
 
 const redirectToServerSelection = () => {
@@ -83,6 +84,16 @@ const fetchServers = async () => {
     <AppSidebar />
 
     <SidebarInset>
+      <div
+        v-if="isDemoMode"
+        class="bg-primary/10 border-b border-primary/20 text-primary flex items-center justify-center gap-2 px-4 py-1.5 text-xs font-medium text-center shrink-0"
+      >
+        <span class="inline-block size-2 rounded-full bg-emerald-500 animate-pulse" />
+        <span>
+          Interactive Demo Sandbox: Explore, deploy, and restart apps. System state resets every hour.
+        </span>
+      </div>
+
       <AppHeader />
 
       <main class="flex flex-1 flex-col p-4 pb-24 sm:p-8 md:p-6 lg:p-8">
