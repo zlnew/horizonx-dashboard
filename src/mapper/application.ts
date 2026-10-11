@@ -22,3 +22,22 @@ export const appStatusLabel = (status: string) => {
       return ''
   }
 }
+
+export const appStatusVariant = (status: string) => {
+  switch (status) {
+    case AppStatus.FAILED:
+      return 'destructive'
+    case AppStatus.STOPPED:
+    case AppStatus.UNKNOWN:
+      return 'outline'
+    case AppStatus.STARTING:
+    case AppStatus.RESTARTING:
+    case AppStatus.DEPLOYING:
+    case AppStatus.STOPPING:
+      return 'secondary'
+    case AppStatus.RUNNING:
+      return 'default'
+    default:
+      return 'default'
+  }
+}

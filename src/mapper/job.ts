@@ -34,3 +34,19 @@ export const jobStatusLabel = (status: string) => {
       return ''
   }
 }
+
+export const jobStatusVariant = (status: string) => {
+  switch (status) {
+    case JobStatus.FAILED:
+    case JobStatus.EXPIRED:
+      return 'destructive'
+    case JobStatus.QUEUED:
+      return 'outline'
+    case JobStatus.RUNNING:
+      return 'secondary'
+    case JobStatus.SUCCESS:
+      return 'default'
+    default:
+      return 'default'
+  }
+}

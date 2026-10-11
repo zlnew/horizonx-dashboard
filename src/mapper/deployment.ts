@@ -14,3 +14,18 @@ export const deployStatusLabel = (status: string) => {
       return ''
   }
 }
+
+export const deployStatusVariant = (status: string) => {
+  switch (status) {
+    case deployStatus.FAILED:
+      return 'destructive'
+    case deployStatus.PENDING:
+      return 'outline'
+    case deployStatus.DEPLOYING:
+      return 'secondary'
+    case deployStatus.SUCCESS:
+      return 'default'
+    default:
+      return 'default'
+  }
+}
