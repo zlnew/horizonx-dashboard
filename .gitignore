@@ -38,3 +38,7 @@ coverage
 __screenshots__/
 .codex
 apps/
+
+# Playwright
+test-results/
+playwright-report/
