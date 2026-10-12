@@ -70,9 +70,13 @@ The built SPA is served by nginx (see `Dockerfile` / `docker-compose.prod.yml`),
 
 - `npm run dev` – Vite dev server with hot reload
 - `npm run build` – type-check + production build
-- `npm run test:unit` – Vitest unit suites
+- `npm run test:unit` – Vitest unit suites (watch mode for local development)
+- `npm run test:unit:run` – Vitest unit suites once, then exit (non-watch)
+- `npm run check` – `npm run type-check` plus the unit suites once, then exit (non-watch); the gate to run before pushing
 - `npm run lint` / `npm run format` – ESLint / Prettier
 - `npm run type-check` – `vue-tsc` only
+
+`npm run check` covers static type-checking and the Vitest unit suites only. It does not run browser or end-to-end tests: this repo has no wired end-to-end runner and no Playwright dependency.
 
 ## Architecture
 

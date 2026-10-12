@@ -28,6 +28,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { dialog } from '@/composables/dialog'
 import useWebSocket from '@/composables/web-socket'
+import ApplicationStatus from '@/constants/application-status'
 import WSEvent from '@/constants/ws-event'
 import useApplicationStore from '@/stores/application'
 
@@ -357,7 +358,7 @@ const showRestartConfirmation = () => {
             <div class="bg-accent/20 h-1.5 w-full">
               <div
                 class="bg-primary h-full transition-all duration-1000"
-                :style="{ width: application.status === 'RUNNING' ? '100%' : '0%' }"
+                :style="{ width: application.status === ApplicationStatus.RUNNING ? '100%' : '0%' }"
               ></div>
             </div>
           </Card>

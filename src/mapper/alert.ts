@@ -52,6 +52,28 @@ export const alertStateLabel = (state: string) => {
   }
 }
 
+export const alertSeverityClasses = (severity: string) => {
+  switch (severity) {
+    case AlertSeverity.CRITICAL:
+      return 'bg-red-500/10 text-red-500 border-red-500/30'
+    case AlertSeverity.FATAL:
+      return 'bg-purple-500/10 text-purple-500 border-purple-500/30'
+    case AlertSeverity.WARNING:
+      return 'bg-yellow-500/10 text-yellow-500 border-yellow-500/30'
+    default:
+      return 'bg-blue-500/10 text-blue-500 border-blue-500/30'
+  }
+}
+
+export const alertStateClasses = (state: string) => {
+  switch (state) {
+    case AlertState.FIRING:
+      return 'bg-red-500/10 text-red-500 border-red-500/30'
+    default:
+      return 'bg-emerald-500/10 text-emerald-500 border-emerald-500/30'
+  }
+}
+
 // Maps a rule row back into the API request shape — used by the enabled
 // toggle and update flows where the full object must be re-submitted.
 export const ruleToRequest = (rule: AlertRule): CreateRuleRequest => ({
